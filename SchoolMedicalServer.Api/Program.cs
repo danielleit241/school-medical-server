@@ -35,8 +35,9 @@ namespace SchoolMedicalServer.Api
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseCors("AllowAllClients");
 
+            app.UseAuthorization();
 
             app.MapControllers();
 
