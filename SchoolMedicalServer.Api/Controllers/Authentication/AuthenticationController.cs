@@ -57,5 +57,15 @@ namespace SchoolMedicalServer.Api.Controllers.Authentication
 
             return Ok(token);
         }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult?> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            var user = await authService.ChangePasswordAsync(request);
+            if (user is null)
+                return BadRequest("Change Password Fail");
+
+            return Ok(user);
+        }
     }
 }

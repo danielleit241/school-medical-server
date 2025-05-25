@@ -127,5 +127,24 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return user;
         }
 
+        public async Task<User?> ChangePasswordAsync(ChangePasswordRequest request)
+        {
+            var user = await context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
+            if (user is null)
+            {
+                return null!;
+            }
+            if (new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.OldPassword) == PasswordVerificationResult.Failed)
+            {
+                return null;
+            }
+            if (request.NewPassword != request.ConfirmNewPassword) {
+                return null;
+            }
+            user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.NewPassword);
+            context.Users.Update(user);
+            await context.SaveChangesAsync();
+            return user;
+        }
     }
 }
