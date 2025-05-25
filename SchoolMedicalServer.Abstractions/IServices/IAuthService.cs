@@ -6,6 +6,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
     public interface IAuthService
     {
         Task<TokenResponseDto?> LoginAsync(UserDto request);
+        Task<TokenResponseDto?> RefreshTokenAsync(RefreshTokenRequest request);
         Task<User?> RegisterAsync(UserDto request);
     }
 }

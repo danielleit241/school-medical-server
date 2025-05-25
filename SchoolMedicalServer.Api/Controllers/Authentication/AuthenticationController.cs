@@ -7,7 +7,7 @@ using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IServices;
 using SchoolMedicalServer.Infrastructure.Services;
 
-namespace SchoolMedicalServer.Api.Controllers.AuthenticationController
+namespace SchoolMedicalServer.Api.Controllers.Authentication
 {
     [Route("api/auth")]
     [ApiController]
@@ -43,6 +43,17 @@ namespace SchoolMedicalServer.Api.Controllers.AuthenticationController
             var token = await authService.LoginAsync(request);
             if (token is null)
                 return BadRequest("Invalid credentials");
+
+            return Ok(token);
+        }
+
+        [HttpPost("refresh-token")]
+        [Authorize]
+        public async Task<IActionResult?> RefreshToken([FromBody] RefreshTokenRequest request)
+        {
+            var token = await authService.RefreshTokenAsync(request);
+            if (token is null)
+                return BadRequest("Invalid refresh token");
 
             return Ok(token);
         }
