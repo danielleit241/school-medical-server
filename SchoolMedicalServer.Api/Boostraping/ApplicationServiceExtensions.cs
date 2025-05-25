@@ -27,8 +27,19 @@ namespace SchoolMedicalServer.Api.Boostraping
 
             services.AddDbContext<SchoolMedicalManagementContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("ConnectionStrings:DBDefault"));
+                options.UseSqlServer(configuration.GetConnectionString("DBDefault"));
             });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllClients", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
+                });
+            });
+
             services.AddTransient<IAuthService, AuthService>();
 
             return services;

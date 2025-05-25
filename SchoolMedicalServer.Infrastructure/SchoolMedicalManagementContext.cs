@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using SchoolMedicalServer.Abstractions.Entities;
 
 namespace SchoolMedicalServer.Infrastructure;
@@ -45,10 +46,6 @@ public partial class SchoolMedicalManagementContext : DbContext
     public virtual DbSet<VaccinationSchedule> VaccinationSchedules { get; set; }
 
     public virtual DbSet<VaccineDetail> VaccineDetails { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=(local);Database= SchoolMedicalManagement;UID=sa;PWD=12345;TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
