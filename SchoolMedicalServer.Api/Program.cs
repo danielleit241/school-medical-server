@@ -1,11 +1,4 @@
-
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using SchoolMedicalServer.Abstractions.IServices;
 using SchoolMedicalServer.Api.Boostraping;
-using SchoolMedicalServer.Infrastructure;
-using SchoolMedicalServer.Infrastructure.Services;
 
 namespace SchoolMedicalServer.Api
 {

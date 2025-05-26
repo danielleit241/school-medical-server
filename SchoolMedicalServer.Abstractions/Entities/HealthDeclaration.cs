@@ -7,8 +7,6 @@ public partial class HealthDeclaration
 {
     public Guid HealthDeclarationId { get; set; }
 
-    public Guid? VaccineId { get; set; }
-
     public Guid? StudentId { get; set; }
 
     public DateOnly? DeclarationDate { get; set; }
@@ -24,6 +22,4 @@ public partial class HealthDeclaration
     public string? Notes { get; set; }
 
     public virtual Student? Student { get; set; }
-
-    public virtual VaccineDetail? Vaccine { get; set; }
 }
