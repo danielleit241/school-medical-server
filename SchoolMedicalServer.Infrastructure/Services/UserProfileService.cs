@@ -21,18 +21,26 @@ namespace SchoolMedicalServer.Infrastructure.Services
         {
             _context = context;
             _configuration = configuration;
-        }
+        }   
 
-        public async Task<User?> GetUserProfileByIdAsync(Guid userId)
+  public async Task<UserProfileDTO?> GetUserProfileByIdAsync(Guid userId)
         {
             var user = await _context.Users.FindAsync(userId);
-            return user;
+            if (user == null) return null;
+
+            return new UserProfileDTO
+            {
+                FullName = user.FullName,
+                Email = user.EmailAddress,
+                DateOfBirth = user.DateOfBirth,
+                AvatarURL = user.AvatarURL
+            };
         }
 
-        public async Task<User?> UpdateUserProfileAsync(Guid userId, UserProfileDTO dto)
+        public async Task<UserProfileDTO?> UpdateUserProfileAsync(Guid userId, UserProfileDTO dto)
         {
             var user = await _context.Users.FindAsync(userId);
-            if (user == null) return user;
+            if (user == null) return null;
 
             user.FullName = dto.FullName;
             user.EmailAddress = dto.Email;
@@ -41,7 +49,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
-            return user;
+
+            return new UserProfileDTO
+            {
+                FullName = user.FullName,
+                Email = user.EmailAddress,
+                DateOfBirth = user.DateOfBirth,
+                AvatarURL = user.AvatarURL
+            };
         }
     }
 }

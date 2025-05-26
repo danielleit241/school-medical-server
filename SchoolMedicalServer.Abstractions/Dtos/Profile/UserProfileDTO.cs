@@ -10,9 +10,6 @@ namespace SchoolMedicalServer.Abstractions.Dtos.Profile
 {
     public class UserProfileDTO
     {
-     
-
-    
         public string FullName { get; set; } = default !;
 
         public DateOnly? DateOfBirth { get; set; }
