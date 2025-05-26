@@ -1,6 +1,6 @@
-﻿namespace SchoolMedicalServer.Abstractions.Dtos
+﻿namespace SchoolMedicalServer.Abstractions.Dtos.Authentication
 {
-    public class UserDto
+    public class LoginRequest
     {
         public string PhoneNumber { get; set; } = default!;
         public string Password { get; set; } = default!;

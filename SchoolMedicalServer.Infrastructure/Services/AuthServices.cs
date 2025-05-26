@@ -5,15 +5,15 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using SchoolMedicalServer.Abstractions.Dtos;
+using SchoolMedicalServer.Abstractions.Dtos.Authentication;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class AuthService(SchoolMedicalManagementContext context, IConfiguration configuration) : IAuthService
+    public class AuthServices(SchoolMedicalManagementContext context, IConfiguration configuration) : IAuthServices
     {
-        public async Task<TokenResponseDto?> LoginAsync(UserDto request)
+        public async Task<TokensResponse?> LoginAsync(LoginRequest request)
         {
             //var user = await context.Users.Include(u => u.Role)
             //    .FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
@@ -33,7 +33,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return await CreateTokenResponse(user);
         }
 
-        public async Task<TokenResponseDto?> RefreshTokenAsync(RefreshTokenRequest request)
+        public async Task<TokensResponse?> RefreshTokenAsync(RefreshTokenRequest request)
         {
             User? user = await ValidateRefreshTokenAsync(request.UserId, request.RefreshToken);
             if (user is null)
@@ -41,9 +41,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return await CreateTokenResponse(user);
         }
 
-        private async Task<TokenResponseDto> CreateTokenResponse(User user)
+        private async Task<TokensResponse> CreateTokenResponse(User user)
         {
-            var response = new TokenResponseDto
+            var response = new TokensResponse
             {
                 AccessToken = CreateToken(user),
                 RefreshToken = await GenerateAndSaveRefreshTokenAsync(user)
@@ -85,8 +85,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                new Claim(ClaimTypes.Name, user.PhoneNumber),
-                new Claim(ClaimTypes.Role, user.Role!.RoleName)
+                new Claim(ClaimTypes.Name, user.FullName ?? ""),
+                new Claim(ClaimTypes.Role, user.Role!.RoleName),
+                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
+                new Claim(ClaimTypes.Email, user.EmailAddress ?? "")
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));
@@ -104,29 +106,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
         }
 
-        public async Task<User?> RegisterAsync(UserDto request)
-        {
-            if (await context.Users.AnyAsync(u => u.PhoneNumber == request.PhoneNumber))
-            {
-                return null;
-            }
-
-            var user = new User();
-            if (user.UserId == Guid.Empty)
-            {
-                user.UserId = Guid.NewGuid();
-            }
-
-            user.PhoneNumber = request.PhoneNumber;
-
-            var hashedPassword = new PasswordHasher<User>().HashPassword(user, request.Password);
-            user.PasswordHash = hashedPassword;
-
-            context.Users.Add(user);
-            await context.SaveChangesAsync();
-            return user;
-        }
-
         public async Task<User?> ChangePasswordAsync(ChangePasswordRequest request)
         {
             var user = await context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
@@ -138,7 +117,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return null;
             }
-            if (request.NewPassword != request.ConfirmNewPassword) {
+            if (request.NewPassword != request.ConfirmNewPassword)
+            {
                 return null;
             }
             user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.NewPassword);
