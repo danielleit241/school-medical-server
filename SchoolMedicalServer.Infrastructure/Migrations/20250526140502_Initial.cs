@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SchoolMedicalServer.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,7 +25,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__MedicalI__727E83EB613E5005", x => x.ItemID);
+                    table.PrimaryKey("PK__MedicalI__727E83EBABA65EC3", x => x.ItemID);
                 });
 
             migrationBuilder.CreateTable(
@@ -38,7 +38,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__Role__8AFACE3AB9E100EC", x => x.RoleID);
+                    table.PrimaryKey("PK__Role__8AFACE3A0F6D7D18", x => x.RoleID);
                 });
 
             migrationBuilder.CreateTable(
@@ -59,7 +59,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__VaccineD__45DC68E9E9168660", x => x.VaccineID);
+                    table.PrimaryKey("PK__VaccineD__45DC68E9F459710F", x => x.VaccineID);
                 });
 
             migrationBuilder.CreateTable(
@@ -72,12 +72,14 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     PhoneNumber = table.Column<string>(type: "varchar(11)", unicode: false, maxLength: 11, nullable: false),
                     PasswordHash = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
                     EmailAddress = table.Column<string>(type: "varchar(70)", unicode: false, maxLength: 70, nullable: true),
+                    AvatarUrl = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true),
+                    DayOfBirth = table.Column<DateOnly>(type: "date", nullable: true),
                     RefreshToken = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true),
                     RefreshTokenExpiryTime = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__User__1788CCACE402F678", x => x.UserID);
+                    table.PrimaryKey("PK__User__1788CCAC7059EAEE", x => x.UserID);
                     table.ForeignKey(
                         name: "FK__User__RoleID__4CA06362",
                         column: x => x.RoleID,
@@ -102,7 +104,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__Student__32C52A79E34805F8", x => x.StudentID);
+                    table.PrimaryKey("PK__Student__32C52A79AED3062C", x => x.StudentID);
                     table.ForeignKey(
                         name: "FK__Student__UserID__4F7CD00D",
                         column: x => x.UserID,
@@ -125,7 +127,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__Appointm__8ECDFCA22BCB7532", x => x.AppointmentID);
+                    table.PrimaryKey("PK__Appointm__8ECDFCA27FD29BEA", x => x.AppointmentID);
                     table.ForeignKey(
                         name: "FK__Appointme__Stude__52593CB8",
                         column: x => x.StudentID,
@@ -154,14 +156,14 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__HealthCh__9C8A5B69FEDAE84D", x => x.ScheduleID);
+                    table.PrimaryKey("PK__HealthCh__9C8A5B69BE2ABA03", x => x.ScheduleID);
                     table.ForeignKey(
-                        name: "FK__HealthChe__Stude__70DDC3D8",
+                        name: "FK__HealthChe__Stude__6FE99F9F",
                         column: x => x.StudentID,
                         principalTable: "Student",
                         principalColumn: "StudentID");
                     table.ForeignKey(
-                        name: "FK__HealthChe__UserI__71D1E811",
+                        name: "FK__HealthChe__UserI__70DDC3D8",
                         column: x => x.UserID,
                         principalTable: "User",
                         principalColumn: "UserID");
@@ -172,7 +174,6 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 columns: table => new
                 {
                     HealthDeclarationID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    VaccineID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     StudentID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeclarationDate = table.Column<DateOnly>(type: "date", nullable: true),
                     ChronicDiseases = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
@@ -183,17 +184,12 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__HealthDe__327AAD7D84759B75", x => x.HealthDeclarationID);
+                    table.PrimaryKey("PK__HealthDe__327AAD7D8F9E8268", x => x.HealthDeclarationID);
                     table.ForeignKey(
-                        name: "FK__HealthDec__Stude__66603565",
+                        name: "FK__HealthDec__Stude__656C112C",
                         column: x => x.StudentID,
                         principalTable: "Student",
                         principalColumn: "StudentID");
-                    table.ForeignKey(
-                        name: "FK__HealthDec__Vacci__656C112C",
-                        column: x => x.VaccineID,
-                        principalTable: "VaccineDetails",
-                        principalColumn: "VaccineID");
                 });
 
             migrationBuilder.CreateTable(
@@ -213,7 +209,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__MedicalE__7944C87040FECA9E", x => x.EventID);
+                    table.PrimaryKey("PK__MedicalE__7944C8702997A560", x => x.EventID);
                     table.ForeignKey(
                         name: "FK__MedicalEv__Stude__59FA5E80",
                         column: x => x.StudentID,
@@ -242,7 +238,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__MedicalR__6EF58830002FCD0C", x => x.RegistrationID);
+                    table.PrimaryKey("PK__MedicalR__6EF58830C8922221", x => x.RegistrationID);
                     table.ForeignKey(
                         name: "FK__MedicalRe__Stude__5629CD9C",
                         column: x => x.StudentID,
@@ -270,14 +266,14 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__Notifica__20CF2E32D2FD02B9", x => x.NotificationID);
+                    table.PrimaryKey("PK__Notifica__20CF2E32256F768A", x => x.NotificationID);
                     table.ForeignKey(
-                        name: "FK__Notificat__Stude__787EE5A0",
+                        name: "FK__Notificat__Stude__7D439ABD",
                         column: x => x.StudentID,
                         principalTable: "Student",
                         principalColumn: "StudentID");
                     table.ForeignKey(
-                        name: "FK__Notificat__UserI__797309D9",
+                        name: "FK__Notificat__UserI__7E37BEF6",
                         column: x => x.UserID,
                         principalTable: "User",
                         principalColumn: "UserID");
@@ -299,14 +295,14 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__Vaccinat__9C8A5B6975E3525E", x => x.ScheduleID);
+                    table.PrimaryKey("PK__Vaccinat__9C8A5B694492A7A5", x => x.ScheduleID);
                     table.ForeignKey(
-                        name: "FK__Vaccinati__Stude__693CA210",
+                        name: "FK__Vaccinati__Stude__68487DD7",
                         column: x => x.StudentID,
                         principalTable: "Student",
                         principalColumn: "StudentID");
                     table.ForeignKey(
-                        name: "FK__Vaccinati__Vacci__6A30C649",
+                        name: "FK__Vaccinati__Vacci__693CA210",
                         column: x => x.VaccineID,
                         principalTable: "VaccineDetails",
                         principalColumn: "VaccineID");
@@ -332,14 +328,14 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__HealthCh__976902280D4BD666", x => x.ResultID);
+                    table.PrimaryKey("PK__HealthCh__976902283B65C17C", x => x.ResultID);
                     table.ForeignKey(
-                        name: "FK__HealthChe__Sched__75A278F5",
+                        name: "FK__HealthChe__Sched__74AE54BC",
                         column: x => x.ScheduleID,
                         principalTable: "HealthCheckSchedule",
                         principalColumn: "ScheduleID");
                     table.ForeignKey(
-                        name: "FK__HealthChe__Stude__74AE54BC",
+                        name: "FK__HealthChe__Stude__73BA3083",
                         column: x => x.StudentID,
                         principalTable: "Student",
                         principalColumn: "StudentID");
@@ -359,7 +355,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__MedicalR__3F51AD779A9EAEC2", x => x.RequestItemID);
+                    table.PrimaryKey("PK__MedicalR__3F51AD77BE2FAFF0", x => x.RequestItemID);
                     table.ForeignKey(
                         name: "FK__MedicalRe__Event__5FB337D6",
                         column: x => x.EventID,
@@ -391,17 +387,49 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__Vaccinat__12DE8FD94A304570", x => x.VaccinationResultID);
+                    table.PrimaryKey("PK__Vaccinat__12DE8FD91DB6B240", x => x.VaccinationResultID);
                     table.ForeignKey(
-                        name: "FK__Vaccinati__Sched__6E01572D",
+                        name: "FK__Vaccinati__Sched__6D0D32F4",
                         column: x => x.ScheduleID,
                         principalTable: "VaccinationSchedule",
                         principalColumn: "ScheduleID");
                     table.ForeignKey(
-                        name: "FK__Vaccinati__Stude__6D0D32F4",
+                        name: "FK__Vaccinati__Stude__6C190EBB",
                         column: x => x.StudentID,
                         principalTable: "Student",
                         principalColumn: "StudentID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "HealthProfile",
+                columns: table => new
+                {
+                    HealthProfileID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StudentID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    VaccinationResultID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    HealthCheckResultID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())"),
+                    RecordedID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__HealthPr__73C2C2B51D74B658", x => x.HealthProfileID);
+                    table.ForeignKey(
+                        name: "FK__HealthPro__Healt__797309D9",
+                        column: x => x.HealthCheckResultID,
+                        principalTable: "HealthCheckResult",
+                        principalColumn: "ResultID");
+                    table.ForeignKey(
+                        name: "FK__HealthPro__Stude__778AC167",
+                        column: x => x.StudentID,
+                        principalTable: "Student",
+                        principalColumn: "StudentID");
+                    table.ForeignKey(
+                        name: "FK__HealthPro__Vacci__787EE5A0",
+                        column: x => x.VaccinationResultID,
+                        principalTable: "VaccinationResult",
+                        principalColumn: "VaccinationResultID");
                 });
 
             migrationBuilder.CreateIndex(
@@ -440,9 +468,19 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 column: "StudentID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HealthDeclaration_VaccineID",
-                table: "HealthDeclaration",
-                column: "VaccineID");
+                name: "IX_HealthProfile_HealthCheckResultID",
+                table: "HealthProfile",
+                column: "HealthCheckResultID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HealthProfile_StudentID",
+                table: "HealthProfile",
+                column: "StudentID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HealthProfile_VaccinationResultID",
+                table: "HealthProfile",
+                column: "VaccinationResultID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MedicalEvent_StudentID",
@@ -495,7 +533,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 column: "RoleID");
 
             migrationBuilder.CreateIndex(
-                name: "UQ__User__85FB4E3808A6DCD1",
+                name: "UQ__User__85FB4E38CF69A5AF",
                 table: "User",
                 column: "PhoneNumber",
                 unique: true);
@@ -528,10 +566,10 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 name: "Appointment");
 
             migrationBuilder.DropTable(
-                name: "HealthCheckResult");
+                name: "HealthDeclaration");
 
             migrationBuilder.DropTable(
-                name: "HealthDeclaration");
+                name: "HealthProfile");
 
             migrationBuilder.DropTable(
                 name: "MedicalRegistration");
@@ -543,16 +581,19 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 name: "Notification");
 
             migrationBuilder.DropTable(
-                name: "VaccinationResult");
+                name: "HealthCheckResult");
 
             migrationBuilder.DropTable(
-                name: "HealthCheckSchedule");
+                name: "VaccinationResult");
 
             migrationBuilder.DropTable(
                 name: "MedicalEvent");
 
             migrationBuilder.DropTable(
                 name: "MedicalInventory");
+
+            migrationBuilder.DropTable(
+                name: "HealthCheckSchedule");
 
             migrationBuilder.DropTable(
                 name: "VaccinationSchedule");

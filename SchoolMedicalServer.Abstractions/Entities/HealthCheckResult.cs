@@ -31,6 +31,8 @@ public partial class HealthCheckResult
 
     public Guid? RecordedId { get; set; }
 
+    public virtual ICollection<HealthProfile> HealthProfiles { get; set; } = new List<HealthProfile>();
+
     public virtual HealthCheckSchedule? Schedule { get; set; }
 
     public virtual Student? Student { get; set; }

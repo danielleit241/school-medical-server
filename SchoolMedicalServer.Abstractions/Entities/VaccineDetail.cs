@@ -27,7 +27,5 @@ public partial class VaccineDetail
 
     public string? Description { get; set; }
 
-    public virtual ICollection<HealthDeclaration> HealthDeclarations { get; set; } = new List<HealthDeclaration>();
-
     public virtual ICollection<VaccinationSchedule> VaccinationSchedules { get; set; } = new List<VaccinationSchedule>();
 }
