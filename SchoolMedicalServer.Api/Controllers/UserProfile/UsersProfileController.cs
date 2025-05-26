@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SchoolMedicalServer.Abstractions.Dtos;
+using SchoolMedicalServer.Abstractions.Dtos.Profile;
 using SchoolMedicalServer.Abstractions.IServices;
 using SchoolMedicalServer.Infrastructure.Services;
 
-namespace SchoolMedicalServer.Api.Controllers.Users
+namespace SchoolMedicalServer.Api.Controllers.UserProfile
 {
     [Route("api/user-profile")]
     [ApiController]

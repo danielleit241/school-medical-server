@@ -1,5 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos;
-
+﻿using SchoolMedicalServer.Abstractions.Dtos.Profile;
 using SchoolMedicalServer.Abstractions.Entities;
 
 

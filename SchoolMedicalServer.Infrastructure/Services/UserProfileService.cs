@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using SchoolMedicalServer.Abstractions.Dtos;
+using SchoolMedicalServer.Abstractions.Dtos.Profile;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IServices;
 using System;
@@ -36,6 +36,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             user.FullName = dto.FullName;
             user.EmailAddress = dto.Email;
+            user.DateOfBirth = dto.DateOfBirth;
+            user.AvatarURL = dto.AvatarURL;
 
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
