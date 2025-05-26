@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using SchoolMedicalServer.Abstractions.Entities;
 
 namespace SchoolMedicalServer.Infrastructure;
@@ -24,6 +23,8 @@ public partial class SchoolMedicalManagementContext : DbContext
     public virtual DbSet<HealthCheckSchedule> HealthCheckSchedules { get; set; }
 
     public virtual DbSet<HealthDeclaration> HealthDeclarations { get; set; }
+
+    public virtual DbSet<HealthProfile> HealthProfiles { get; set; }
 
     public virtual DbSet<MedicalEvent> MedicalEvents { get; set; }
 
@@ -51,7 +52,7 @@ public partial class SchoolMedicalManagementContext : DbContext
     {
         modelBuilder.Entity<Appointment>(entity =>
         {
-            entity.HasKey(e => e.AppointmentId).HasName("PK__Appointm__8ECDFCA22BCB7532");
+            entity.HasKey(e => e.AppointmentId).HasName("PK__Appointm__8ECDFCA27FD29BEA");
 
             entity.ToTable("Appointment");
 
@@ -73,7 +74,7 @@ public partial class SchoolMedicalManagementContext : DbContext
 
         modelBuilder.Entity<HealthCheckResult>(entity =>
         {
-            entity.HasKey(e => e.ResultId).HasName("PK__HealthCh__976902280D4BD666");
+            entity.HasKey(e => e.ResultId).HasName("PK__HealthCh__976902283B65C17C");
 
             entity.ToTable("HealthCheckResult");
 
@@ -90,16 +91,16 @@ public partial class SchoolMedicalManagementContext : DbContext
 
             entity.HasOne(d => d.Schedule).WithMany(p => p.HealthCheckResults)
                 .HasForeignKey(d => d.ScheduleId)
-                .HasConstraintName("FK__HealthChe__Sched__75A278F5");
+                .HasConstraintName("FK__HealthChe__Sched__74AE54BC");
 
             entity.HasOne(d => d.Student).WithMany(p => p.HealthCheckResults)
                 .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK__HealthChe__Stude__74AE54BC");
+                .HasConstraintName("FK__HealthChe__Stude__73BA3083");
         });
 
         modelBuilder.Entity<HealthCheckSchedule>(entity =>
         {
-            entity.HasKey(e => e.ScheduleId).HasName("PK__HealthCh__9C8A5B69FEDAE84D");
+            entity.HasKey(e => e.ScheduleId).HasName("PK__HealthCh__9C8A5B69BE2ABA03");
 
             entity.ToTable("HealthCheckSchedule");
 
@@ -115,16 +116,16 @@ public partial class SchoolMedicalManagementContext : DbContext
 
             entity.HasOne(d => d.Student).WithMany(p => p.HealthCheckSchedules)
                 .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK__HealthChe__Stude__70DDC3D8");
+                .HasConstraintName("FK__HealthChe__Stude__6FE99F9F");
 
             entity.HasOne(d => d.User).WithMany(p => p.HealthCheckSchedules)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__HealthChe__UserI__71D1E811");
+                .HasConstraintName("FK__HealthChe__UserI__70DDC3D8");
         });
 
         modelBuilder.Entity<HealthDeclaration>(entity =>
         {
-            entity.HasKey(e => e.HealthDeclarationId).HasName("PK__HealthDe__327AAD7D84759B75");
+            entity.HasKey(e => e.HealthDeclarationId).HasName("PK__HealthDe__327AAD7D8F9E8268");
 
             entity.ToTable("HealthDeclaration");
 
@@ -137,20 +138,46 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.FoodAllergies).HasMaxLength(255);
             entity.Property(e => e.Notes).HasMaxLength(255);
             entity.Property(e => e.StudentId).HasColumnName("StudentID");
-            entity.Property(e => e.VaccineId).HasColumnName("VaccineID");
 
             entity.HasOne(d => d.Student).WithMany(p => p.HealthDeclarations)
                 .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK__HealthDec__Stude__66603565");
+                .HasConstraintName("FK__HealthDec__Stude__656C112C");
+        });
 
-            entity.HasOne(d => d.Vaccine).WithMany(p => p.HealthDeclarations)
-                .HasForeignKey(d => d.VaccineId)
-                .HasConstraintName("FK__HealthDec__Vacci__656C112C");
+        modelBuilder.Entity<HealthProfile>(entity =>
+        {
+            entity.HasKey(e => e.HealthProfileId).HasName("PK__HealthPr__73C2C2B51D74B658");
+
+            entity.ToTable("HealthProfile");
+
+            entity.Property(e => e.HealthProfileId)
+                .ValueGeneratedNever()
+                .HasColumnName("HealthProfileID");
+            entity.Property(e => e.CreatedDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.HealthCheckResultId).HasColumnName("HealthCheckResultID");
+            entity.Property(e => e.Notes).HasMaxLength(255);
+            entity.Property(e => e.RecordedId).HasColumnName("RecordedID");
+            entity.Property(e => e.StudentId).HasColumnName("StudentID");
+            entity.Property(e => e.VaccinationResultId).HasColumnName("VaccinationResultID");
+
+            entity.HasOne(d => d.HealthCheckResult).WithMany(p => p.HealthProfiles)
+                .HasForeignKey(d => d.HealthCheckResultId)
+                .HasConstraintName("FK__HealthPro__Healt__797309D9");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.HealthProfiles)
+                .HasForeignKey(d => d.StudentId)
+                .HasConstraintName("FK__HealthPro__Stude__778AC167");
+
+            entity.HasOne(d => d.VaccinationResult).WithMany(p => p.HealthProfiles)
+                .HasForeignKey(d => d.VaccinationResultId)
+                .HasConstraintName("FK__HealthPro__Vacci__787EE5A0");
         });
 
         modelBuilder.Entity<MedicalEvent>(entity =>
         {
-            entity.HasKey(e => e.EventId).HasName("PK__MedicalE__7944C87040FECA9E");
+            entity.HasKey(e => e.EventId).HasName("PK__MedicalE__7944C8702997A560");
 
             entity.ToTable("MedicalEvent");
 
@@ -177,7 +204,7 @@ public partial class SchoolMedicalManagementContext : DbContext
 
         modelBuilder.Entity<MedicalInventory>(entity =>
         {
-            entity.HasKey(e => e.ItemId).HasName("PK__MedicalI__727E83EB613E5005");
+            entity.HasKey(e => e.ItemId).HasName("PK__MedicalI__727E83EBABA65EC3");
 
             entity.ToTable("MedicalInventory");
 
@@ -192,7 +219,7 @@ public partial class SchoolMedicalManagementContext : DbContext
 
         modelBuilder.Entity<MedicalRegistration>(entity =>
         {
-            entity.HasKey(e => e.RegistrationId).HasName("PK__MedicalR__6EF58830002FCD0C");
+            entity.HasKey(e => e.RegistrationId).HasName("PK__MedicalR__6EF58830C8922221");
 
             entity.ToTable("MedicalRegistration");
 
@@ -216,7 +243,7 @@ public partial class SchoolMedicalManagementContext : DbContext
 
         modelBuilder.Entity<MedicalRequest>(entity =>
         {
-            entity.HasKey(e => e.RequestItemId).HasName("PK__MedicalR__3F51AD779A9EAEC2");
+            entity.HasKey(e => e.RequestItemId).HasName("PK__MedicalR__3F51AD77BE2FAFF0");
 
             entity.ToTable("MedicalRequest");
 
@@ -239,7 +266,7 @@ public partial class SchoolMedicalManagementContext : DbContext
 
         modelBuilder.Entity<Notification>(entity =>
         {
-            entity.HasKey(e => e.NotificationId).HasName("PK__Notifica__20CF2E32D2FD02B9");
+            entity.HasKey(e => e.NotificationId).HasName("PK__Notifica__20CF2E32256F768A");
 
             entity.ToTable("Notification");
 
@@ -255,16 +282,16 @@ public partial class SchoolMedicalManagementContext : DbContext
 
             entity.HasOne(d => d.Student).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK__Notificat__Stude__787EE5A0");
+                .HasConstraintName("FK__Notificat__Stude__7D439ABD");
 
             entity.HasOne(d => d.User).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__Notificat__UserI__797309D9");
+                .HasConstraintName("FK__Notificat__UserI__7E37BEF6");
         });
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__Role__8AFACE3AB9E100EC");
+            entity.HasKey(e => e.RoleId).HasName("PK__Role__8AFACE3A0F6D7D18");
 
             entity.ToTable("Role");
 
@@ -276,7 +303,7 @@ public partial class SchoolMedicalManagementContext : DbContext
 
         modelBuilder.Entity<Student>(entity =>
         {
-            entity.HasKey(e => e.StudentId).HasName("PK__Student__32C52A79E34805F8");
+            entity.HasKey(e => e.StudentId).HasName("PK__Student__32C52A79AED3062C");
 
             entity.ToTable("Student");
 
@@ -308,15 +335,18 @@ public partial class SchoolMedicalManagementContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__User__1788CCACE402F678");
+            entity.HasKey(e => e.UserId).HasName("PK__User__1788CCAC7059EAEE");
 
             entity.ToTable("User");
 
-            entity.HasIndex(e => e.PhoneNumber, "UQ__User__85FB4E3808A6DCD1").IsUnique();
+            entity.HasIndex(e => e.PhoneNumber, "UQ__User__85FB4E38CF69A5AF").IsUnique();
 
             entity.Property(e => e.UserId)
                 .ValueGeneratedNever()
                 .HasColumnName("UserID");
+            entity.Property(e => e.AvatarUrl)
+                .HasMaxLength(255)
+                .IsUnicode(false);
             entity.Property(e => e.EmailAddress)
                 .HasMaxLength(70)
                 .IsUnicode(false);
@@ -340,7 +370,7 @@ public partial class SchoolMedicalManagementContext : DbContext
 
         modelBuilder.Entity<VaccinationResult>(entity =>
         {
-            entity.HasKey(e => e.VaccinationResultId).HasName("PK__Vaccinat__12DE8FD94A304570");
+            entity.HasKey(e => e.VaccinationResultId).HasName("PK__Vaccinat__12DE8FD91DB6B240");
 
             entity.ToTable("VaccinationResult");
 
@@ -359,16 +389,16 @@ public partial class SchoolMedicalManagementContext : DbContext
 
             entity.HasOne(d => d.Schedule).WithMany(p => p.VaccinationResults)
                 .HasForeignKey(d => d.ScheduleId)
-                .HasConstraintName("FK__Vaccinati__Sched__6E01572D");
+                .HasConstraintName("FK__Vaccinati__Sched__6D0D32F4");
 
             entity.HasOne(d => d.Student).WithMany(p => p.VaccinationResults)
                 .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK__Vaccinati__Stude__6D0D32F4");
+                .HasConstraintName("FK__Vaccinati__Stude__6C190EBB");
         });
 
         modelBuilder.Entity<VaccinationSchedule>(entity =>
         {
-            entity.HasKey(e => e.ScheduleId).HasName("PK__Vaccinat__9C8A5B6975E3525E");
+            entity.HasKey(e => e.ScheduleId).HasName("PK__Vaccinat__9C8A5B694492A7A5");
 
             entity.ToTable("VaccinationSchedule");
 
@@ -384,16 +414,16 @@ public partial class SchoolMedicalManagementContext : DbContext
 
             entity.HasOne(d => d.Student).WithMany(p => p.VaccinationSchedules)
                 .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK__Vaccinati__Stude__693CA210");
+                .HasConstraintName("FK__Vaccinati__Stude__68487DD7");
 
             entity.HasOne(d => d.Vaccine).WithMany(p => p.VaccinationSchedules)
                 .HasForeignKey(d => d.VaccineId)
-                .HasConstraintName("FK__Vaccinati__Vacci__6A30C649");
+                .HasConstraintName("FK__Vaccinati__Vacci__693CA210");
         });
 
         modelBuilder.Entity<VaccineDetail>(entity =>
         {
-            entity.HasKey(e => e.VaccineId).HasName("PK__VaccineD__45DC68E9E9168660");
+            entity.HasKey(e => e.VaccineId).HasName("PK__VaccineD__45DC68E9F459710F");
 
             entity.Property(e => e.VaccineId)
                 .ValueGeneratedNever()

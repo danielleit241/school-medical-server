@@ -33,6 +33,8 @@ public partial class Student
 
     public virtual ICollection<HealthDeclaration> HealthDeclarations { get; set; } = new List<HealthDeclaration>();
 
+    public virtual ICollection<HealthProfile> HealthProfiles { get; set; } = new List<HealthProfile>();
+
     public virtual ICollection<MedicalEvent> MedicalEvents { get; set; } = new List<MedicalEvent>();
 
     public virtual ICollection<MedicalRegistration> MedicalRegistrations { get; set; } = new List<MedicalRegistration>();

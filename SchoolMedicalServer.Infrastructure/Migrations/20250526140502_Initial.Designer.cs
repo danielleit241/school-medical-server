@@ -12,8 +12,8 @@ using SchoolMedicalServer.Infrastructure;
 namespace SchoolMedicalServer.Infrastructure.Migrations
 {
     [DbContext(typeof(SchoolMedicalManagementContext))]
-    [Migration("20250525080600_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250526140502_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,7 +56,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnName("UserID");
 
                     b.HasKey("AppointmentId")
-                        .HasName("PK__Appointm__8ECDFCA22BCB7532");
+                        .HasName("PK__Appointm__8ECDFCA27FD29BEA");
 
                     b.HasIndex("StudentId");
 
@@ -115,7 +115,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("ResultId")
-                        .HasName("PK__HealthCh__976902280D4BD666");
+                        .HasName("PK__HealthCh__976902283B65C17C");
 
                     b.HasIndex("ScheduleId");
 
@@ -161,7 +161,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnName("UserID");
 
                     b.HasKey("ScheduleId")
-                        .HasName("PK__HealthCh__9C8A5B69FEDAE84D");
+                        .HasName("PK__HealthCh__9C8A5B69BE2ABA03");
 
                     b.HasIndex("StudentId");
 
@@ -203,18 +203,55 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("StudentID");
 
-                    b.Property<Guid?>("VaccineId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("VaccineID");
-
                     b.HasKey("HealthDeclarationId")
-                        .HasName("PK__HealthDe__327AAD7D84759B75");
+                        .HasName("PK__HealthDe__327AAD7D8F9E8268");
 
                     b.HasIndex("StudentId");
 
-                    b.HasIndex("VaccineId");
-
                     b.ToTable("HealthDeclaration", (string)null);
+                });
+
+            modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthProfile", b =>
+                {
+                    b.Property<Guid>("HealthProfileId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("HealthProfileID");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<Guid?>("HealthCheckResultId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("HealthCheckResultID");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid?>("RecordedId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("RecordedID");
+
+                    b.Property<Guid?>("StudentId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("StudentID");
+
+                    b.Property<Guid?>("VaccinationResultId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("VaccinationResultID");
+
+                    b.HasKey("HealthProfileId")
+                        .HasName("PK__HealthPr__73C2C2B51D74B658");
+
+                    b.HasIndex("HealthCheckResultId");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("VaccinationResultId");
+
+                    b.ToTable("HealthProfile", (string)null);
                 });
 
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.MedicalEvent", b =>
@@ -258,7 +295,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnName("UserID");
 
                     b.HasKey("EventId")
-                        .HasName("PK__MedicalE__7944C87040FECA9E");
+                        .HasName("PK__MedicalE__7944C8702997A560");
 
                     b.HasIndex("StudentId");
 
@@ -296,7 +333,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.HasKey("ItemId")
-                        .HasName("PK__MedicalI__727E83EB613E5005");
+                        .HasName("PK__MedicalI__727E83EBABA65EC3");
 
                     b.ToTable("MedicalInventory", (string)null);
                 });
@@ -337,7 +374,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnName("UserID");
 
                     b.HasKey("RegistrationId")
-                        .HasName("PK__MedicalR__6EF58830002FCD0C");
+                        .HasName("PK__MedicalR__6EF58830C8922221");
 
                     b.HasIndex("StudentId");
 
@@ -375,7 +412,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("RequestItemId")
-                        .HasName("PK__MedicalR__3F51AD779A9EAEC2");
+                        .HasName("PK__MedicalR__3F51AD77BE2FAFF0");
 
                     b.HasIndex("EventId");
 
@@ -417,7 +454,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnName("VaccineScheduleID");
 
                     b.HasKey("NotificationId")
-                        .HasName("PK__Notifica__20CF2E32D2FD02B9");
+                        .HasName("PK__Notifica__20CF2E32256F768A");
 
                     b.HasIndex("StudentId");
 
@@ -442,7 +479,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("varchar(10)");
 
                     b.HasKey("RoleId")
-                        .HasName("PK__Role__8AFACE3AB9E100EC");
+                        .HasName("PK__Role__8AFACE3A0F6D7D18");
 
                     b.ToTable("Role", (string)null);
                 });
@@ -495,7 +532,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnName("UserID");
 
                     b.HasKey("StudentId")
-                        .HasName("PK__Student__32C52A79E34805F8");
+                        .HasName("PK__Student__32C52A79AED3062C");
 
                     b.HasIndex("UserId");
 
@@ -507,6 +544,14 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("UserID");
+
+                    b.Property<string>("AvatarUrl")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateOnly?>("DayOfBirth")
+                        .HasColumnType("date");
 
                     b.Property<string>("EmailAddress")
                         .HasMaxLength(70)
@@ -542,11 +587,11 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnName("RoleID");
 
                     b.HasKey("UserId")
-                        .HasName("PK__User__1788CCACE402F678");
+                        .HasName("PK__User__1788CCAC7059EAEE");
 
                     b.HasIndex("RoleId");
 
-                    b.HasIndex(new[] { "PhoneNumber" }, "UQ__User__85FB4E3808A6DCD1")
+                    b.HasIndex(new[] { "PhoneNumber" }, "UQ__User__85FB4E38CF69A5AF")
                         .IsUnique();
 
                     b.ToTable("User", (string)null);
@@ -600,7 +645,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("date");
 
                     b.HasKey("VaccinationResultId")
-                        .HasName("PK__Vaccinat__12DE8FD94A304570");
+                        .HasName("PK__Vaccinat__12DE8FD91DB6B240");
 
                     b.HasIndex("ScheduleId");
 
@@ -646,7 +691,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnName("VaccineID");
 
                     b.HasKey("ScheduleId")
-                        .HasName("PK__Vaccinat__9C8A5B6975E3525E");
+                        .HasName("PK__Vaccinat__9C8A5B694492A7A5");
 
                     b.HasIndex("StudentId");
 
@@ -700,7 +745,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("VaccineId")
-                        .HasName("PK__VaccineD__45DC68E9E9168660");
+                        .HasName("PK__VaccineD__45DC68E9F459710F");
 
                     b.ToTable("VaccineDetails");
                 });
@@ -727,12 +772,12 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.HasOne("SchoolMedicalServer.Abstractions.Entities.HealthCheckSchedule", "Schedule")
                         .WithMany("HealthCheckResults")
                         .HasForeignKey("ScheduleId")
-                        .HasConstraintName("FK__HealthChe__Sched__75A278F5");
+                        .HasConstraintName("FK__HealthChe__Sched__74AE54BC");
 
                     b.HasOne("SchoolMedicalServer.Abstractions.Entities.Student", "Student")
                         .WithMany("HealthCheckResults")
                         .HasForeignKey("StudentId")
-                        .HasConstraintName("FK__HealthChe__Stude__74AE54BC");
+                        .HasConstraintName("FK__HealthChe__Stude__73BA3083");
 
                     b.Navigation("Schedule");
 
@@ -744,12 +789,12 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.HasOne("SchoolMedicalServer.Abstractions.Entities.Student", "Student")
                         .WithMany("HealthCheckSchedules")
                         .HasForeignKey("StudentId")
-                        .HasConstraintName("FK__HealthChe__Stude__70DDC3D8");
+                        .HasConstraintName("FK__HealthChe__Stude__6FE99F9F");
 
                     b.HasOne("SchoolMedicalServer.Abstractions.Entities.User", "User")
                         .WithMany("HealthCheckSchedules")
                         .HasForeignKey("UserId")
-                        .HasConstraintName("FK__HealthChe__UserI__71D1E811");
+                        .HasConstraintName("FK__HealthChe__UserI__70DDC3D8");
 
                     b.Navigation("Student");
 
@@ -761,16 +806,33 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.HasOne("SchoolMedicalServer.Abstractions.Entities.Student", "Student")
                         .WithMany("HealthDeclarations")
                         .HasForeignKey("StudentId")
-                        .HasConstraintName("FK__HealthDec__Stude__66603565");
+                        .HasConstraintName("FK__HealthDec__Stude__656C112C");
 
-                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.VaccineDetail", "Vaccine")
-                        .WithMany("HealthDeclarations")
-                        .HasForeignKey("VaccineId")
-                        .HasConstraintName("FK__HealthDec__Vacci__656C112C");
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthProfile", b =>
+                {
+                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.HealthCheckResult", "HealthCheckResult")
+                        .WithMany("HealthProfiles")
+                        .HasForeignKey("HealthCheckResultId")
+                        .HasConstraintName("FK__HealthPro__Healt__797309D9");
+
+                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.Student", "Student")
+                        .WithMany("HealthProfiles")
+                        .HasForeignKey("StudentId")
+                        .HasConstraintName("FK__HealthPro__Stude__778AC167");
+
+                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.VaccinationResult", "VaccinationResult")
+                        .WithMany("HealthProfiles")
+                        .HasForeignKey("VaccinationResultId")
+                        .HasConstraintName("FK__HealthPro__Vacci__787EE5A0");
+
+                    b.Navigation("HealthCheckResult");
 
                     b.Navigation("Student");
 
-                    b.Navigation("Vaccine");
+                    b.Navigation("VaccinationResult");
                 });
 
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.MedicalEvent", b =>
@@ -829,12 +891,12 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.HasOne("SchoolMedicalServer.Abstractions.Entities.Student", "Student")
                         .WithMany("Notifications")
                         .HasForeignKey("StudentId")
-                        .HasConstraintName("FK__Notificat__Stude__787EE5A0");
+                        .HasConstraintName("FK__Notificat__Stude__7D439ABD");
 
                     b.HasOne("SchoolMedicalServer.Abstractions.Entities.User", "User")
                         .WithMany("Notifications")
                         .HasForeignKey("UserId")
-                        .HasConstraintName("FK__Notificat__UserI__797309D9");
+                        .HasConstraintName("FK__Notificat__UserI__7E37BEF6");
 
                     b.Navigation("Student");
 
@@ -866,12 +928,12 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.HasOne("SchoolMedicalServer.Abstractions.Entities.VaccinationSchedule", "Schedule")
                         .WithMany("VaccinationResults")
                         .HasForeignKey("ScheduleId")
-                        .HasConstraintName("FK__Vaccinati__Sched__6E01572D");
+                        .HasConstraintName("FK__Vaccinati__Sched__6D0D32F4");
 
                     b.HasOne("SchoolMedicalServer.Abstractions.Entities.Student", "Student")
                         .WithMany("VaccinationResults")
                         .HasForeignKey("StudentId")
-                        .HasConstraintName("FK__Vaccinati__Stude__6D0D32F4");
+                        .HasConstraintName("FK__Vaccinati__Stude__6C190EBB");
 
                     b.Navigation("Schedule");
 
@@ -883,16 +945,21 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.HasOne("SchoolMedicalServer.Abstractions.Entities.Student", "Student")
                         .WithMany("VaccinationSchedules")
                         .HasForeignKey("StudentId")
-                        .HasConstraintName("FK__Vaccinati__Stude__693CA210");
+                        .HasConstraintName("FK__Vaccinati__Stude__68487DD7");
 
                     b.HasOne("SchoolMedicalServer.Abstractions.Entities.VaccineDetail", "Vaccine")
                         .WithMany("VaccinationSchedules")
                         .HasForeignKey("VaccineId")
-                        .HasConstraintName("FK__Vaccinati__Vacci__6A30C649");
+                        .HasConstraintName("FK__Vaccinati__Vacci__693CA210");
 
                     b.Navigation("Student");
 
                     b.Navigation("Vaccine");
+                });
+
+            modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthCheckResult", b =>
+                {
+                    b.Navigation("HealthProfiles");
                 });
 
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthCheckSchedule", b =>
@@ -925,6 +992,8 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
 
                     b.Navigation("HealthDeclarations");
 
+                    b.Navigation("HealthProfiles");
+
                     b.Navigation("MedicalEvents");
 
                     b.Navigation("MedicalRegistrations");
@@ -951,6 +1020,11 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.Navigation("Students");
                 });
 
+            modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.VaccinationResult", b =>
+                {
+                    b.Navigation("HealthProfiles");
+                });
+
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.VaccinationSchedule", b =>
                 {
                     b.Navigation("VaccinationResults");
@@ -958,8 +1032,6 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
 
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.VaccineDetail", b =>
                 {
-                    b.Navigation("HealthDeclarations");
-
                     b.Navigation("VaccinationSchedules");
                 });
 #pragma warning restore 612, 618

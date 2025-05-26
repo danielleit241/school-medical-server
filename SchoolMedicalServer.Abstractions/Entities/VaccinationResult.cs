@@ -29,6 +29,8 @@ public partial class VaccinationResult
 
     public Guid? RecordedId { get; set; }
 
+    public virtual ICollection<HealthProfile> HealthProfiles { get; set; } = new List<HealthProfile>();
+
     public virtual VaccinationSchedule? Schedule { get; set; }
 
     public virtual Student? Student { get; set; }
