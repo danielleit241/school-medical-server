@@ -41,6 +41,7 @@ namespace SchoolMedicalServer.Api.Boostraping
             });
 
             services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IUserProfileService, UserProfileService>();
 
             return services;
         }

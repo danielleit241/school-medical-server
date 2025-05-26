@@ -5,6 +5,8 @@ namespace SchoolMedicalServer.Abstractions.Entities;
 
 public partial class User
 {
+    public Guid Id;
+
     public Guid UserId { get; set; }
 
     public int? RoleId { get; set; }
