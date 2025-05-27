@@ -26,7 +26,7 @@ namespace SchoolMedicalServer.Api.Controllers.UserProfile
 
         [HttpPut("{userId}")]
         [Authorize]
-        public async Task<IActionResult> UpdateProfileAsync(Guid userId, [FromBody] UserProfileDto request)
+        public async Task<IActionResult> UpdateProfileAsync(Guid userId, [FromBody] UserProfileRequest request)
         {
             if (!ModelState.IsValid)
             {

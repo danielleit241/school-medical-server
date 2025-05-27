@@ -1,11 +1,13 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.User;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Pagination;
+using SchoolMedicalServer.Abstractions.Dtos.User;
 
 namespace SchoolMedicalServer.Abstractions.IServices
 {
     public interface IUserService
     {
-        Task<List<UserDto>?> GetAllAsync();
+        Task<PaginationResponse<UserDto>> GetAllAsync(PaginationRequest paginationRequest);
         Task<UserDto?> GetUserAsync(Guid userId);
+        Task<bool> UpdateStatusUserAsync(Guid userid, bool status);
         Task<bool> UpdateUserAsync(Guid userid, UserDto request);
     }
 }

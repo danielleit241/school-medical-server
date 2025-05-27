@@ -9,7 +9,7 @@ namespace SchoolMedicalServer.Api.Controllers.Account
 {
     [Route("api/accounts")]
     [ApiController]
-    public class AccountController(IAccountServices accountService, IEmailHelper emailHelper) : ControllerBase
+    public class AccountController(IAccountService accountService, IEmailHelper emailHelper) : ControllerBase
     {
         [HttpPost("register-staff")]
         [Authorize(Roles = "admin")]
@@ -26,8 +26,12 @@ namespace SchoolMedicalServer.Api.Controllers.Account
                 Body = $@"
                 <html>
                 <body>
-                    <h2>Xin chào!</h2>
+                    <h2Xin chào!</h2>
                     <p>{"Bạn đã nhận được email từ hệ thống quản lý y tế."}</p>
+                    <p>Thông tin tài khoản của bạn: {account.PhoneNumber}</p>
+                    <p>Mật khẩu: {account.Password}</p>
+                    <p>Vui lòng đăng nhập và thay đổi mật khẩu ngay sau khi nhận được email này.</p>
+                    <p>Chúng tôi khuyến nghị bạn sử dụng mật khẩu mạnh và không chia sẻ thông tin đăng nhập của mình với bất kỳ ai.</p>
                     <p>Trân trọng,<br/>Đội ngũ phát triển</p>
                 </body>
                 </html>"

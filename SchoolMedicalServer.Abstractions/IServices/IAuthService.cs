@@ -3,7 +3,7 @@ using SchoolMedicalServer.Abstractions.Entities;
 
 namespace SchoolMedicalServer.Abstractions.IServices
 {
-    public interface IAuthServices
+    public interface IAuthService
     {
         Task<User?> ChangePasswordAsync(ChangePasswordRequest request);
         Task<TokensResponse?> LoginAsync(LoginRequest request);

@@ -7,11 +7,11 @@ using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class AccountServices(SchoolMedicalManagementContext context, IConfiguration configuration) : IAccountServices
+    public class AccountService(SchoolMedicalManagementContext context, IConfiguration configuration) : IAccountService
     {
         public async Task<List<AccountDto>> BatchCreateParentsAsync()
         {
-            string? defaultPassword = configuration["Default:Password"];
+            string? defaultPassword = configuration["DefaultAccountCreate:Password"];
             if (string.IsNullOrEmpty(defaultPassword))
                 return [];
 
@@ -42,13 +42,17 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     context.Students.Update(student);
                     continue;
                 }
+                var role = await context.Roles.FirstOrDefaultAsync(r => r.RoleName == configuration["DefaultAccountCreate:RoleName"]);
+
+                if (role == null)
+                    return null;
 
                 var user = new User
                 {
                     UserId = Guid.NewGuid(),
                     PhoneNumber = student.ParentPhoneNumber!,
                     PasswordHash = new PasswordHasher<User>().HashPassword(null!, defaultPassword),
-                    RoleId = 4,
+                    RoleId = role.RoleId,
                     EmailAddress = student.ParentEmailAddress,
                     Status = true
                 };
@@ -85,20 +89,23 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 user.UserId = Guid.NewGuid();
             }
-            if (string.IsNullOrEmpty(request.RoleId) || string.IsNullOrEmpty(request.FullName) || string.IsNullOrEmpty(request.Email))
+            if (string.IsNullOrEmpty(request.RoleName) || string.IsNullOrEmpty(request.FullName) || string.IsNullOrEmpty(request.Email))
             {
                 return null;
             }
 
-            if (int.TryParse(request.RoleId, out var roleId))
+            var role = await context.Roles.FirstOrDefaultAsync(r => r.RoleName == request.RoleName);
+
+            if (role == null)
             {
-                user.RoleId = roleId;
+                return null;
             }
 
             user.PhoneNumber = request.PhoneNumber;
             user.FullName = request.FullName;
             user.EmailAddress = request.Email;
             user.Status = true;
+            user.RoleId = role.RoleId;
 
             var hashedPassword = new PasswordHasher<User>().HashPassword(user, request.Password);
             user.PasswordHash = hashedPassword;

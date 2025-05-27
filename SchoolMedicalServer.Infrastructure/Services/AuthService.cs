@@ -11,7 +11,7 @@ using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class AuthServices(SchoolMedicalManagementContext context, IConfiguration configuration) : IAuthServices
+    public class AuthService(SchoolMedicalManagementContext context, IConfiguration configuration) : IAuthService
     {
         public async Task<TokensResponse?> LoginAsync(LoginRequest request)
         {
@@ -25,7 +25,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return null;
             }
 
-            if (request.Password == configuration["Default:Password"])
+            if (request.Password == configuration["Default:Password"] || user.Status == false)
             {
                 return null;
             }

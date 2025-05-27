@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace SchoolMedicalServer.Abstractions.Entities;
+﻿namespace SchoolMedicalServer.Abstractions.Entities;
 
 public partial class HealthDeclaration
 {
@@ -17,9 +14,8 @@ public partial class HealthDeclaration
 
     public string? FoodAllergies { get; set; }
 
-    public string? AdministeredVaccines { get; set; }
-
     public string? Notes { get; set; }
 
     public virtual Student? Student { get; set; }
+    public virtual ICollection<VaccinationDeclaration> VaccinationDeclarations { get; set; } = new List<VaccinationDeclaration>();
 }

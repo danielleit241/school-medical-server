@@ -8,7 +8,7 @@ namespace SchoolMedicalServer.Api.Controllers.Authentication
 {
     [Route("api/auth")]
     [ApiController]
-    public class AuthenticationController(IAuthServices authService) : ControllerBase
+    public class AuthenticationController(IAuthService authService) : ControllerBase
     {
 
         [HttpPost("login")]

@@ -2,7 +2,7 @@
 
 namespace SchoolMedicalServer.Abstractions.IServices
 {
-    public interface IAccountServices
+    public interface IAccountService
     {
         Task<List<AccountDto>> BatchCreateParentsAsync();
         Task<AccountDto?> RegisterStaffAsync(RegisterStaffRequest request);

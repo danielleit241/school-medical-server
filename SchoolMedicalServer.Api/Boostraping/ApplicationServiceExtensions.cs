@@ -5,6 +5,7 @@ using SchoolMedicalServer.Infrastructure.Services;
 using SchoolMedicalServer.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Api.Helpers.EmailHelper;
+using Microsoft.OpenApi.Models;
 
 namespace SchoolMedicalServer.Api.Boostraping
 {
@@ -12,6 +13,35 @@ namespace SchoolMedicalServer.Api.Boostraping
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "School Medical API", Version = "v1" });
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization: Bearer {token}",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                         new OpenApiSecurityScheme
+                         {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                         },
+                         Array.Empty<string>()
+                     }
+                });
+            });
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters()
@@ -41,12 +71,15 @@ namespace SchoolMedicalServer.Api.Boostraping
                 });
             });
 
-            services.AddScoped<IAuthServices, AuthServices>();
-            services.AddTransient<IAccountServices, AccountServices>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IEmailHelper, EmailHelper>();
 
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IUserProfileService, UserProfileService>();
+
+            services.AddScoped<IHealthDeclarationService, HealthDeclarationService>();
+
 
             return services;
         }
