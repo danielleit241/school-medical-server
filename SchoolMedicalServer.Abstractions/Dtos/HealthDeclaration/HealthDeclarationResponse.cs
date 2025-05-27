@@ -1,0 +1,37 @@
+﻿namespace SchoolMedicalServer.Abstractions.Dtos.HealthDeclaration
+{
+    public class HealthDeclarationResponse
+    {
+        public HealthDeclarationDtoResponse HealthDeclaration { get; set; } = default!;
+
+        public List<VaccinationDeclarationDtoResponse>? Vaccinations { get; set; }
+    }
+
+    public class HealthDeclarationDtoResponse
+    {
+        public Guid HealthDeclarationId { get; set; }
+
+        public Guid? StudentId { get; set; }
+
+        public DateOnly? DeclarationDate { get; set; }
+
+        public string? ChronicDiseases { get; set; }
+
+        public string? DrugAllergies { get; set; }
+
+        public string? FoodAllergies { get; set; }
+
+        public string? Notes { get; set; }
+    }
+
+    public class VaccinationDeclarationDtoResponse
+    {
+        public string VaccineName { get; set; } = default!;
+
+        public string? BatchNumber { get; set; }
+
+        public DateOnly? VaccinatedDate { get; set; }
+
+        public string? Notes { get; set; }
+    }
+}

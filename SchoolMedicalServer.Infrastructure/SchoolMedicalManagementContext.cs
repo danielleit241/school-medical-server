@@ -47,6 +47,7 @@ public partial class SchoolMedicalManagementContext : DbContext
     public virtual DbSet<VaccinationSchedule> VaccinationSchedules { get; set; }
 
     public virtual DbSet<VaccineDetail> VaccineDetails { get; set; }
+    public virtual DbSet<VaccinationDeclaration> VaccinationDeclarations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -132,7 +133,7 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.HealthDeclarationId)
                 .ValueGeneratedNever()
                 .HasColumnName("HealthDeclarationID");
-            entity.Property(e => e.AdministeredVaccines).HasMaxLength(255);
+            //entity.Property(e => e.AdministeredVaccines).HasMaxLength(255);
             entity.Property(e => e.ChronicDiseases).HasMaxLength(255);
             entity.Property(e => e.DrugAllergies).HasMaxLength(255);
             entity.Property(e => e.FoodAllergies).HasMaxLength(255);
@@ -448,6 +449,27 @@ public partial class SchoolMedicalManagementContext : DbContext
             new Role { RoleId = 3, RoleName = "manager" },
             new Role { RoleId = 4, RoleName = "parent" }
         );
+
+        modelBuilder.Entity<VaccinationDeclaration>(entity =>
+        {
+            entity.HasKey(e => e.VaccinationDeclarationId).HasName("PK__VaccinationDeclaration");
+
+            entity.ToTable("VaccinationDeclaration");
+
+            entity.Property(e => e.VaccinationDeclarationId)
+                .ValueGeneratedNever()
+                .HasColumnName("VaccinationDeclarationID");
+
+            entity.Property(e => e.HealthDeclarationId).HasColumnName("HealthDeclarationID");
+            entity.Property(e => e.VaccineName).HasMaxLength(100);
+            entity.Property(e => e.BatchNumber).HasMaxLength(50);
+            entity.Property(e => e.Notes).HasMaxLength(255);
+
+            entity.HasOne(d => d.HealthDeclaration)
+                .WithMany(p => p.VaccinationDeclarations)
+                .HasForeignKey(d => d.HealthDeclarationId)
+                .HasConstraintName("FK_VaccinationDeclaration_HealthDeclaration");
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }

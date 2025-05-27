@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.User;
 using SchoolMedicalServer.Abstractions.IServices;
 
@@ -12,10 +13,10 @@ namespace SchoolMedicalServer.Api.Controllers.User
 
         [HttpGet]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers([AsParameters] PaginationRequest paginationRequest)
         {
-            var users = await userService.GetAllAsync();
-            if (users == null || users.Count == 0)
+            var users = await userService.GetAllAsync(paginationRequest);
+            if (users == null)
             {
                 return NotFound("No users found.");
             }
@@ -41,9 +42,19 @@ namespace SchoolMedicalServer.Api.Controllers.User
             var isUpdated = await userService.UpdateUserAsync(userid, request);
             if (!isUpdated)
             {
-                return NotFound();
+                return BadRequest();
             }
             return Ok(isUpdated);
+        }
+
+        [HttpDelete("{userid}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateStatusUser(Guid userid, [FromBody] bool status)
+        {
+            var isBaned = await userService.UpdateStatusUserAsync(userid, status);
+            if (!isBaned)
+                return BadRequest();
+            return Ok(isBaned);
         }
     }
 }

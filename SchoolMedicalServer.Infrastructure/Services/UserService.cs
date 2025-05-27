@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure;
+using Microsoft.EntityFrameworkCore;
+using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.User;
 using SchoolMedicalServer.Abstractions.IServices;
 
@@ -6,15 +8,21 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class UserService(SchoolMedicalManagementContext context) : IUserService
     {
-        public async Task<List<UserDto>?> GetAllAsync()
+        public async Task<PaginationResponse<UserDto>> GetAllAsync(PaginationRequest paginationRequest)
         {
-            var users = await context.Users.Include(u => u.Role).ToListAsync();
-            if (users == null) return null;
+            var totalCount = await context.Users.CountAsync();
+            var users = await context.Users.Include(u => u.Role)
+                .OrderBy(u => u.FullName)
+                .Skip((paginationRequest.PageIndex - 1) * paginationRequest.PageSize)
+                .Take(paginationRequest.PageSize)
+                .ToListAsync();
 
-            var response = new List<UserDto>();
+            if (users == null) return null;
+            var userDtos = new List<UserDto>();
+
             foreach (var user in users)
             {
-                response.Add(new UserDto
+                userDtos.Add(new UserDto
                 {
                     UserId = user.UserId,
                     FullName = user.FullName,
@@ -25,7 +33,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     Status = user.Status ?? false
                 });
             }
-            return response;
+            return new PaginationResponse<UserDto>(
+                    paginationRequest.PageIndex,
+                    paginationRequest.PageSize,
+                    totalCount,
+                    userDtos
+            );
         }
 
         public async Task<UserDto?> GetUserAsync(Guid userId)
@@ -43,6 +56,26 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Status = user.Status ?? false
             };
             return response;
+        }
+
+        public async Task<bool> UpdateStatusUserAsync(Guid userid, bool status)
+        {
+            var user = await context.Users.FirstOrDefaultAsync(x => x.UserId == userid);
+            if (user == null)
+            {
+                return false;
+            }
+            user.Status = status;
+            context.Users.Update(user);
+            try
+            {
+                await context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<bool> UpdateUserAsync(Guid userid, UserDto request)
@@ -71,9 +104,15 @@ namespace SchoolMedicalServer.Infrastructure.Services
             user.RoleId = newRole.RoleId;
 
             context.Users.Update(user);
-            await context.SaveChangesAsync();
-
-            return true;
+            try
+            {
+                await context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

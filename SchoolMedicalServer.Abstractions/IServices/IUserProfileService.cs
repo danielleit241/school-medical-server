@@ -5,7 +5,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
 {
     public interface IUserProfileService
     {
-        Task<UserProfileDto?> GetUserProfileByIdAsync(Guid userId);
-        Task<UserProfileDto?> UpdateUserProfileAsync(Guid userId, UserProfileDto dto);
+        Task<UserProfileResponse?> GetUserProfileByIdAsync(Guid userId);
+        Task<UserProfileResponse?> UpdateUserProfileAsync(Guid userId, UserProfileRequest dto);
     }
 }

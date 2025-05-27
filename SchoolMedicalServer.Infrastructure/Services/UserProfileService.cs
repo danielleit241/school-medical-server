@@ -5,15 +5,16 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class UserProfileService(SchoolMedicalManagementContext context) : IUserProfileService
     {
-        public async Task<UserProfileDto?> GetUserProfileByIdAsync(Guid userId)
+        public async Task<UserProfileResponse?> GetUserProfileByIdAsync(Guid userId)
         {
             var user = await context.Users.FindAsync(userId);
             if (user == null) return null;
 
-            var response = new UserProfileDto
+            var response = new UserProfileResponse
             {
                 FullName = user.FullName!,
-                Email = user.EmailAddress!,
+                EmailAddress = user.EmailAddress!,
+                PhoneNumber = user.PhoneNumber,
                 DateOfBirth = user.DayOfBirth,
                 AvatarUrl = user.AvatarUrl
             };
@@ -21,23 +22,24 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return response;
         }
 
-        public async Task<UserProfileDto?> UpdateUserProfileAsync(Guid userId, UserProfileDto dto)
+        public async Task<UserProfileResponse?> UpdateUserProfileAsync(Guid userId, UserProfileRequest dto)
         {
             var user = await context.Users.FindAsync(userId);
             if (user == null) return null;
 
             user.FullName = dto.FullName;
-            user.EmailAddress = dto.Email;
+            user.EmailAddress = dto.EmailAddress;
             user.DayOfBirth = dto.DateOfBirth;
             user.AvatarUrl = dto.AvatarUrl;
 
             context.Users.Update(user);
             await context.SaveChangesAsync();
 
-            var response = new UserProfileDto
+            var response = new UserProfileResponse
             {
                 FullName = user.FullName,
-                Email = user.EmailAddress,
+                EmailAddress = user.EmailAddress,
+                PhoneNumber = user.PhoneNumber,
                 DateOfBirth = user.DayOfBirth,
                 AvatarUrl = user.AvatarUrl
             };
