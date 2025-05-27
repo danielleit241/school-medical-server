@@ -43,8 +43,10 @@ namespace SchoolMedicalServer.Api.Boostraping
 
             services.AddScoped<IAuthServices, AuthServices>();
             services.AddTransient<IAccountServices, AccountServices>();
-              services.AddTransient<IUserService, UserService>();
             services.AddTransient<IEmailHelper, EmailHelper>();
+
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IUserProfileService, UserProfileService>();
 
             return services;
         }

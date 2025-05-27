@@ -1,53 +1,79 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using SchoolMedicalServer.Abstractions.Dtos.Profile;
 using SchoolMedicalServer.Abstractions.Dtos.User;
-using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class UserService : IUserService
+    public class UserService(SchoolMedicalManagementContext context) : IUserService
     {
-        private readonly SchoolMedicalManagementContext _context;
-
-        public UserService(SchoolMedicalManagementContext context)
+        public async Task<List<UserDto>?> GetAllAsync()
         {
-            _context = context;
-        }
+            var users = await context.Users.Include(u => u.Role).ToListAsync();
+            if (users == null) return null;
 
-        public async Task<List<UserDTO?>> GetAllAsync()
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(); // Fixed: Use FirstOrDefaultAsync for async operations
-            if (user == null) return null;
-
-            return new List<UserDTO?> // Fixed: Return a list of UserDTO
+            var response = new List<UserDto>();
+            foreach (var user in users)
             {
-                new UserDTO
+                response.Add(new UserDto
                 {
                     UserId = user.UserId,
-                    RoleId = user.RoleId,
                     FullName = user.FullName,
                     EmailAddress = user.EmailAddress,
-                    DayOfBirth = user.DateOfBirth,
-                    AvatarUrl = user.AvatarURL
-                }
-            };
+                    AvatarUrl = user.AvatarUrl ?? "",
+                    DayOfBirth = user.DayOfBirth,
+                    RoleName = user.Role?.RoleName ?? "",
+                    Status = user.Status ?? false
+                });
+            }
+            return response;
         }
 
-        //public Task<UserDTO?> UpdateUserAsync(Guid userId, UserDTO dto)
-        //{
-        //    var user = _context.Users.FindAsync(userId);
-        //    if (user == null)
-        //    {
-        //        return null;
-        //    }
-        //    var userToUpdate = user.Result;
-        //}
+        public async Task<UserDto?> GetUserAsync(Guid userId)
+        {
+            var user = await context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+            if (user == null) return null;
+            var response = new UserDto
+            {
+                UserId = user.UserId,
+                FullName = user.FullName,
+                EmailAddress = user.EmailAddress,
+                AvatarUrl = user.AvatarUrl ?? "",
+                DayOfBirth = user.DayOfBirth,
+                RoleName = user.Role?.RoleName ?? "",
+                Status = user.Status ?? false
+            };
+            return response;
+        }
+
+        public async Task<bool> UpdateUserAsync(Guid userid, UserDto request)
+        {
+            var user = await context.Users.Include(u => u.Role).FirstOrDefaultAsync(x => x.UserId == userid);
+            if (user == null)
+            {
+                return false;
+            }
+            if (request == null)
+            {
+                return false;
+            }
+
+            var newRole = await context.Roles.FirstOrDefaultAsync(x => x.RoleName == request.RoleName);
+
+            if (newRole == null)
+            {
+                return false;
+            }
+
+            user.FullName = request.FullName;
+            user.EmailAddress = request.EmailAddress;
+            user.DayOfBirth = request.DayOfBirth;
+            user.AvatarUrl = request.AvatarUrl;
+            user.RoleId = newRole.RoleId;
+
+            context.Users.Update(user);
+            await context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

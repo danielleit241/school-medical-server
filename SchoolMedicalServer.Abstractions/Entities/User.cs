@@ -6,10 +6,6 @@ namespace SchoolMedicalServer.Abstractions.Entities;
 
 public partial class User
 {
-    public Guid Id;
-    public DateOnly? DateOfBirth;
-    public string? AvatarURL;
-
     public Guid UserId { get; set; }
 
     public int? RoleId { get; set; }

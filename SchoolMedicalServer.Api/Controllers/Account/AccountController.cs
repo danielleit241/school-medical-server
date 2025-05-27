@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SchoolMedicalServer.Abstractions.Dtos;
+using SchoolMedicalServer.Abstractions.Dtos.Helpers;
 using SchoolMedicalServer.Abstractions.Dtos.Account;
 using SchoolMedicalServer.Abstractions.IServices;
 using SchoolMedicalServer.Api.Helpers.EmailHelper;
