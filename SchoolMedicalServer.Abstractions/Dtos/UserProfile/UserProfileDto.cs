@@ -6,17 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolMedicalServer.Abstractions.Dtos.Profile
+namespace SchoolMedicalServer.Abstractions.Dtos.UserProfile
 {
-    public class UserProfileDTO
+    public class UserProfileDto
     {
-        public string FullName { get; set; } = default !;
+        public string FullName { get; set; } = default!;
 
         public DateOnly? DateOfBirth { get; set; }
 
-        public string? AvatarURL { get; set; }
+        public string? AvatarUrl { get; set; }
 
-        public string Email { get; set; } = default !;
+        public string Email { get; set; } = default!;
 
     }
 }

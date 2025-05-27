@@ -1,29 +1,49 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SchoolMedicalServer.Abstractions.Dtos.User;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Api.Controllers.User
 {
-    [Route("api/user")]
+    [Route("api/users")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController(IUserService userService) : ControllerBase
     {
-        private readonly IUserService _userService;
-
-        // Constructor with 'this' initializer to resolve CS8862
-        public UserController(IUserService userService)
-        {
-            _userService = userService;
-        }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllUser()
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetUsers()
         {
-            var users = await _userService.GetAllAsync();
-            if (users == null || !users.Any())
+            var users = await userService.GetAllAsync();
+            if (users == null || users.Count == 0)
             {
                 return NotFound("No users found.");
             }
             return Ok(users);
+        }
+
+        [HttpGet("{userId}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetUsers(Guid userId)
+        {
+            var users = await userService.GetUserAsync(userId);
+            if (users == null)
+            {
+                return NotFound("No users found.");
+            }
+            return Ok(users);
+        }
+
+        [HttpPut("{userid}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateUser(Guid userid, UserDto request)
+        {
+            var isUpdated = await userService.UpdateUserAsync(userid, request);
+            if (!isUpdated)
+            {
+                return NotFound();
+            }
+            return Ok(isUpdated);
         }
     }
 }

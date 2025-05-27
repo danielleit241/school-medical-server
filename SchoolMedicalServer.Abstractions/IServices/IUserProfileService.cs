@@ -1,13 +1,11 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.Profile;
-using SchoolMedicalServer.Abstractions.Entities;
+﻿using SchoolMedicalServer.Abstractions.Dtos.UserProfile;
 
 
 namespace SchoolMedicalServer.Abstractions.IServices
 {
     public interface IUserProfileService
     {
-
-        Task<UserProfileDTO?> GetUserProfileByIdAsync(Guid userId);
-        Task<UserProfileDTO?> UpdateUserProfileAsync(Guid userId, UserProfileDTO dto);
+        Task<UserProfileDto?> GetUserProfileByIdAsync(Guid userId);
+        Task<UserProfileDto?> UpdateUserProfileAsync(Guid userId, UserProfileDto dto);
     }
 }
