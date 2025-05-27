@@ -5,7 +5,7 @@ using SchoolMedicalServer.Abstractions.IServices;
 namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class UserService(SchoolMedicalManagementContext context) : IUserService
-    {
+    {       
         public async Task<List<UserDto>?> GetAllAsync()
         {
             var users = await context.Users.Include(u => u.Role).ToListAsync();
