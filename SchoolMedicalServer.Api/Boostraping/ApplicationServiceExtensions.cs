@@ -4,6 +4,7 @@ using SchoolMedicalServer.Abstractions.IServices;
 using SchoolMedicalServer.Infrastructure.Services;
 using SchoolMedicalServer.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using SchoolMedicalServer.Api.Helpers.EmailHelper;
 
 namespace SchoolMedicalServer.Api.Boostraping
 {
@@ -40,8 +41,9 @@ namespace SchoolMedicalServer.Api.Boostraping
                 });
             });
 
-            services.AddTransient<IAuthServices, AuthServices>();
+            services.AddScoped<IAuthServices, AuthServices>();
             services.AddTransient<IAccountServices, AccountServices>();
+            services.AddTransient<IEmailHelper, EmailHelper>();
 
             return services;
         }

@@ -1,6 +1,6 @@
 ﻿namespace SchoolMedicalServer.Abstractions.Dtos.Account
 {
-    public class RegisterRequestDto
+    public class RegisterStaffRequest
     {
         public string PhoneNumber { get; set; } = default!;
         public string FullName { get; set; } = default!;

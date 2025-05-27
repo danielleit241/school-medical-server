@@ -25,6 +25,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return null;
             }
 
+            if (request.Password == configuration["Default:Password"])
+            {
+                return null;
+            }
+
             if (new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.Password) == PasswordVerificationResult.Failed)
             {
                 return null;
@@ -88,7 +93,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 new Claim(ClaimTypes.Name, user.FullName ?? ""),
                 new Claim(ClaimTypes.Role, user.Role!.RoleName),
                 new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
-                new Claim(ClaimTypes.Email, user.EmailAddress ?? "")
+                new Claim(ClaimTypes.Email, user.EmailAddress ?? ""),
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));

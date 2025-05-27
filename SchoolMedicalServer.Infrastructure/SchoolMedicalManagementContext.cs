@@ -339,7 +339,8 @@ public partial class SchoolMedicalManagementContext : DbContext
 
             entity.ToTable("User");
 
-            entity.HasIndex(e => e.PhoneNumber, "UQ__User__85FB4E38CF69A5AF").IsUnique();
+            // Unique constraint on PhoneNumber
+            entity.HasIndex(e => e.PhoneNumber).IsUnique();
 
             entity.Property(e => e.UserId)
                 .ValueGeneratedNever()
@@ -360,6 +361,9 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.RefreshToken)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+            entity.Property(e => e.Status)
+                .HasColumnType("bit")
+                .HasDefaultValue(true);
             entity.Property(e => e.RefreshTokenExpiryTime).HasColumnType("datetime");
             entity.Property(e => e.RoleId).HasColumnName("RoleID");
 
@@ -437,6 +441,13 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.VaccineName).HasMaxLength(100);
             entity.Property(e => e.VaccineType).HasMaxLength(50);
         });
+
+        modelBuilder.Entity<Role>().HasData(
+            new Role { RoleId = 1, RoleName = "admin" },
+            new Role { RoleId = 2, RoleName = "staff" },
+            new Role { RoleId = 3, RoleName = "manager" },
+            new Role { RoleId = 4, RoleName = "parent" }
+        );
 
         OnModelCreatingPartial(modelBuilder);
     }

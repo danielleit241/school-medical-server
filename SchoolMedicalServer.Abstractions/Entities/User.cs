@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace SchoolMedicalServer.Abstractions.Entities;
 
@@ -23,19 +24,22 @@ public partial class User
 
     public string? RefreshToken { get; set; }
 
+    public bool? Status { get; set; }
+
     public DateTime? RefreshTokenExpiryTime { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-
+    [JsonIgnore]
     public virtual ICollection<HealthCheckSchedule> HealthCheckSchedules { get; set; } = new List<HealthCheckSchedule>();
-
+    [JsonIgnore]
     public virtual ICollection<MedicalEvent> MedicalEvents { get; set; } = new List<MedicalEvent>();
-
+    [JsonIgnore]
     public virtual ICollection<MedicalRegistration> MedicalRegistrations { get; set; } = new List<MedicalRegistration>();
-
+    [JsonIgnore]
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
-
+    [JsonIgnore]
     public virtual Role? Role { get; set; }
-
+    [JsonIgnore]
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();
 }

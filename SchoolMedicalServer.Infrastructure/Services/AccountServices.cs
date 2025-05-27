@@ -1,14 +1,79 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using SchoolMedicalServer.Abstractions.Dtos.Account;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class AccountServices(SchoolMedicalManagementContext context) : IAccountServices
+    public class AccountServices(SchoolMedicalManagementContext context, IConfiguration configuration) : IAccountServices
     {
-        public async Task<User?> RegisterStaffAsync(RegisterRequestDto request)
+        public async Task<List<AccountDto>> BatchCreateParentsAsync()
+        {
+            string? defaultPassword = configuration["Default:Password"];
+            if (string.IsNullOrEmpty(defaultPassword))
+                return [];
+
+            var students = await context.Students
+                .Where(s => s.ParentPhoneNumber != null)
+                .ToListAsync();
+
+            var parentPhones = students
+                .Select(s => s.ParentPhoneNumber)
+                .Where(p => !string.IsNullOrEmpty(p))
+                .Distinct()
+                .ToList();
+
+            var existingUsers = await context.Users
+                .Where(u => parentPhones.Contains(u.PhoneNumber))
+                .ToDictionaryAsync(u => u.PhoneNumber);
+
+            List<AccountDto> accounts = [];
+
+            foreach (var student in students)
+            {
+                if (string.IsNullOrEmpty(student.ParentPhoneNumber))
+                    continue;
+
+                if (existingUsers.TryGetValue(student.ParentPhoneNumber, out var existingUser))
+                {
+                    student.UserId = existingUser.UserId;
+                    context.Students.Update(student);
+                    continue;
+                }
+
+                var user = new User
+                {
+                    UserId = Guid.NewGuid(),
+                    PhoneNumber = student.ParentPhoneNumber!,
+                    PasswordHash = new PasswordHasher<User>().HashPassword(null!, defaultPassword),
+                    RoleId = 4,
+                    EmailAddress = student.ParentEmailAddress,
+                    Status = true
+                };
+
+                student.UserId = user.UserId;
+
+                accounts.Add(new AccountDto
+                {
+                    Id = user.UserId,
+                    PhoneNumber = user.PhoneNumber,
+                    Password = defaultPassword
+                });
+
+                context.Users.Add(user);
+                context.Students.Update(student);
+
+                // Add to local dictionary to prevent duplicate users in this batch
+                existingUsers[user.PhoneNumber] = user;
+            }
+
+            await context.SaveChangesAsync();
+            return accounts;
+        }
+
+        public async Task<AccountDto?> RegisterStaffAsync(RegisterStaffRequest request)
         {
             if (await context.Users.AnyAsync(u => u.PhoneNumber == request.PhoneNumber))
             {
@@ -33,6 +98,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             user.PhoneNumber = request.PhoneNumber;
             user.FullName = request.FullName;
             user.EmailAddress = request.Email;
+            user.Status = true;
 
             var hashedPassword = new PasswordHasher<User>().HashPassword(user, request.Password);
             user.PasswordHash = hashedPassword;
@@ -40,7 +106,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
             context.Users.Add(user);
             await context.SaveChangesAsync();
 
-            return user;
+            var account = new AccountDto
+            {
+                Id = user.UserId,
+                PhoneNumber = user.PhoneNumber,
+                Password = request.Password
+            };
+
+            return account;
         }
     }
 }
