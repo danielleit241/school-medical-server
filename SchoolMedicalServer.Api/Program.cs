@@ -1,5 +1,6 @@
 using Microsoft.OpenApi.Models;
 using SchoolMedicalServer.Api.Boostraping;
+using SchoolMedicalServer.Infrastructure.Services;
 
 namespace SchoolMedicalServer.Api
 {

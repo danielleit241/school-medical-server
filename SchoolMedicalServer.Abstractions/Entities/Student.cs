@@ -27,8 +27,6 @@ public partial class Student
 
     public string? ParentEmailAddress { get; set; }
 
-
-
     public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 
     public virtual ICollection<HealthCheckResult> HealthCheckResults { get; set; } = new List<HealthCheckResult>();
