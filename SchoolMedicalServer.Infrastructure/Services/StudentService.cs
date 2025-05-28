@@ -1,37 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Dtos.Student;
-using SchoolMedicalServer.Abstractions.Dtos.User;
-using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class StudentService : IStudentService
+    public class StudentService(SchoolMedicalManagementContext context) : IStudentService
     {
-        private readonly SchoolMedicalManagementContext context;
+        private readonly SchoolMedicalManagementContext context = context;
 
-        public StudentService(SchoolMedicalManagementContext context)
-        {
-            this.context = context;
-        }
-
-        public async Task<IEnumerable<StudentDTO>?> GetAllStudentsByParentIdAsync(Guid parentId)
+        public async Task<IEnumerable<StudentDto>?> GetParentStudentsAsync(Guid parentId)
         {
             var students = await context.Students.Include(s => s.User).Where(s => s.UserId == parentId).ToListAsync();
             if (students == null) return null;
 
-            var response = students.Select(s => new StudentDTO
+            var response = students.Select(s => new StudentDto
             {
                 StudentId = s.StudentId,
                 StudentCode = s.StudentCode,
                 FullName = s.FullName,
-                DateOfBirth = s.DayOfBirth ?? default,
-                AvatarURL = s.User != null ? s.User.AvatarUrl ?? "" : "",
+                DayOfBirth = s.DayOfBirth ?? default,
                 Gender = s.Gender,
                 Grade = s.Grade,
                 Address = s.Address,
@@ -42,7 +29,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return response;
         }
 
-        public async Task<StudentDTO?> GetStudentByIdForParentAsync(Guid parentId, Guid studentId)
+        public async Task<StudentDto?> GetParentStudentAsync(Guid parentId, Guid studentId)
         {
             var student = await context.Students.Include(s => s.User)
                 .Where(s => s.UserId == parentId && s.StudentId == studentId)
@@ -50,13 +37,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             if (student == null) return null;
 
-            var response = new StudentDTO
+            var response = new StudentDto
             {
                 StudentId = student.StudentId,
                 StudentCode = student.StudentCode,
                 FullName = student.FullName,
-                DateOfBirth = student.DayOfBirth ?? default,
-                AvatarURL = student.User != null ? student.User.AvatarUrl ?? "" : "",
+                DayOfBirth = student.DayOfBirth ?? default,
                 Gender = student.Gender,
                 Grade = student.Grade,
                 Address = student.Address,
