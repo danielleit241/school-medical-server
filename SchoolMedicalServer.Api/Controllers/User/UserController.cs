@@ -13,7 +13,7 @@ namespace SchoolMedicalServer.Api.Controllers.User
 
         [HttpGet]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> GetUsers([AsParameters] PaginationRequest paginationRequest)
+        public async Task<IActionResult> GetUsers([FromQuery] PaginationRequest paginationRequest)
         {
             var users = await userService.GetAllAsync(paginationRequest);
             if (users == null)
