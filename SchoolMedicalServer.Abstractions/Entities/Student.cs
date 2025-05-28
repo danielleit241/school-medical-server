@@ -5,6 +5,8 @@ namespace SchoolMedicalServer.Abstractions.Entities;
 
 public partial class Student
 {
+    
+
     public Guid StudentId { get; set; }
 
     public Guid? UserId { get; set; }
@@ -24,6 +26,8 @@ public partial class Student
     public string? ParentPhoneNumber { get; set; }
 
     public string? ParentEmailAddress { get; set; }
+
+
 
     public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 
