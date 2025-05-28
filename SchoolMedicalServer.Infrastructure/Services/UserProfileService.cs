@@ -1,4 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.UserProfile;
+﻿using SchoolMedicalServer.Abstractions.Dtos.User;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services

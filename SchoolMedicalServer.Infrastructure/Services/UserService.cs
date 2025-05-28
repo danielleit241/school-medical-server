@@ -16,8 +16,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 .Skip((paginationRequest.PageIndex - 1) * paginationRequest.PageSize)
                 .Take(paginationRequest.PageSize)
                 .ToListAsync();
+            if (users == null) return null!;
 
-            if (users == null) return null;
             var userDtos = new List<UserDto>();
 
             foreach (var user in users)

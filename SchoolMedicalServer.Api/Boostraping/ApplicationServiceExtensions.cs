@@ -79,7 +79,9 @@ namespace SchoolMedicalServer.Api.Boostraping
             services.AddTransient<IUserProfileService, UserProfileService>();
 
             services.AddScoped<IHealthDeclarationService, HealthDeclarationService>();
+            services.AddScoped<IAppointmentService, AppointmentService>();
 
+            services.AddScoped<IStudentService, StudentService>();
 
             return services;
         }
