@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace SchoolMedicalServer.Abstractions.IServices
 {
-    public interface IParentStudentService
+    public interface IStudentService
     {
-        Task<IEnumerable<ParentStudentDto>> GetAllStudentsAsync(Guid parentUserId);
-        Task<ParentStudentDto?> GetStudentByIdAsync(Guid parentUserId, Guid studentId);
+        Task<IEnumerable<StudentDTO>?> GetAllStudentsByParentIdAsync(Guid parentId);
+        Task<StudentDTO?> GetStudentByIdForParentAsync(Guid parentId, Guid studentId);
 
     }
 }

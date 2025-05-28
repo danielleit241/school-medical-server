@@ -1,4 +1,6 @@
+using SchoolMedicalServer.Abstractions.IServices;
 using SchoolMedicalServer.Api.Boostraping;
+using SchoolMedicalServer.Infrastructure.Services;
 
 namespace SchoolMedicalServer.Api
 {
@@ -14,6 +16,8 @@ namespace SchoolMedicalServer.Api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddScoped<IStudentService, StudentService>();
+
 
             builder.Services.AddApplicationServices(builder.Configuration);
 

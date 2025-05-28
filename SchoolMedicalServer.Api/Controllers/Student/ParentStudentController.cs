@@ -8,14 +8,14 @@ namespace SchoolMedicalServer.Api.Controllers.Student
 {
     [ApiController]
     [Route("api/parents/students")]
-    [Authorize(Roles = "Parent")]
+    [Authorize (Roles = "parent")]
     public class ParentStudentController : ControllerBase
     {
-        private readonly IParentStudentService _parentStudentService;
+        private readonly IStudentService _studentService;
 
-        public ParentStudentController(IParentStudentService parentStudentService)
+        public ParentStudentController(IStudentService studentService)
         {
-            _parentStudentService = parentStudentService;
+            _studentService = studentService;
         }
 
         private Guid GetCurrentUserId()
@@ -25,19 +25,25 @@ namespace SchoolMedicalServer.Api.Controllers.Student
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ParentStudentDto>>> GetStudents()
+        public async Task<ActionResult<IEnumerable<StudentDTO>>> GetAllStudents()
         {
-            var userId = GetCurrentUserId();
-            var students = await _parentStudentService.GetAllStudentsAsync(userId);
+            var parentId = GetCurrentUserId();
+            var students = await _studentService.GetAllStudentsByParentIdAsync(parentId);
+            if (students == null || !students.Any())
+            {
+                return NotFound("No students found for this parent.");
+            }
             return Ok(students);
         }
 
         [HttpGet("{studentId}")]
-        public async Task<ActionResult<ParentStudentDto>> GetStudent(Guid studentId)
+        public async Task<ActionResult<StudentDTO>> GetStudent(Guid studentId)
         {
-            var userId = GetCurrentUserId();
-            var student = await _parentStudentService.GetStudentByIdAsync(userId, studentId);
-            if (student == null) return NotFound();
+            var parentId = GetCurrentUserId();
+            var student = await _studentService.GetStudentByIdForParentAsync(parentId, studentId);
+            if (student == null) {
+                return NotFound($"Student with ID {studentId} not found for this parent.");
+            }
             return Ok(student);
         }
     }
