@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolMedicalServer.Infrastructure;
 
@@ -11,9 +12,11 @@ using SchoolMedicalServer.Infrastructure;
 namespace SchoolMedicalServer.Infrastructure.Migrations
 {
     [DbContext(typeof(SchoolMedicalManagementContext))]
-    partial class SchoolMedicalManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20250528135700_AddStaffNurseIdToAppointment")]
+    partial class AddStaffNurseIdToAppointment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,17 +34,12 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.Property<DateOnly?>("AppointmentDate")
                         .HasColumnType("date");
 
-                    b.Property<TimeOnly?>("AppointmentEndTime")
-                        .HasColumnType("time")
-                        .HasColumnName("AppointmentEndTime");
-
                     b.Property<string>("AppointmentReason")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<TimeOnly?>("AppointmentStartTime")
-                        .HasColumnType("time")
-                        .HasColumnName("AppointmentStartTime");
+                    b.Property<TimeOnly?>("AppointmentTime")
+                        .HasColumnType("time");
 
                     b.Property<bool?>("CompletionStatus")
                         .HasColumnType("bit");
@@ -57,10 +55,6 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.Property<Guid?>("StudentId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("StudentID");
-
-                    b.Property<string>("Topic")
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier")

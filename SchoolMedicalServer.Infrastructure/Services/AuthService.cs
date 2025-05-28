@@ -18,14 +18,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
             //var user = await context.Users.Include(u => u.Role)
             //    .FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
 
-            var user = await context.Users.Include("Role")
+            var user = await context.Users.Include("Role").Where(u => u.Status == true)
                 .FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
             if (user == null)
             {
                 return null;
             }
 
-            if (request.Password == configuration["Default:Password"] || user.Status == false)
+            if (request.Password == configuration["Default:Password"])
             {
                 return null;
             }

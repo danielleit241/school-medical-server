@@ -9,15 +9,8 @@ namespace SchoolMedicalServer.Api.Controllers.Student
     [ApiController]
     [Route("api/parents/students")]
     [Authorize(Roles = "Parent")]
-    public class ParentStudentController : ControllerBase
+    public class ParentStudentController(IParentStudentService parentStudentService) : ControllerBase
     {
-        private readonly IParentStudentService _parentStudentService;
-
-        public ParentStudentController(IParentStudentService parentStudentService)
-        {
-            _parentStudentService = parentStudentService;
-        }
-
         private Guid GetCurrentUserId()
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -28,7 +21,7 @@ namespace SchoolMedicalServer.Api.Controllers.Student
         public async Task<ActionResult<IEnumerable<ParentStudentDto>>> GetStudents()
         {
             var userId = GetCurrentUserId();
-            var students = await _parentStudentService.GetAllStudentsAsync(userId);
+            var students = await parentStudentService.GetAllStudentsAsync(userId);
             return Ok(students);
         }
 
@@ -36,7 +29,7 @@ namespace SchoolMedicalServer.Api.Controllers.Student
         public async Task<ActionResult<ParentStudentDto>> GetStudent(Guid studentId)
         {
             var userId = GetCurrentUserId();
-            var student = await _parentStudentService.GetStudentByIdAsync(userId, studentId);
+            var student = await parentStudentService.GetStudentByIdAsync(userId, studentId);
             if (student == null) return NotFound();
             return Ok(student);
         }

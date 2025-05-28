@@ -1,4 +1,4 @@
-﻿namespace SchoolMedicalServer.Abstractions.Dtos.UserProfile
+﻿namespace SchoolMedicalServer.Abstractions.Dtos.User
 {
     public class UserProfileRequest
     {

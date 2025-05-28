@@ -64,6 +64,21 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.StudentId).HasColumnName("StudentID");
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
+            // Add this line for StaffNurseId
+            entity.Property(e => e.StaffNurseId)
+                  .HasColumnName("StaffNurseId")
+                  .IsRequired();
+            //Adding AppointmentTopic
+            entity.Property(e => e.Topic).HasMaxLength(40);
+            //Adding startime, and endtime
+            entity.Property(e => e.AppointmentStartTime)
+                .HasColumnType("time")
+                .HasColumnName("AppointmentStartTime");
+
+            entity.Property(e => e.AppointmentEndTime)
+                  .HasColumnType("time")
+                  .HasColumnName("AppointmentEndTime");
+
             entity.HasOne(d => d.Student).WithMany(p => p.Appointments)
                 .HasForeignKey(d => d.StudentId)
                 .HasConstraintName("FK__Appointme__Stude__52593CB8");

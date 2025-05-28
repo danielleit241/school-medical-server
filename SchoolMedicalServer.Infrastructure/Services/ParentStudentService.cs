@@ -1,25 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Dtos.Student;
-using SchoolMedicalServer.Abstractions.Dtos.User;
-using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class ParentStudentService : IParentStudentService
+    public class ParentStudentService(SchoolMedicalManagementContext context) : IParentStudentService
     {
-        private readonly SchoolMedicalManagementContext context;
-
-        public ParentStudentService(SchoolMedicalManagementContext context)
-        {
-            this.context = context;
-        }
-
         public async Task<IEnumerable<ParentStudentDto>> GetAllStudentsAsync(Guid parentUserId)
         {
             return await context.Students
@@ -57,6 +43,5 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 })
                 .FirstOrDefaultAsync();
         }
-
     }
 }
