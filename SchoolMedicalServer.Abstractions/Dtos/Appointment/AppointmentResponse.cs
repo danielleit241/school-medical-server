@@ -2,6 +2,7 @@
 {
     public class AppointmentResponse
     {
+        public Guid AppointmentId { get; set; }
         public StudentInfo? Student { get; set; }
         public UserInfo? User { get; set; }
         public StaffNurseInfo? StaffNurse { get; set; }
