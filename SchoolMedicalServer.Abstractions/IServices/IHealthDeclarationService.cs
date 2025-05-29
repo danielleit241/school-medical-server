@@ -5,11 +5,12 @@
 //using System.Threading.Tasks;
 //using SchoolMedicalServer.Abstractions.Dtos.HealthDeclaration;
 
-//namespace SchoolMedicalServer.Abstractions.IServices
-//{
-//    public interface IHealthDeclarationService
-//    {
-//        Task<bool> CreateHealthDeclarationAsync(Guid studentId, HealthDeclarationRequest request);
-//        Task<HealthDeclarationResponse?> GetHealthDeclarationAsync(Guid studentId);
-//    }
-//}
+namespace SchoolMedicalServer.Abstractions.IServices
+{
+    public interface IHealthDeclarationService
+    {
+        Task<bool> CreateHealthDeclarationAsync(Guid studentId, HealthProfileDeclarationRequest request);
+        Task<HealthProfileDeclarationResponse?> GetHealthDeclarationAsync(Guid studentId);
+    }
+}
+

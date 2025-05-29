@@ -1,116 +1,114 @@
-﻿//using Microsoft.EntityFrameworkCore;
-//using SchoolMedicalServer.Abstractions.Dtos.HealthDeclaration;
-//using SchoolMedicalServer.Abstractions.Entities;
-//using SchoolMedicalServer.Abstractions.IServices;
+using Microsoft.EntityFrameworkCore;
+using SchoolMedicalServer.Abstractions.Dtos.HealthDeclaration;
+using SchoolMedicalServer.Abstractions.Entities;
+using SchoolMedicalServer.Abstractions.IServices;
 
-//namespace SchoolMedicalServer.Infrastructure.Services
-//{
-//    public class HealthDeclarationService(SchoolMedicalManagementContext context) : IHealthDeclarationService
-//    {
-//        public async Task<bool> CreateHealthDeclarationAsync(Guid studentId, HealthDeclarationRequest request)
-//        {
-//            if (studentId == Guid.Empty)
-//            {
-//                return false;
-//            }
+namespace SchoolMedicalServer.Infrastructure.Services
+{
+    public class HealthDeclarationService(SchoolMedicalManagementContext context) : IHealthDeclarationService
+    {
+        public async Task<bool> CreateHealthDeclarationAsync(Guid studentId, HealthProfileDeclarationRequest request)
+        {
+            if (studentId == Guid.Empty)
+            {
+                return false;
+            }
 
-//            if (request == null)
-//            {
-//                return false;
-//            }
+            if (request == null)
+            {
+                return false;
+            }
 
-//            var student = await context.Students.FirstOrDefaultAsync(s => s.StudentId == studentId);
-//            if (student == null)
-//            {
-//                return false;
-//            }
+            var healthProfile = await context.HealthProfiles.FirstOrDefaultAsync(f => f.StudentId == studentId);
+            if (healthProfile == null)
+            {
+                return false;
+            }
 
-//            var healthDeclarationId = Guid.NewGuid();
-//            var healthDeclaration = new HealthDeclaration
-//            {
-//                HealthDeclarationId = healthDeclarationId,
-//                //StudentId = studentId,
-//                DeclarationDate = request.HealthDeclaration.DeclarationDate ?? DateOnly.FromDateTime(DateTime.UtcNow),
-//                ChronicDiseases = request.HealthDeclaration.ChronicDiseases,
-//                DrugAllergies = request.HealthDeclaration.DrugAllergies ?? "",
-//                FoodAllergies = request.HealthDeclaration.FoodAllergies ?? "",
-//                Notes = request.HealthDeclaration.Notes ?? ""
-//            };
-//            context.HealthDeclarations.Add(healthDeclaration);
-//            if (request.Vaccinations != null)
-//            {
-//                foreach (var vaccination in request.Vaccinations)
-//                {
-//                    var vaccinationDeclaration = new VaccinationDeclaration
-//                    {
-//                        HealthDeclarationId = healthDeclarationId,
-//                        VaccinationDeclarationId = Guid.NewGuid(),
-//                        VaccineName = vaccination.VaccineName,
-//                        BatchNumber = vaccination.BatchNumber,
-//                        VaccinatedDate = vaccination.VaccinatedDate,
-//                        Notes = vaccination.Notes
-//                    };
-//                    context.VaccinationDeclarations.Add(vaccinationDeclaration);
-//                }
-//            }
-//            try
-//            {
-//                await context.SaveChangesAsync();
-//                return true;
-//            }
-//            catch (Exception)
-//            {
-//                return false;
-//            }
-//        }
+            if (healthProfile.DeclarationDate.HasValue)
+            {
+                return false;
+            }
 
-//        public async Task<HealthDeclarationResponse?> GetHealthDeclarationAsync(Guid studentId)
-//        {
-//            if (studentId == Guid.Empty)
-//            {
-//                return null;
-//            }
-//            var healthDeclaration = await context.HealthDeclarations
-//                .Include(h => h.VaccinationDeclarations)
-//                .FirstOrDefaultAsync();
-//            if (healthDeclaration == null)
-//            {
-//                return null;
-//            }
+            healthProfile.DeclarationDate = request.HealthDeclaration.DeclarationDate ?? DateOnly.FromDateTime(DateTime.UtcNow);
+            healthProfile.ChronicDiseases = request.HealthDeclaration.ChronicDiseases;
+            healthProfile.DrugAllergies = request.HealthDeclaration.DrugAllergies ?? "";
+            healthProfile.FoodAllergies = request.HealthDeclaration.FoodAllergies ?? "";
+            healthProfile.Notes = request.HealthDeclaration.Notes ?? "";
 
-//            var healthDeclarationDto = new HealthDeclarationDtoResponse
-//            {
-//                HealthDeclarationId = healthDeclaration.HealthDeclarationId,
-//                //StudentId = healthDeclaration.StudentId,
-//                DeclarationDate = healthDeclaration.DeclarationDate,
-//                ChronicDiseases = healthDeclaration.ChronicDiseases,
-//                DrugAllergies = healthDeclaration.DrugAllergies,
-//                FoodAllergies = healthDeclaration.FoodAllergies,
-//                Notes = healthDeclaration.Notes
-//            };
+            if (request.Vaccinations != null)
+            {
+                foreach (var vaccination in request.Vaccinations)
+                {
+                    var vaccinationDeclaration = new VaccinationDeclaration
+                    {
+                        HealthProfileId = healthProfile.HealthProfileId,
+                        VaccinationDeclarationId = Guid.NewGuid(),
+                        VaccineName = vaccination.VaccineName,
+                        BatchNumber = vaccination.BatchNumber,
+                        VaccinatedDate = vaccination.VaccinatedDate,
+                    };
+                    context.VaccinationDeclarations.Add(vaccinationDeclaration);
+                }
+            }
+            try
+            {
+                await context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
-//            var vaccineDeclarations = healthDeclaration.VaccinationDeclarations
-//                .Select(v => new VaccinationDeclarationDtoResponse
-//                {
-//                    VaccineName = v.VaccineName,
-//                    BatchNumber = v.BatchNumber,
-//                    VaccinatedDate = v.VaccinatedDate,
-//                    Notes = v.Notes
-//                }).ToList() ?? [];
+        public async Task<HealthProfileDeclarationResponse?> GetHealthDeclarationAsync(Guid studentId)
+        {
+            if (studentId == Guid.Empty)
+            {
+                return null;
+            }
+            var healthProfileDeclaration = await context.HealthProfiles
+                .Where(h => h.StudentId == studentId)
+                .Include(h => h.VaccinationDeclarations)
+                .FirstOrDefaultAsync();
+            if (healthProfileDeclaration == null)
+            {
+                return null;
+            }
 
-//            var response = new HealthDeclarationResponse()
-//            {
-//                HealthDeclaration = healthDeclarationDto,
-//                Vaccinations = vaccineDeclarations,
-//            };
+            var healthDeclarationDto = new HealthProfileDeclarationDtoResponse
+            {
+                HealthProfileId = healthProfileDeclaration.HealthProfileId,
+                StudentId = healthProfileDeclaration.StudentId,
+                DeclarationDate = healthProfileDeclaration.DeclarationDate,
+                ChronicDiseases = healthProfileDeclaration.ChronicDiseases,
+                DrugAllergies = healthProfileDeclaration.DrugAllergies,
+                FoodAllergies = healthProfileDeclaration.FoodAllergies,
+                Notes = healthProfileDeclaration.Notes
+            };
 
-//            if (response.HealthDeclaration == null)
-//            {
-//                return null;
-//            }
+            var vaccineDeclarations = healthProfileDeclaration.VaccinationDeclarations
+                .Select(v => new VaccinationDeclarationDtoResponse
+                {
+                    VaccineName = v.VaccineName,
+                    BatchNumber = v.BatchNumber,
+                    VaccinatedDate = v.VaccinatedDate,
+                }).ToList() ?? [];
 
-//            return response;
-//        }
+            var response = new HealthProfileDeclarationResponse()
+            {
+                HealthDeclaration = healthDeclarationDto,
+                Vaccinations = vaccineDeclarations,
+            };
 
-//    }
-//}
+            if (response.HealthDeclaration == null)
+            {
+                return null;
+            }
+
+            return response;
+        }
+
+    }
+}

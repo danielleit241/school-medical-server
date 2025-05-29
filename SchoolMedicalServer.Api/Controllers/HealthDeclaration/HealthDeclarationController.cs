@@ -1,38 +1,38 @@
-﻿//using Microsoft.AspNetCore.Authorization;
-//using Microsoft.AspNetCore.Mvc;
-//using SchoolMedicalServer.Abstractions.Dtos.HealthDeclaration;
-//using SchoolMedicalServer.Abstractions.IServices;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SchoolMedicalServer.Abstractions.Dtos.HealthDeclaration;
+using SchoolMedicalServer.Abstractions.IServices;
 
-//namespace SchoolMedicalServer.Api.Controllers.HealthDeclaration
-//{
-//    [Route("api")]
-//    [ApiController]
-//    public class HealthDeclarationController(IHealthDeclarationService service) : ControllerBase
-//    {
+namespace SchoolMedicalServer.Api.Controllers.HealthDeclaration
+{
+    [Route("api")]
+    [ApiController]
+    public class HealthDeclarationController(IHealthDeclarationService service) : ControllerBase
+    {
 
-//        [HttpGet("students/{studentId}/health-declarations")]
-//        [Authorize(Roles = "parent")]
-//        public async Task<IActionResult> GetHealthDeclaration(Guid studentId)
-//        {
+        [HttpGet("students/{studentId}/health-declarations")]
+        [Authorize(Roles = "parent")]
+        public async Task<IActionResult> GetHealthProfileDeclaration(Guid studentId)
+        {
 
-//            var response = await service.GetHealthDeclarationAsync(studentId);
-//            if (response == null)
-//            {
-//                return NotFound();
-//            }
-//            return Ok(response);
-//        }
+            var response = await service.GetHealthDeclarationAsync(studentId);
+            if (response == null)
+            {
+                return NotFound();
+            }
+            return Ok(response);
+        }
 
-//        [HttpPost("students/{studentId}/health-declarations")]
-//        [Authorize(Roles = "parent")]
-//        public async Task<IActionResult> RegisterHealthDeclaration(Guid studentId, HealthDeclarationRequest request)
-//        {
-//            var isCreated = await service.CreateHealthDeclarationAsync(studentId, request);
-//            if (!isCreated)
-//            {
-//                return BadRequest();
-//            }
-//            return Ok();
-//        }
-//    }
-//}
+        [HttpPost("students/{studentId}/health-declarations")]
+        [Authorize(Roles = "parent")]
+        public async Task<IActionResult> RegisterHealthProfileDeclaration(Guid studentId, HealthProfileDeclarationRequest request)
+        {
+            var isCreated = await service.CreateHealthDeclarationAsync(studentId, request);
+            if (!isCreated)
+            {
+                return BadRequest();
+            }
+            return Ok();
+        }
+    }
+}

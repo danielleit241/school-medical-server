@@ -4,7 +4,7 @@ using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class StudentService(SchoolMedicalManagementContext context) : IStudentService
+    public class ParentStudentService(SchoolMedicalManagementContext context) : IParentStudentService
     {
         private readonly SchoolMedicalManagementContext context = context;
 
@@ -16,7 +16,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var response = students.Select(s => new StudentDto
             {
                 StudentId = s.StudentId,
-                StudentCode = s.StudentCode,
+                StudentCode = s.StudentCode,    
                 FullName = s.FullName,
                 DayOfBirth = s.DayOfBirth ?? default,
                 Gender = s.Gender,

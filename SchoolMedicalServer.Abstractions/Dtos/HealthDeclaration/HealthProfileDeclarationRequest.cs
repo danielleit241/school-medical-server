@@ -1,13 +1,13 @@
 ﻿namespace SchoolMedicalServer.Abstractions.Dtos.HealthDeclaration
 {
-    public class HealthDeclarationRequest
+    public class HealthProfileDeclarationRequest
     {
-        public HealthDeclarationDtoRequest HealthDeclaration { get; set; } = default!;
+        public HealthProfileDeclarationDtoRequest HealthDeclaration { get; set; } = default!;
 
         public List<VaccinationDeclarationDtoRequest>? Vaccinations { get; set; }
     }
 
-    public class HealthDeclarationDtoRequest
+    public class HealthProfileDeclarationDtoRequest
     {
         public DateOnly? DeclarationDate { get; set; }
 

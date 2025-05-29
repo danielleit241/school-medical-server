@@ -3,6 +3,7 @@
     public class AccountDto
     {
         public Guid Id { get; set; }
+        public string FullName { get; set; } = default!;
         public string PhoneNumber { get; set; } = default!;
         public string Password { get; set; } = default!;
     }

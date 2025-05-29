@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Dtos.Appointment;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -72,6 +72,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                             .Select(u => u.FullName)
                             .FirstOrDefaultAsync()
                     },
+                    AppointmentId = appointment.AppointmentId,
                     Topic = appointment.Topic,
                     AppointmentDate = appointment.AppointmentDate,
                     AppointmentStartTime = appointment.AppointmentStartTime,
@@ -95,11 +96,17 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return false;
             }
 
-            var userId = await context.Students.Select(s => s.UserId).FirstOrDefaultAsync();
-            if (userId == null || userId != request.UserId)
+            var userId = await context.Students.Where(u => u.UserId == request.UserId).Select(s => s.UserId).FirstOrDefaultAsync();
+            if (userId == null)
             {
                 return false;
             }
+
+            var isStaffHasAppointment = await context.Appointments
+                .AnyAsync(a => a.StaffNurseId == request.StaffNurseId && a.AppointmentDate == request.AppointmentDate &&
+                               a.AppointmentStartTime < request.AppointmentEndTime && a.AppointmentEndTime > request.AppointmentStartTime);
+            if (isStaffHasAppointment)
+                return false;
 
             try
             {
@@ -121,30 +128,239 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 await context.SaveChangesAsync();
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
 
         }
 
-        public Task<AppointmentResponse> GetStaffNurseAppointment(Guid staffNurseId, Guid appointmentId)
+        public async Task<AppointmentResponse> GetStaffNurseAppointment(Guid staffNurseId, Guid appointmentId)
         {
-            throw new NotImplementedException();
+            var appointment = await context.Appointments
+                            .Include(u => u.User)
+                            .Include(s => s.Student)
+                            .FirstOrDefaultAsync(a => a.StaffNurseId == staffNurseId && a.AppointmentId == appointmentId);
+
+            if (appointment == null || appointment.User == null || appointment.Student == null)
+                return null!;
+
+            var nurseFullName = await context.Users
+                .Where(u => u.UserId == staffNurseId)
+                .Select(u => u.FullName)
+                .FirstOrDefaultAsync();
+
+            var response = new AppointmentResponse
+            {
+                Student = new StudentInfo
+                {
+                    StudentId = appointment.Student.StudentId,
+                    StudentCode = appointment.Student.StudentCode,
+                    FullName = appointment.Student.FullName
+                },
+                User = new UserInfo
+                {
+                    UserId = appointment.User.UserId,
+                    FullName = appointment.User.FullName
+                },
+                StaffNurse = new StaffNurseInfo
+                {
+                    StaffNurseId = appointment.StaffNurseId,
+                    FullName = nurseFullName
+                },
+                AppointmentId = appointment.AppointmentId,
+                Topic = appointment.Topic,
+                AppointmentDate = appointment.AppointmentDate,
+                AppointmentStartTime = appointment.AppointmentStartTime,
+                AppointmentEndTime = appointment.AppointmentEndTime,
+                AppointmentReason = appointment.AppointmentReason,
+                ConfirmationStatus = appointment.ConfirmationStatus,
+                CompletionStatus = appointment.CompletionStatus
+            };
+
+            return response;
         }
 
-        public Task<PaginationResponse<AppointmentResponse>> GetStaffNurseAppointments(Guid staffNurseId, PaginationRequest? paginationRequest)
+        public async Task<PaginationResponse<AppointmentResponse>> GetStaffNurseAppointments(Guid staffNurseId, PaginationRequest? paginationRequest)
         {
-            throw new NotImplementedException();
-        }
-        public Task<AppointmentResponse> GetUserAppointment(Guid userId, Guid appointmentId)
-        {
-            throw new NotImplementedException();
+            var totalCount = await context.Appointments.CountAsync(a => a.StaffNurseId == staffNurseId);
+            if (totalCount == 0)
+            {
+                return null!;
+            }
+
+            int pageIndex = paginationRequest!.PageIndex;
+            int pageSize = paginationRequest!.PageSize;
+            int skip = (pageIndex - 1) * pageSize;
+
+            var appointments = await context.Appointments
+                .Include(a => a.User)
+                .Include(a => a.Student)
+                .Where(a => a.StaffNurseId == staffNurseId)
+                .OrderByDescending(a => a.AppointmentDate)
+                .ThenBy(a => a.AppointmentStartTime)
+                .Skip(skip)
+                .Take(pageSize)
+                .AsNoTracking()
+                .ToListAsync();
+
+            if (appointments == null || appointments.Count == 0) return null!;
+
+            var nurseFullName = await context.Users
+                .Where(u => u.UserId == staffNurseId)
+                .Select(u => u.FullName)
+                .FirstOrDefaultAsync() ?? string.Empty;
+
+            var response = appointments.Select(appointment => new AppointmentResponse
+            {
+                Student = new StudentInfo
+                {
+                    StudentId = appointment.Student!.StudentId,
+                    StudentCode = appointment.Student.StudentCode,
+                    FullName = appointment.Student.FullName
+                },
+                User = new UserInfo
+                {
+                    UserId = appointment.User!.UserId,
+                    FullName = appointment.User.FullName
+                },
+                StaffNurse = new StaffNurseInfo
+                {
+                    StaffNurseId = appointment.StaffNurseId,
+                    FullName = nurseFullName
+                },
+                AppointmentId = appointment.AppointmentId,
+                Topic = appointment.Topic,
+                AppointmentDate = appointment.AppointmentDate,
+                AppointmentStartTime = appointment.AppointmentStartTime,
+                AppointmentEndTime = appointment.AppointmentEndTime,
+                AppointmentReason = appointment.AppointmentReason,
+                ConfirmationStatus = appointment.ConfirmationStatus,
+                CompletionStatus = appointment.CompletionStatus
+            }).ToList();
+
+            return new PaginationResponse<AppointmentResponse>(
+                pageIndex,
+                pageSize,
+                totalCount,
+                response
+            );
         }
 
-        public Task<PaginationResponse<AppointmentResponse>> GetUserAppointments(Guid userId, PaginationRequest? paginationRequest)
+
+        public async Task<AppointmentResponse> GetUserAppointment(Guid userId, Guid appointmentId)
         {
-            throw new NotImplementedException();
+            var appointment = await context.Appointments
+                           .Include(u => u.User)
+                           .Include(s => s.Student)
+                           .FirstOrDefaultAsync(a => a.UserId == userId && a.AppointmentId == appointmentId);
+
+            if (appointment == null) return null!;
+
+            var nurseFullName = await context.Users
+                .Where(u => u.UserId == appointment.StaffNurseId)
+                .Select(u => u.FullName)
+                .FirstOrDefaultAsync();
+
+            var response = new AppointmentResponse
+            {
+                Student = new StudentInfo
+                {
+                    StudentId = appointment.Student!.StudentId,
+                    StudentCode = appointment.Student.StudentCode,
+                    FullName = appointment.Student.FullName
+                },
+                User = new UserInfo
+                {
+                    UserId = appointment.User!.UserId,
+                    FullName = appointment.User.FullName
+                },
+                StaffNurse = new StaffNurseInfo
+                {
+                    StaffNurseId = appointment.StaffNurseId,
+                    FullName = nurseFullName
+                },
+                AppointmentId = appointment.AppointmentId,
+                Topic = appointment.Topic,
+                AppointmentDate = appointment.AppointmentDate,
+                AppointmentStartTime = appointment.AppointmentStartTime,
+                AppointmentEndTime = appointment.AppointmentEndTime,
+                AppointmentReason = appointment.AppointmentReason,
+                ConfirmationStatus = appointment.ConfirmationStatus,
+                CompletionStatus = appointment.CompletionStatus
+            };
+
+            return response;
+        }
+
+
+        public async Task<PaginationResponse<AppointmentResponse>> GetUserAppointments(Guid userId, PaginationRequest? paginationRequest)
+        {
+            var totalCount = await context.Appointments.CountAsync(a => a.UserId == userId);
+            if (totalCount == 0)
+            {
+                return null!;
+            }
+
+            int pageIndex = paginationRequest!.PageIndex;
+            int pageSize = paginationRequest!.PageSize;
+            int skip = (pageIndex - 1) * pageSize;
+
+            var appointments = await context.Appointments
+                .Include(a => a.User)
+                .Include(a => a.Student)
+                .Where(a => a.UserId == userId)
+                .OrderByDescending(a => a.AppointmentDate)
+                .ThenBy(a => a.AppointmentStartTime)
+                .Skip(skip)
+                .Take(pageSize)
+                .AsNoTracking()
+                .ToListAsync();
+
+            if (appointments == null) return null!;
+
+
+            var response = new List<AppointmentResponse>();
+            foreach (var appointment in appointments)
+            {
+                var nurseFullName = await context.Users
+                    .Where(u => u.UserId == appointment.StaffNurseId)
+                    .Select(u => u.FullName)
+                    .FirstOrDefaultAsync();
+                response.Add(new AppointmentResponse
+                {
+                    Student = new StudentInfo
+                    {
+                        StudentId = appointment.Student!.StudentId,
+                        StudentCode = appointment.Student.StudentCode,
+                        FullName = appointment.Student.FullName
+                    },
+                    User = new UserInfo
+                    {
+                        UserId = appointment.User!.UserId,
+                        FullName = appointment.User.FullName
+                    },
+                    StaffNurse = new StaffNurseInfo
+                    {
+                        StaffNurseId = appointment.StaffNurseId,
+                        FullName = nurseFullName
+                    },
+                    AppointmentId = appointment.AppointmentId,
+                    Topic = appointment.Topic,
+                    AppointmentDate = appointment.AppointmentDate,
+                    AppointmentStartTime = appointment.AppointmentStartTime,
+                    AppointmentEndTime = appointment.AppointmentEndTime,
+                    AppointmentReason = appointment.AppointmentReason,
+                    ConfirmationStatus = appointment.ConfirmationStatus,
+                    CompletionStatus = appointment.CompletionStatus
+                });
+            }
+            return new PaginationResponse<AppointmentResponse>(
+                pageIndex,
+                pageSize,
+                totalCount,
+                response
+            );
         }
     }
 }

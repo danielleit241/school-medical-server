@@ -45,7 +45,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 var role = await context.Roles.FirstOrDefaultAsync(r => r.RoleName == configuration["DefaultAccountCreate:RoleName"]);
 
                 if (role == null)
-                    return null;
+                    return null!;
 
                 var user = new User
                 {
@@ -62,6 +62,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 accounts.Add(new AccountDto
                 {
                     Id = user.UserId,
+                    FullName = student.FullName,
                     PhoneNumber = user.PhoneNumber,
                     Password = defaultPassword
                 });
@@ -116,6 +117,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var account = new AccountDto
             {
                 Id = user.UserId,
+                FullName = request.FullName,
                 PhoneNumber = user.PhoneNumber,
                 Password = request.Password
             };

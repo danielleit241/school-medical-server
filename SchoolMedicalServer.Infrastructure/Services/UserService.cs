@@ -31,7 +31,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 .OrderBy(u => u.FullName)
                 .Skip((paginationRequest.PageIndex - 1) * paginationRequest.PageSize)
                 .Take(paginationRequest.PageSize)
-                .ToListAsync();
+                .ToListAsync();     
             if (users == null) return null!;
 
             var userDtos = new List<UserDto>();
