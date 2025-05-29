@@ -28,6 +28,8 @@ public partial class User
 
     public DateTime? RefreshTokenExpiryTime { get; set; }
 
+    public string? Address { get; set; }
+
     [JsonIgnore]
     public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     [JsonIgnore]

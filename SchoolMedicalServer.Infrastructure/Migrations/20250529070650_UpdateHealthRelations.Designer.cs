@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolMedicalServer.Infrastructure;
 
@@ -11,9 +12,11 @@ using SchoolMedicalServer.Infrastructure;
 namespace SchoolMedicalServer.Infrastructure.Migrations
 {
     [DbContext(typeof(SchoolMedicalManagementContext))]
-    partial class SchoolMedicalManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20250529070650_UpdateHealthRelations")]
+    partial class UpdateHealthRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,20 +189,15 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.ToTable("HealthCheckSchedule", (string)null);
                 });
 
-            modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthProfile", b =>
+            modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthDeclaration", b =>
                 {
-                    b.Property<Guid>("HealthProfileId")
+                    b.Property<Guid>("HealthDeclarationId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("HealthProfileID");
+                        .HasColumnName("HealthDeclarationID");
 
                     b.Property<string>("ChronicDiseases")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
 
                     b.Property<DateOnly?>("DeclarationDate")
                         .HasColumnType("date");
@@ -212,13 +210,63 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<Guid>("HealthProfileId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("HealthProfileID");
+
+                    b.Property<Guid>("HealthProfileId1")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Notes")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<Guid?>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("HealthDeclarationId")
+                        .HasName("PK__HealthDe__327AAD7D8F9E8268");
+
+                    b.HasIndex("HealthProfileId")
+                        .IsUnique();
+
+                    b.HasIndex("HealthProfileId1");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("HealthDeclaration", (string)null);
+                });
+
+            modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthProfile", b =>
+                {
+                    b.Property<Guid>("HealthProfileId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("HealthProfileID");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<Guid?>("HealthCheckResultId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("HealthCheckResultID");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid?>("RecordedId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("RecordedID");
+
+                    b.Property<Guid?>("StudentId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("StudentID");
+
+                    b.Property<Guid?>("VaccinationResultId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("VaccinationResultID");
 
                     b.HasKey("HealthProfileId")
                         .HasName("PK__HealthPr__73C2C2B51D74B658");
@@ -493,8 +541,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<DateOnly?>("DayOfBirth")
-                        .HasColumnType("date")
-                        .HasColumnName("DayOfBirth");
+                        .HasColumnType("date");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -543,10 +590,6 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("UserID");
-
-                    b.Property<string>("Address")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("AvatarUrl")
                         .HasMaxLength(255)
@@ -615,9 +658,13 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<Guid>("HealthProfileId")
+                    b.Property<Guid>("HealthDeclarationId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("HealthProfileID");
+                        .HasColumnName("HealthDeclarationID");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateOnly?>("VaccinatedDate")
                         .HasColumnType("date");
@@ -630,7 +677,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.HasKey("VaccinationDeclarationId")
                         .HasName("PK__VaccinationDeclaration");
 
-                    b.HasIndex("HealthProfileId");
+                    b.HasIndex("HealthDeclarationId");
 
                     b.ToTable("VaccinationDeclaration", (string)null);
                 });
@@ -823,13 +870,15 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasForeignKey("ScheduleId")
                         .HasConstraintName("FK__HealthChe__Sched__74AE54BC");
 
-                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.Student", null)
+                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.Student", "Student")
                         .WithMany("HealthCheckResults")
                         .HasForeignKey("StudentId");
 
                     b.Navigation("HealthProfile");
 
                     b.Navigation("Schedule");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthCheckSchedule", b =>
@@ -847,6 +896,30 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.Navigation("Student");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthDeclaration", b =>
+                {
+                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.HealthProfile", null)
+                        .WithOne("HealthDeclaration")
+                        .HasForeignKey("SchoolMedicalServer.Abstractions.Entities.HealthDeclaration", "HealthProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_HealthDeclaration_HealthProfile");
+
+                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.HealthProfile", "HealthProfile")
+                        .WithMany()
+                        .HasForeignKey("HealthProfileId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.Student", "Student")
+                        .WithMany("HealthDeclarations")
+                        .HasForeignKey("StudentId");
+
+                    b.Navigation("HealthProfile");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthProfile", b =>
@@ -950,14 +1023,14 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
 
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.VaccinationDeclaration", b =>
                 {
-                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.HealthProfile", "HealthProfile")
+                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.HealthDeclaration", "HealthDeclaration")
                         .WithMany("VaccinationDeclarations")
-                        .HasForeignKey("HealthProfileId")
+                        .HasForeignKey("HealthDeclarationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_VaccinationDeclaration_HealthProfile");
+                        .HasConstraintName("FK_VaccinationDeclaration_HealthDeclaration");
 
-                    b.Navigation("HealthProfile");
+                    b.Navigation("HealthDeclaration");
                 });
 
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.VaccinationResult", b =>
@@ -973,13 +1046,15 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasForeignKey("ScheduleId")
                         .HasConstraintName("FK__Vaccinati__Sched__6D0D32F4");
 
-                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.Student", null)
+                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.Student", "Student")
                         .WithMany("VaccinationResults")
                         .HasForeignKey("StudentId");
 
                     b.Navigation("HealthProfile");
 
                     b.Navigation("Schedule");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.VaccinationSchedule", b =>
@@ -1004,11 +1079,16 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.Navigation("HealthCheckResults");
                 });
 
+            modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthDeclaration", b =>
+                {
+                    b.Navigation("VaccinationDeclarations");
+                });
+
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthProfile", b =>
                 {
                     b.Navigation("HealthCheckResults");
 
-                    b.Navigation("VaccinationDeclarations");
+                    b.Navigation("HealthDeclaration");
 
                     b.Navigation("VaccinationResults");
                 });
@@ -1035,6 +1115,8 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.Navigation("HealthCheckResults");
 
                     b.Navigation("HealthCheckSchedules");
+
+                    b.Navigation("HealthDeclarations");
 
                     b.Navigation("HealthProfile");
 

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace SchoolMedicalServer.Abstractions.Entities;
+﻿namespace SchoolMedicalServer.Abstractions.Entities;
 
 public partial class Student
 {
-    
-
     public Guid StudentId { get; set; }
 
     public Guid? UserId { get; set; }
@@ -33,9 +28,7 @@ public partial class Student
 
     public virtual ICollection<HealthCheckSchedule> HealthCheckSchedules { get; set; } = new List<HealthCheckSchedule>();
 
-    public virtual ICollection<HealthDeclaration> HealthDeclarations { get; set; } = new List<HealthDeclaration>();
-
-    public virtual ICollection<HealthProfile> HealthProfiles { get; set; } = new List<HealthProfile>();
+    public virtual HealthProfile? HealthProfile { get; set; }
 
     public virtual ICollection<MedicalEvent> MedicalEvents { get; set; } = new List<MedicalEvent>();
 

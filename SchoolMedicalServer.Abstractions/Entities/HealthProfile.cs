@@ -1,27 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace SchoolMedicalServer.Abstractions.Entities;
+﻿namespace SchoolMedicalServer.Abstractions.Entities;
 
 public partial class HealthProfile
 {
     public Guid HealthProfileId { get; set; }
-
     public Guid? StudentId { get; set; }
-
-    public Guid? VaccinationResultId { get; set; }
-
-    public Guid? HealthCheckResultId { get; set; }
-
     public DateTime? CreatedDate { get; set; }
-
-    public Guid? RecordedId { get; set; }
-
+    public DateOnly? DeclarationDate { get; set; }
+    public string? ChronicDiseases { get; set; }
+    public string? DrugAllergies { get; set; }
+    public string? FoodAllergies { get; set; }
     public string? Notes { get; set; }
 
-    public virtual HealthCheckResult? HealthCheckResult { get; set; }
-
-    public virtual Student? Student { get; set; }
-
-    public virtual VaccinationResult? VaccinationResult { get; set; }
+    public virtual Student Student { get; set; } = null!;
+    public virtual ICollection<VaccinationResult> VaccinationResults { get; set; } = new List<VaccinationResult>();
+    public virtual ICollection<HealthCheckResult> HealthCheckResults { get; set; } = new List<HealthCheckResult>();
+    public virtual ICollection<VaccinationDeclaration> VaccinationDeclarations { get; set; } = new List<VaccinationDeclaration>();
 }

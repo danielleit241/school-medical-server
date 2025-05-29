@@ -11,11 +11,11 @@ namespace SchoolMedicalServer.Api.Controllers.User
     public class UserController(IUserService userService) : ControllerBase
     {
 
-        [HttpGet]
+        [HttpGet("/roles/{roleName}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> GetUsers([FromQuery] PaginationRequest paginationRequest)
+        public async Task<IActionResult> GetUsersByRoleName([FromQuery] PaginationRequest? paginationRequest, string roleName)
         {
-            var users = await userService.GetAllAsync(paginationRequest);
+            var users = await userService.GetUsersByRoleNamePaginationAsync(paginationRequest, roleName);
             if (users == null)
             {
                 return NotFound("No users found.");
