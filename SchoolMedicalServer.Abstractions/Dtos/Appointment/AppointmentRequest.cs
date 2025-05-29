@@ -4,6 +4,8 @@
     {
         public Guid? StudentId { get; set; }
 
+        public Guid? UserId { get; set; }
+
         public Guid? StaffNurseId { get; set; }
 
         public string? Topic { get; set; }

@@ -16,7 +16,10 @@ namespace SchoolMedicalServer.Api.Controllers
         public async Task<IActionResult> GetStaffNurses()
         {
             var staffNurses = await service.GetStaffNurses();
-
+            if (staffNurses is null)
+            {
+                return NotFound("No staff nurses found.");
+            }
             return Ok(staffNurses);
         }
 
@@ -27,6 +30,10 @@ namespace SchoolMedicalServer.Api.Controllers
             if (User.IsInRole("parent"))
             {
                 var appointments = await service.GetAppointmentsByStaffNurseAndDate(staffNurseId, dateRequest);
+                if (appointments is null)
+                {
+                    return NotFound("No appointments found for the specified staff nurse.");
+                }
                 return Ok(appointments);
             }
 
@@ -39,11 +46,19 @@ namespace SchoolMedicalServer.Api.Controllers
                 if (dateRequest.HasValue)
                 {
                     var appointments = await service.GetAppointmentsByStaffNurseAndDate(staffNurseId, dateRequest);
+                    if (appointments is null)
+                    {
+                        return NotFound("No appointments found for the specified staff nurse on the given date.");
+                    }
                     return Ok(appointments);
                 }
                 else
                 {
                     var response = await service.GetStaffNurseAppointments(staffNurseId, paginationRequest);
+                    if (response is null)
+                    {
+                        return NotFound("No appointments found for the specified staff nurse.");
+                    }
                     return Ok(response);
                 }
             }
@@ -55,8 +70,11 @@ namespace SchoolMedicalServer.Api.Controllers
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> RegisterAppointment([FromBody] AppointmentRequest request)
         {
-            var appointment = await service.RegisterAppointment(request);
-
+            var isCreated = await service.RegisterAppointment(request);
+            if (!isCreated)
+            {
+                return BadRequest("Failed to register appointment. Please check the request data.");
+            }
             return Created();
 
         }
@@ -66,7 +84,10 @@ namespace SchoolMedicalServer.Api.Controllers
         public async Task<IActionResult> GetUserAppointments(Guid userId, [FromQuery] PaginationRequest? paginationRequest)
         {
             var userAppointments = await service.GetUserAppointments(userId, paginationRequest);
-
+            if (userAppointments is null || !userAppointments.Items.Any())
+            {
+                return NotFound("No appointments found for the specified user.");
+            }
             return Ok(userAppointments);
         }
 

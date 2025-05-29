@@ -22,8 +22,6 @@ public partial class SchoolMedicalManagementContext : DbContext
 
     public virtual DbSet<HealthCheckSchedule> HealthCheckSchedules { get; set; }
 
-    public virtual DbSet<HealthDeclaration> HealthDeclarations { get; set; }
-
     public virtual DbSet<HealthProfile> HealthProfiles { get; set; }
 
     public virtual DbSet<MedicalEvent> MedicalEvents { get; set; }
@@ -47,6 +45,7 @@ public partial class SchoolMedicalManagementContext : DbContext
     public virtual DbSet<VaccinationSchedule> VaccinationSchedules { get; set; }
 
     public virtual DbSet<VaccineDetail> VaccineDetails { get; set; }
+
     public virtual DbSet<VaccinationDeclaration> VaccinationDeclarations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -103,15 +102,17 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.Notes).HasMaxLength(255);
             entity.Property(e => e.RecordedId).HasColumnName("RecordedID");
             entity.Property(e => e.ScheduleId).HasColumnName("ScheduleID");
-            entity.Property(e => e.StudentId).HasColumnName("StudentID");
 
             entity.HasOne(d => d.Schedule).WithMany(p => p.HealthCheckResults)
                 .HasForeignKey(d => d.ScheduleId)
                 .HasConstraintName("FK__HealthChe__Sched__74AE54BC");
 
-            entity.HasOne(d => d.Student).WithMany(p => p.HealthCheckResults)
-                .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK__HealthChe__Stude__73BA3083");
+            entity.Property(e => e.HealthProfileId).HasColumnName("HealthProfileID");
+
+            entity.HasOne(hcr => hcr.HealthProfile)
+                .WithMany(hp => hp.HealthCheckResults)
+                .HasForeignKey(hcr => hcr.HealthProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<HealthCheckSchedule>(entity =>
@@ -139,26 +140,6 @@ public partial class SchoolMedicalManagementContext : DbContext
                 .HasConstraintName("FK__HealthChe__UserI__70DDC3D8");
         });
 
-        modelBuilder.Entity<HealthDeclaration>(entity =>
-        {
-            entity.HasKey(e => e.HealthDeclarationId).HasName("PK__HealthDe__327AAD7D8F9E8268");
-
-            entity.ToTable("HealthDeclaration");
-
-            entity.Property(e => e.HealthDeclarationId)
-                .ValueGeneratedNever()
-                .HasColumnName("HealthDeclarationID");
-            //entity.Property(e => e.AdministeredVaccines).HasMaxLength(255);
-            entity.Property(e => e.ChronicDiseases).HasMaxLength(255);
-            entity.Property(e => e.DrugAllergies).HasMaxLength(255);
-            entity.Property(e => e.FoodAllergies).HasMaxLength(255);
-            entity.Property(e => e.Notes).HasMaxLength(255);
-            entity.Property(e => e.StudentId).HasColumnName("StudentID");
-
-            entity.HasOne(d => d.Student).WithMany(p => p.HealthDeclarations)
-                .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK__HealthDec__Stude__656C112C");
-        });
 
         modelBuilder.Entity<HealthProfile>(entity =>
         {
@@ -172,24 +153,37 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.CreatedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.HealthCheckResultId).HasColumnName("HealthCheckResultID");
             entity.Property(e => e.Notes).HasMaxLength(255);
-            entity.Property(e => e.RecordedId).HasColumnName("RecordedID");
             entity.Property(e => e.StudentId).HasColumnName("StudentID");
-            entity.Property(e => e.VaccinationResultId).HasColumnName("VaccinationResultID");
 
-            entity.HasOne(d => d.HealthCheckResult).WithMany(p => p.HealthProfiles)
-                .HasForeignKey(d => d.HealthCheckResultId)
-                .HasConstraintName("FK__HealthPro__Healt__797309D9");
+            entity.Property(e => e.DeclarationDate).HasColumnType("date");
+            entity.Property(e => e.ChronicDiseases).HasMaxLength(255);
+            entity.Property(e => e.DrugAllergies).HasMaxLength(255);
+            entity.Property(e => e.FoodAllergies).HasMaxLength(255);
 
-            entity.HasOne(d => d.Student).WithMany(p => p.HealthProfiles)
-                .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK__HealthPro__Stude__778AC167");
+            entity.HasOne(d => d.Student)
+                .WithOne(s => s.HealthProfile)
+                .HasForeignKey<HealthProfile>(hp => hp.StudentId)
+                .HasConstraintName("FK_HealthProfile_Student")
+                .OnDelete(DeleteBehavior.Cascade);
 
-            entity.HasOne(d => d.VaccinationResult).WithMany(p => p.HealthProfiles)
-                .HasForeignKey(d => d.VaccinationResultId)
-                .HasConstraintName("FK__HealthPro__Vacci__787EE5A0");
+            entity.HasMany(hp => hp.VaccinationResults)
+                .WithOne(vr => vr.HealthProfile)
+                .HasForeignKey(vr => vr.HealthProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(hp => hp.HealthCheckResults)
+                .WithOne(hcr => hcr.HealthProfile)
+                .HasForeignKey(hcr => hcr.HealthProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(hp => hp.VaccinationDeclarations)
+                .WithOne(vd => vd.HealthProfile)
+                .HasForeignKey(vd => vd.HealthProfileId)
+                .HasConstraintName("FK_VaccinationDeclaration_HealthProfile")
+                .OnDelete(DeleteBehavior.Cascade);
         });
+
 
         modelBuilder.Entity<MedicalEvent>(entity =>
         {
@@ -326,27 +320,30 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.StudentId)
                 .ValueGeneratedNever()
                 .HasColumnName("StudentID");
-            entity.Property(e => e.Address).HasMaxLength(255);
+            entity.Property(e => e.StudentCode)
+                .HasMaxLength(8)
+                .IsUnicode(false);
             entity.Property(e => e.FullName).HasMaxLength(50);
+            entity.Property(e => e.DayOfBirth).HasColumnName("DayOfBirth");
             entity.Property(e => e.Gender).HasMaxLength(3);
             entity.Property(e => e.Grade)
                 .HasMaxLength(12)
                 .IsUnicode(false)
                 .IsFixedLength();
-            entity.Property(e => e.ParentEmailAddress)
-                .HasMaxLength(70)
-                .IsUnicode(false);
+            entity.Property(e => e.Address).HasMaxLength(255);
             entity.Property(e => e.ParentPhoneNumber)
                 .HasMaxLength(11)
                 .IsUnicode(false);
-            entity.Property(e => e.StudentCode)
-                .HasMaxLength(8)
+            entity.Property(e => e.ParentEmailAddress)
+                .HasMaxLength(70)
                 .IsUnicode(false);
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Students)
+            entity.HasOne(d => d.User)
+                .WithMany(p => p.Students)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK__Student__UserID__4F7CD00D");
+            // 1-1 Student-HealthProfile đã cấu hình ở HealthProfile
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -382,6 +379,7 @@ public partial class SchoolMedicalManagementContext : DbContext
                 .HasDefaultValue(true);
             entity.Property(e => e.RefreshTokenExpiryTime).HasColumnType("datetime");
             entity.Property(e => e.RoleId).HasColumnName("RoleID");
+            entity.Property(e => e.Address).HasMaxLength(255);
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
@@ -405,15 +403,17 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.RecordedId).HasColumnName("RecordedID");
             entity.Property(e => e.ScheduleId).HasColumnName("ScheduleID");
             entity.Property(e => e.SeverityLevel).HasMaxLength(50);
-            entity.Property(e => e.StudentId).HasColumnName("StudentID");
 
             entity.HasOne(d => d.Schedule).WithMany(p => p.VaccinationResults)
                 .HasForeignKey(d => d.ScheduleId)
                 .HasConstraintName("FK__Vaccinati__Sched__6D0D32F4");
 
-            entity.HasOne(d => d.Student).WithMany(p => p.VaccinationResults)
-                .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK__Vaccinati__Stude__6C190EBB");
+            entity.Property(e => e.HealthProfileId).HasColumnName("HealthProfileID");
+
+            entity.HasOne(vr => vr.HealthProfile)
+                .WithMany(hp => hp.VaccinationResults)
+                .HasForeignKey(vr => vr.HealthProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<VaccinationSchedule>(entity =>
@@ -474,17 +474,17 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.VaccinationDeclarationId)
                 .ValueGeneratedNever()
                 .HasColumnName("VaccinationDeclarationID");
-
-            entity.Property(e => e.HealthDeclarationId).HasColumnName("HealthDeclarationID");
+            entity.Property(e => e.HealthProfileId).HasColumnName("HealthProfileID");
             entity.Property(e => e.VaccineName).HasMaxLength(100);
             entity.Property(e => e.BatchNumber).HasMaxLength(50);
-            entity.Property(e => e.Notes).HasMaxLength(255);
+            entity.Property(e => e.VaccinatedDate).HasColumnType("date");
 
-            entity.HasOne(d => d.HealthDeclaration)
+            entity.HasOne(d => d.HealthProfile)
                 .WithMany(p => p.VaccinationDeclarations)
-                .HasForeignKey(d => d.HealthDeclarationId)
-                .HasConstraintName("FK_VaccinationDeclaration_HealthDeclaration");
+                .HasForeignKey(d => d.HealthProfileId)
+                .HasConstraintName("FK_VaccinationDeclaration_HealthProfile");
         });
+
 
         OnModelCreatingPartial(modelBuilder);
     }

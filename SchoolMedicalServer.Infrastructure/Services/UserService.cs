@@ -8,10 +8,26 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class UserService(SchoolMedicalManagementContext context) : IUserService
     {
-        public async Task<PaginationResponse<UserDto>> GetAllAsync(PaginationRequest paginationRequest)
+        public async Task<PaginationResponse<UserDto>> GetUsersByRoleNamePaginationAsync(PaginationRequest paginationRequest, string roleName)
         {
+            if (paginationRequest == null)
+            {
+                paginationRequest = new PaginationRequest();
+            }
+            if (paginationRequest.PageIndex <= 0)
+            {
+                paginationRequest.PageIndex = 1;
+            }
+            if (paginationRequest.PageSize <= 0)
+            {
+                paginationRequest.PageSize = 10;
+            }
+            var role = await context.Roles.FirstOrDefaultAsync(r => r.RoleName == roleName);
+            if (role == null) return null;
+
             var totalCount = await context.Users.CountAsync();
             var users = await context.Users.Include(u => u.Role)
+                .Where(u => u.RoleId == role.RoleId)
                 .OrderBy(u => u.FullName)
                 .Skip((paginationRequest.PageIndex - 1) * paginationRequest.PageSize)
                 .Take(paginationRequest.PageSize)

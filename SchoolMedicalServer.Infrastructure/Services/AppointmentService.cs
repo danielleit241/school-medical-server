@@ -95,13 +95,19 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return false;
             }
 
+            var userId = await context.Students.Select(s => s.UserId).FirstOrDefaultAsync();
+            if (userId == null || userId != request.UserId)
+            {
+                return false;
+            }
+
             try
             {
                 var appointment = new Appointment
                 {
                     AppointmentId = Guid.NewGuid(),
                     StudentId = request.StudentId,
-                    UserId = await context.Students.Select(s => s.UserId).FirstOrDefaultAsync(),
+                    UserId = request.UserId,
                     StaffNurseId = request.StaffNurseId,
                     Topic = request.Topic,
                     AppointmentDate = request.AppointmentDate,
