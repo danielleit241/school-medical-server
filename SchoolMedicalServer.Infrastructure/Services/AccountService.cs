@@ -45,7 +45,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 var role = await context.Roles.FirstOrDefaultAsync(r => r.RoleName == configuration["DefaultAccountCreate:RoleName"]);
 
                 if (role == null)
-                    return null;
+                    return null!;
 
                 var user = new User
                 {

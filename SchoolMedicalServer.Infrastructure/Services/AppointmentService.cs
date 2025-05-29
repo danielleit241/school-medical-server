@@ -115,30 +115,212 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 await context.SaveChangesAsync();
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 return false;
             }
 
         }
 
-        public Task<AppointmentResponse> GetStaffNurseAppointment(Guid staffNurseId, Guid appointmentId)
+        public async Task<AppointmentResponse> GetStaffNurseAppointment(Guid staffNurseId, Guid appointmentId)
         {
-            throw new NotImplementedException();
+            var appointment = await context.Appointments
+         .Include(u => u.User)
+         .Include(s => s.Student)
+         .FirstOrDefaultAsync(a => a.StaffNurseId == staffNurseId && a.AppointmentId == appointmentId);
+
+            if (appointment == null) return null!;
+
+            var nurseFullName = await context.Users
+                .Where(u => u.UserId == appointment.StaffNurseId)
+                .Select(u => u.FullName)
+                .FirstOrDefaultAsync() ?? "";
+
+            var response = new AppointmentResponse
+            {
+                Student = appointment.Student == null ? null : new StudentInfo
+                {
+                    StudentId = appointment.Student.StudentId,
+                    StudentCode = appointment.Student.StudentCode,
+                    FullName = appointment.Student.FullName
+                },
+                User = appointment.User == null ? null : new UserInfo
+                {
+                    UserId = appointment.User.UserId,
+                    FullName = appointment.User.FullName
+                },
+                StaffNurse = new StaffNurseInfo
+                {
+                    StaffNurseId = appointment.StaffNurseId,
+                    FullName = nurseFullName
+                },
+                Topic = appointment.Topic,
+                AppointmentDate = appointment.AppointmentDate,
+                AppointmentStartTime = appointment.AppointmentStartTime,
+                AppointmentEndTime = appointment.AppointmentEndTime,
+                AppointmentReason = appointment.AppointmentReason,
+                ConfirmationStatus = appointment.ConfirmationStatus,
+                CompletionStatus = appointment.CompletionStatus
+            };
+
+            return response;
         }
 
-        public Task<PaginationResponse<AppointmentResponse>> GetStaffNurseAppointments(Guid staffNurseId, PaginationRequest? paginationRequest)
+        public async Task<PaginationResponse<AppointmentResponse>> GetStaffNurseAppointments(Guid staffNurseId, PaginationRequest? paginationRequest)
         {
-            throw new NotImplementedException();
-        }
-        public Task<AppointmentResponse> GetUserAppointment(Guid userId, Guid appointmentId)
-        {
-            throw new NotImplementedException();
+            var totalCount = await context.Appointments.CountAsync(a => a.StaffNurseId == staffNurseId);
+            var appointments = await context.Appointments
+                .Include(u => u.User)
+                .Include(s => s.Student)
+                .Where(a => a.StaffNurseId == staffNurseId)
+                .OrderBy(a => a.AppointmentDate)
+                .ThenBy(a => a.AppointmentStartTime)
+                .Skip((paginationRequest?.PageIndex - 1 ?? 0) * (paginationRequest?.PageSize ?? 10))
+                .Take(paginationRequest?.PageSize ?? 10)
+                .ToListAsync(); 
+            if (appointments == null) return null!;
+
+            var response = new List<AppointmentResponse>();
+            foreach (var appointment in appointments)
+            {
+                var nurseFullName = await context.Users
+                    .Where(u => u.UserId == appointment.StaffNurseId)
+                    .Select(u => u.FullName)
+                    .FirstOrDefaultAsync() ?? "";
+                response.Add(new AppointmentResponse
+                {
+                    Student = appointment.Student == null ? null : new StudentInfo
+                    {
+                        StudentId = appointment.Student.StudentId,
+                        StudentCode = appointment.Student.StudentCode,
+                        FullName = appointment.Student.FullName
+                    },
+                    User = appointment.User == null ? null : new UserInfo
+                    {
+                        UserId = appointment.User.UserId,
+                        FullName = appointment.User.FullName
+                    },
+                    StaffNurse = new StaffNurseInfo
+                    {
+                        StaffNurseId = appointment.StaffNurseId,
+                        FullName = nurseFullName
+                    },
+                    Topic = appointment.Topic,
+                    AppointmentDate = appointment.AppointmentDate,
+                    AppointmentStartTime = appointment.AppointmentStartTime,
+                    AppointmentEndTime = appointment.AppointmentEndTime,
+                    AppointmentReason = appointment.AppointmentReason,
+                    ConfirmationStatus = appointment.ConfirmationStatus,
+                    CompletionStatus = appointment.CompletionStatus
+                });
+            }
+            return new PaginationResponse<AppointmentResponse>(
+                paginationRequest?.PageIndex ?? 1,
+                paginationRequest?.PageSize ?? 10,
+                totalCount,
+                response
+            );
         }
 
-        public Task<PaginationResponse<AppointmentResponse>> GetUserAppointments(Guid userId, PaginationRequest? paginationRequest)
+
+        public async Task<AppointmentResponse> GetUserAppointment(Guid userId, Guid appointmentId)
         {
-            throw new NotImplementedException();
+            var appointment = await context.Appointments
+        .Include(u => u.User)
+        .Include(s => s.Student)
+        .FirstOrDefaultAsync(a => a.UserId == userId && a.AppointmentId == appointmentId);
+
+            if (appointment == null) return null!;
+
+            var nurseFullName = await context.Users
+                .Where(u => u.UserId == appointment.StaffNurseId)
+                .Select(u => u.FullName)
+                .FirstOrDefaultAsync() ?? "";
+
+            var response = new AppointmentResponse
+            {
+                Student = appointment.Student == null ? null : new StudentInfo
+                {
+                    StudentId = appointment.Student.StudentId,
+                    StudentCode = appointment.Student.StudentCode,
+                    FullName = appointment.Student.FullName
+                },
+                User = appointment.User == null ? null : new UserInfo
+                {
+                    UserId = appointment.User.UserId,
+                    FullName = appointment.User.FullName
+                },
+                StaffNurse = new StaffNurseInfo
+                {
+                    StaffNurseId = appointment.StaffNurseId,
+                    FullName = nurseFullName
+                },
+                Topic = appointment.Topic,
+                AppointmentDate = appointment.AppointmentDate,
+                AppointmentStartTime = appointment.AppointmentStartTime,
+                AppointmentEndTime = appointment.AppointmentEndTime,
+                AppointmentReason = appointment.AppointmentReason,
+                ConfirmationStatus = appointment.ConfirmationStatus,
+                CompletionStatus = appointment.CompletionStatus
+            };
+
+            return response;
+        }
+        
+
+        public async Task<PaginationResponse<AppointmentResponse>> GetUserAppointments(Guid userId, PaginationRequest? paginationRequest)
+        {
+            var totalCount = await context.Appointments.CountAsync(a => a.UserId == userId);
+            var appointments = await context.Appointments
+                .Include(u => u.User)
+                .Include(s => s.Student)
+                .Where(a => a.UserId == userId)
+                .OrderBy(a => a.AppointmentDate)
+                .ThenBy(a => a.AppointmentStartTime)
+                .Skip((paginationRequest?.PageIndex - 1 ?? 0) * (paginationRequest?.PageSize ?? 10))
+                .Take(paginationRequest?.PageSize ?? 10)
+                .ToListAsync(); 
+            if (appointments == null) return null!;
+            var response = new List<AppointmentResponse>();
+            foreach (var appointment in appointments)
+            {
+                var nurseFullName = await context.Users
+                    .Where(u => u.UserId == appointment.StaffNurseId)
+                    .Select(u => u.FullName)
+                    .FirstOrDefaultAsync() ?? "";
+                response.Add(new AppointmentResponse
+                {
+                    Student = appointment.Student == null ? null : new StudentInfo
+                    {
+                        StudentId = appointment.Student.StudentId,
+                        StudentCode = appointment.Student.StudentCode,
+                        FullName = appointment.Student.FullName
+                    },
+                    User = appointment.User == null ? null : new UserInfo
+                    {
+                        UserId = appointment.User.UserId,
+                        FullName = appointment.User.FullName
+                    },
+                    StaffNurse = new StaffNurseInfo
+                    {
+                        StaffNurseId = appointment.StaffNurseId,
+                        FullName = nurseFullName
+                    },
+                    Topic = appointment.Topic,
+                    AppointmentDate = appointment.AppointmentDate,
+                    AppointmentStartTime = appointment.AppointmentStartTime,
+                    AppointmentEndTime = appointment.AppointmentEndTime,
+                    AppointmentReason = appointment.AppointmentReason,
+                    ConfirmationStatus = appointment.ConfirmationStatus,
+                    CompletionStatus = appointment.CompletionStatus
+                });
+            }
+            return new PaginationResponse<AppointmentResponse>(
+                paginationRequest?.PageIndex ?? 1,
+                paginationRequest?.PageSize ?? 10,
+                totalCount,
+                response
+            );
         }
     }
 }

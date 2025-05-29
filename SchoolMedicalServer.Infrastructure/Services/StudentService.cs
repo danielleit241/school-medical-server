@@ -16,7 +16,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var response = students.Select(s => new StudentDto
             {
                 StudentId = s.StudentId,
-                StudentCode = s.StudentCode,
+                StudentCode = s.StudentCode,    
                 FullName = s.FullName,
                 DayOfBirth = s.DayOfBirth ?? default,
                 Gender = s.Gender,
