@@ -19,22 +19,17 @@ namespace SchoolMedicalServer.Api.Controllers.Account
             if (account is null)
                 return BadRequest("Registration failed");
 
+            string htmlBody = System.IO.File.ReadAllText("register_staff_email_template.html");
+
+            htmlBody = htmlBody.Replace("{PHONENUMBER}", account.PhoneNumber)
+                   .Replace("{PASSWORD}", account.Password)
+                   .Replace("{fullName}", account.FullName);
+
             var emailDesc = new EmailDto
             {
-                To = "hoalvpse181951@fpt.edu.vn",
+                To = request.Email,
                 Subject = "Batch Parent Account Creation",
-                Body = $@"
-                <html>
-                <body>
-                    <h2Xin chào!</h2>
-                    <p>{"Bạn đã nhận được email từ hệ thống quản lý y tế."}</p>
-                    <p>Thông tin tài khoản của bạn: {account.PhoneNumber}</p>
-                    <p>Mật khẩu: {account.Password}</p>
-                    <p>Vui lòng đăng nhập và thay đổi mật khẩu ngay sau khi nhận được email này.</p>
-                    <p>Chúng tôi khuyến nghị bạn sử dụng mật khẩu mạnh và không chia sẻ thông tin đăng nhập của mình với bất kỳ ai.</p>
-                    <p>Trân trọng,<br/>Đội ngũ phát triển</p>
-                </body>
-                </html>"
+                Body = htmlBody
             };
 
             await emailHelper.SendEmailAsync(emailDesc);

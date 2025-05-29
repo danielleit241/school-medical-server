@@ -7,7 +7,7 @@ namespace SchoolMedicalServer.Api.Controllers.Student
 {
     [ApiController]
     [Route("api")]
-    public class StudentController(IStudentService service) : ControllerBase
+    public class ParentStudentController(IParentStudentService service) : ControllerBase
     {
 
         [HttpGet("parents/{parentId}/students")]

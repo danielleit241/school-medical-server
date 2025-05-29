@@ -1,15 +1,15 @@
 ﻿namespace SchoolMedicalServer.Abstractions.Dtos.HealthDeclaration
 {
-    public class HealthDeclarationResponse
+    public class HealthProfileDeclarationResponse
     {
-        public HealthDeclarationDtoResponse HealthDeclaration { get; set; } = default!;
+        public HealthProfileDeclarationDtoResponse HealthDeclaration { get; set; } = default!;
 
         public List<VaccinationDeclarationDtoResponse>? Vaccinations { get; set; }
     }
 
-    public class HealthDeclarationDtoResponse
+    public class HealthProfileDeclarationDtoResponse
     {
-        public Guid HealthDeclarationId { get; set; }
+        public Guid HealthProfileId { get; set; }
 
         public Guid? StudentId { get; set; }
 

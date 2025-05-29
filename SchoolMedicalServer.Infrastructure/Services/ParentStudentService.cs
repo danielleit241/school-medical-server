@@ -4,7 +4,7 @@ using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class StudentService(SchoolMedicalManagementContext context) : IStudentService
+    public class ParentStudentService(SchoolMedicalManagementContext context) : IParentStudentService
     {
         private readonly SchoolMedicalManagementContext context = context;
 
