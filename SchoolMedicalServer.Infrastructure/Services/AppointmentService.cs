@@ -361,9 +361,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
             );
         }
 
-        public async Task<bool> ApproveAppointment(Guid appointmentId, ApproveRequest request)
+        public async Task<bool> ApproveAppointment(Guid appointmentId, AppoinmentNurseApprovedRequest request)
         {
             var appointment = await context.Appointments.FirstOrDefaultAsync(a => a.AppointmentId == appointmentId);
+            if (appointment == null || appointment.StaffNurseId != request.StaffNurseId)
+            {
+                return false;
+            }
             if (appointment == null)
             {
                 return false;
@@ -372,7 +376,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 appointment.ConfirmationStatus = request.ConfirmationStatus.Value;
             }
-            if (request.CompletionStatus.HasValue)
+            if (request.CompletionStatus.HasValue && appointment.ConfirmationStatus == true)
             {
                 appointment.CompletionStatus = request.CompletionStatus.Value;
             }

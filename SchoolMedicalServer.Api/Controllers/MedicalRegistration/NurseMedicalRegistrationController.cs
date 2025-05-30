@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
@@ -32,17 +34,17 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
             return Ok(registration);
         }
 
-        //[HttpPut("{medicalRegistrationId}/approve")]
-        //[Authorize(Roles = "nurse")]
-        //public IActionResult ApproveMedicalRegistration(Guid medicalRegistrationId)
-        //{
-        //    var isApproved = service.ApproveMedicalRegistration(medicalRegistrationId);
-        //    if (!isApproved)
-        //    {
-        //        return BadRequest("Failed to approve medical registration.");
-        //    }
-        //    return NoContent();
-        //}
+        [HttpPut("nurse/medical-registrations/{medicalRegistrationId}")]
+        [Authorize(Roles = "nurse")]
+        public async Task<IActionResult> ApproveMedicalRegistration(Guid medicalRegistrationId, MedicalRegistrationNurseApprovedRequest request)
+        {
+            var isApproved = await service.ApproveMedicalRegistration(medicalRegistrationId, request);
+            if (!isApproved)
+            {
+                return BadRequest("Failed to approve medical registration.");
+            }
+            return NoContent();
+        }
     }
 
 }
