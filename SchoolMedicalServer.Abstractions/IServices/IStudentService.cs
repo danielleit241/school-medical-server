@@ -1,4 +1,5 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.Student;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Pagination;
+using SchoolMedicalServer.Abstractions.Dtos.Student;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
 {
     public interface IStudentService
     {
-        Task<IEnumerable<StudentDto>> GetAllStudentsAsync();
-
+        Task<PaginationResponse<StudentDto>> GetAllStudentsAsync(PaginationRequest? paginationRequest);
+      
     }
 }
