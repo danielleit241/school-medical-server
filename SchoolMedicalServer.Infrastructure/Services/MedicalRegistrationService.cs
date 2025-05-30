@@ -116,39 +116,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
         public async Task<PaginationResponse<MedicalRegistrationResponse?>> GetMedicalRegistrationsAsync(PaginationRequest? paginationRequest)
         {
             var totalCount = await context.MedicalRegistrations.CountAsync();
-
-            if (paginationRequest == null)
+            if (totalCount == 0)
             {
-                paginationRequest = new PaginationRequest
-                {
-                    PageIndex = 1,
-                    PageSize = 10
-                };
-            }
-            else
-            {
-                if (paginationRequest.PageIndex <= 0)
-                {
-                    paginationRequest.PageIndex = 1;
-                }
-                if (paginationRequest.PageSize <= 0)
-                {
-                    paginationRequest.PageSize = 10;
-                }
-                if (totalCount == 0)
-                {
-                    return new PaginationResponse<MedicalRegistrationResponse?>(
-                        paginationRequest.PageIndex,
-                        paginationRequest.PageSize,
-                        totalCount,
-                        new List<MedicalRegistrationResponse?>()
-                    );
-                }
+                return null!;
             }
 
             var registrations = await context.MedicalRegistrations
                 .OrderByDescending(m => m.DateSubmitted)
-                .Skip((paginationRequest.PageIndex - 1) * paginationRequest.PageSize)
+                .Skip((paginationRequest!.PageIndex - 1) * paginationRequest.PageSize)
                 .Take(paginationRequest.PageSize)
                 .ToListAsync();
 
@@ -178,7 +153,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
                 var nurseInfo = await context.Users
                     .Where(u => u.UserId == medicalRegistration.StaffNurseId)
-                    .Select(u => u.FullName ?? string.Empty) 
+                    .Select(u => u.FullName ?? string.Empty)
                     .AsNoTracking()
                     .FirstOrDefaultAsync();
 
@@ -215,49 +190,22 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 totalCount,
                 result
             );
-            
         }
 
 
 
         public async Task<PaginationResponse<MedicalRegistrationResponse?>> GetUserMedicalRegistrationsAsync(PaginationRequest? paginationRequest, Guid userId)
         {
-          
+            var totalCount = await context.MedicalRegistrations.Where(m => m.UserId == userId).CountAsync();
 
-            var totalCount = await context.MedicalRegistrations.CountAsync();
-
-            if (paginationRequest == null)
+            if (totalCount == 0)
             {
-                paginationRequest = new PaginationRequest
-                {
-                    PageIndex = 1,
-                    PageSize = 10
-                };
-            }
-            else
-            {
-                if (paginationRequest.PageIndex <= 0)
-                {
-                    paginationRequest.PageIndex = 1;
-                }
-                if (paginationRequest.PageSize <= 0)
-                {
-                    paginationRequest.PageSize = 10;
-                }
-                if (totalCount == 0)
-                {
-                    return new PaginationResponse<MedicalRegistrationResponse?>(
-                        paginationRequest.PageIndex,
-                        paginationRequest.PageSize,
-                        totalCount,
-                        new List<MedicalRegistrationResponse?>()
-                    );
-                }
+                return null!;
             }
 
             var registrations = await context.MedicalRegistrations
                 .OrderByDescending(m => m.DateSubmitted)
-                .Skip((paginationRequest.PageIndex - 1) * paginationRequest.PageSize)
+                .Skip((paginationRequest!.PageIndex - 1) * paginationRequest.PageSize)
                 .Take(paginationRequest.PageSize)
                 .ToListAsync();
 
