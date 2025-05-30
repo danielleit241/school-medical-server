@@ -124,5 +124,52 @@ namespace SchoolMedicalServer.Infrastructure.Services
             await context.SaveChangesAsync();
             return user;
         }
+
+        public async Task<string> GetOtpAsync(SendOtpRequest request)
+        {
+            var user = await context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber && u.EmailAddress == request.EmailAddress);
+            if (user == null)
+            {
+                return null!;
+            }
+
+            var otp = GenerateOtp();
+            user.Otp = otp;
+            user.OtpExpiryTime = DateTime.UtcNow.AddMinutes(1);
+            context.Users.Update(user);
+            await context.SaveChangesAsync();
+            return user.Otp;
+        }
+
+        private string GenerateOtp()
+        {
+            var otp = new Random().Next(100000, 999999).ToString();
+            return otp;
+        }
+
+        public async Task<bool> ResetPasswordAsync(ResetPasswordRequest request)
+        {
+            var user = await context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
+            if (user == null)
+            {
+                return false;
+            }
+            user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.NewPassword);
+            user.Otp = null;
+            user.OtpExpiryTime = null;
+            context.Users.Update(user);
+            await context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> VerifyOtpAsync(string otp)
+        {
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Otp == otp && u.OtpExpiryTime > DateTime.UtcNow);
+            if (user == null)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

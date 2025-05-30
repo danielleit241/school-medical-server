@@ -388,6 +388,11 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.RefreshTokenExpiryTime).HasColumnType("datetime");
             entity.Property(e => e.RoleId).HasColumnName("RoleID");
             entity.Property(e => e.Address).HasMaxLength(255);
+            entity.Property(e => e.Otp)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+            entity.Property(e => e.OtpExpiryTime);
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)

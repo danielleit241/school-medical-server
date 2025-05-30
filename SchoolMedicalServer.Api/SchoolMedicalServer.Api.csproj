@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\Templates\register_staff_email_template.html" />
+    <None Include="wwwroot\Templates\register_email_template.html" />
   </ItemGroup>
 
 </Project>

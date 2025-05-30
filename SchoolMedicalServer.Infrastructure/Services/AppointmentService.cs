@@ -8,7 +8,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class AppointmentService(SchoolMedicalManagementContext context) : IAppointmentService
     {
-        public async Task<IEnumerable<StaffNurseDto>> GetStaffNurses()
+        public async Task<IEnumerable<StaffNurseInfo>> GetStaffNurses()
         {
             var staffNurses = await context.Users.Include(u => u.Role).Where(u => u.Role!.RoleName == "nurse").Where(u => u.Status == true).ToListAsync();
 
@@ -17,12 +17,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return [];
             }
 
-            var response = new List<StaffNurseDto>();
+            var response = new List<StaffNurseInfo>();
             foreach (var staffNurse in staffNurses)
             {
-                response.Add(new StaffNurseDto
+                response.Add(new StaffNurseInfo
                 {
-                    Id = staffNurse.UserId,
+                    StaffNurseId = staffNurse.UserId,
                     FullName = staffNurse.FullName,
                     PhoneNumber = staffNurse.PhoneNumber,
                 });

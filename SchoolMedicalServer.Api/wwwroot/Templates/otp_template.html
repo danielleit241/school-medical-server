@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Your Medicare OTP code</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body {
+            background: #0d253f;
+            color: #222;
+            font-family: Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: #3c8de3;
+            padding: 48px 36px 24px 36px;
+            color: #222;
+            box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.1), 0 1.5px 6px 0 rgba(34, 41, 47, 0.08);
+            border-radius: 16px;
+        }
+
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 28px;
+            width: 100%;
+            height: 150px;
+            border-radius: 20px;
+            overflow: hidden;
+            background-color: #3c8de3;
+        }
+
+            .logo img {
+                width: 50%;
+                height: 100%;
+                object-fit: cover;
+                object-position: right;
+            }
+
+        .otp-intro {
+            font-size: 1.3em;
+            margin-bottom: 1.2em;
+            color: #000;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .underline {
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: #2bd7f1;
+            margin-bottom: 18px;
+            border-radius: 2px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin: 0 0 16px 0;
+            line-height: 1.6;
+        }
+
+        a {
+            color: #2bd7f1;
+            text-decoration: underline;
+        }
+
+        .footer-bottom-box {
+            background: #f8fafd;
+            border-radius: 0 0 12px 12px;
+            margin-top: 32px;
+            padding: 32px 0 18px 0;
+            border-top: 1px solid #e3eaf3;
+            box-shadow: 0 2px 5px #e3eaf3;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .footer-bottom-content {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .footer-bottom-copy {
+            color: #8a99a8;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .footer-bottom-links {
+            margin-bottom: 8px;
+        }
+
+            .footer-bottom-links a {
+                color: #3b5bdb;
+                text-decoration: none;
+                font-weight: 500;
+                margin: 0 10px;
+                font-size: 15px;
+                transition: color 0.2s;
+            }
+
+                .footer-bottom-links a:hover {
+                    color: #1976d2;
+                    text-decoration: underline;
+                }
+
+        .footer-bottom-address {
+            color: #8a99a8;
+            font-size: 14px;
+        }
+
+        .securityNote {
+            margin: 20px 0;
+            padding: 14px 18px;
+            border-left: 4px solid #2bd7f1;
+            background: #ffffff;
+            color: rgb(252, 55, 21);
+            font-size: 14px;
+            line-height: 1.6;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px dashed #4e4e4e;
+            margin: 28px 0 18px 0;
+            height: 0;
+            background: none;
+        }
+        /* Account info responsive */
+        .account-info {
+            margin: 40px 60px;
+            text-align: center;
+        }
+
+        .account-box {
+            width: 100%;
+            min-height: 110px;
+            display: block;
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px 16px;
+            box-shadow: 0 0px 8px #a8a8a8;
+            box-sizing: border-box;
+        }
+
+        .account-label {
+            color: #0c273f;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .account-value {
+            color: #2bd7f1;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 20px 5vw;
+            }
+
+            .account-info {
+                margin: 18px 2vw;
+            }
+
+            .account-box {
+                padding: 10px 4vw;
+            }
+
+            .account-label {
+                font-size: 1.02rem;
+            }
+
+            .account-value {
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="https://res.cloudinary.com/darnrlpag/image/upload/v1748610185/updr4o4duytunc5a3f84.png?fbclid=IwY2xjawKmjCJleHRuA2FlbQIxMABicmlkETFBeFh0ekRON0NXWDRPY2tjAR42e8tMKZWd5EVQtvrYuSP_H_iHDRqj8oPceTh5TX6vmf3SQT4YVAZt_OmcoA_aem_zbAjMNoW8C0f8g_SzxGLGQ"
+                 alt="Medicare Logo" />
+        </div>
+        <span class="underline"></span>
+        <div class="otp-intro">
+            This is your OTP code for password reset or account verification.
+        </div>
+        <div class="account-info">
+            <div class="account-box">
+                <div style="margin-bottom: 18px">
+                    <div class="account-label">OTP Code</div>
+                    <div class="account-value">{OTP}</div>
+                </div>
+                <div>
+                    <div class="account-label" style="font-size: 1em; color: #e53935">
+                        OTP is valid for 60 seconds. Do not share this code with anyone.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="securityNote">
+            <strong>Security Note:</strong> This OTP is for password reset and
+            account verification. If you did not request this, please ignore this
+            email.
+        </div>
+        <hr style="color: #ccc" />
+        <p style="margin-top: 20px; color: #000000">
+            This is an automated email, please do not reply to this message.
+        </p>
+        <div class="footer-bottom-box">
+            <div class="footer-bottom-content">
+                <div class="footer-bottom-copy">
+                    © 2025 Medicare Health Management System. All rights reserved.
+                </div>
+                <div class="footer-bottom-links">
+                    <a href="https://www.facebook.com/gcfootball2024">Website</a> | <a href="https://www.facebook.com/gcfootball2024">Facebook</a> |
+                    <a href="https://www.facebook.com/gcfootball2024">Instagram</a> |
+                    <a href="https://www.facebook.com/gcfootball2024">LinkedIn</a>
+                </div>
+                <div class="footer-bottom-address">
+                    Address: Ho Chi Minh City, Vietnam
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -13,28 +13,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class StudentService(SchoolMedicalManagementContext context) : IStudentService
     {
-        public async Task<PaginationResponse< StudentDto>> GetAllStudentsAsync(PaginationRequest? paginationRequest)
+        public async Task<PaginationResponse<StudentDto>> GetAllStudentsAsync(PaginationRequest? paginationRequest)
         {
             var totalCount = await context.Students.CountAsync();
-            if (paginationRequest == null)
-            {
-                paginationRequest = new PaginationRequest
-                {
-                    PageIndex = 1,
-                    PageSize = 10
-                };
-            }
-            else
-            {
-                if (paginationRequest.PageIndex <= 0)
-                {
-                    paginationRequest.PageIndex = 1;
-                }
-                if (paginationRequest.PageSize <= 0)
-                {
-                    paginationRequest.PageSize = 10;
-                }
-            }
 
             var students = await context.Students
                 .Skip((paginationRequest.PageIndex - 1) * paginationRequest.PageSize)
