@@ -15,7 +15,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         public async Task<IEnumerable<StudentDto>> GetAllStudentsAsync()
         {
             var students = await context.Students
-        .Select(s => new StudentDto
+            .Select(s => new StudentDto
         {
             StudentId = s.StudentId,
             StudentCode = s.StudentCode,
@@ -27,7 +27,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             ParentPhoneNumber = s.ParentPhoneNumber,
             ParentEmailAddress = s.ParentEmailAddress
         })
-        .ToListAsync();
+            .ToListAsync();
 
             return students;
         }
