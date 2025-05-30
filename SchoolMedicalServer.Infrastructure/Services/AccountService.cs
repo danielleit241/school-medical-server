@@ -63,6 +63,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Id = user.UserId,
                     FullName = student.FullName,
+                    EmailAddress = user.EmailAddress!,
                     PhoneNumber = user.PhoneNumber,
                     Password = defaultPassword
                 });
@@ -70,7 +71,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 context.Users.Add(user);
                 context.Students.Update(student);
 
-                // Add to local dictionary to prevent duplicate users in this batch
                 existingUsers[user.PhoneNumber] = user;
             }
 
@@ -118,6 +118,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 Id = user.UserId,
                 FullName = request.FullName,
+                EmailAddress = user.EmailAddress,
                 PhoneNumber = user.PhoneNumber,
                 Password = request.Password
             };

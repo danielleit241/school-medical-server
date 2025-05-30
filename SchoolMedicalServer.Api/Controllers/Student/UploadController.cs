@@ -19,7 +19,7 @@ namespace SchoolMedicalServer.Api.Controllers.Student
                     return BadRequest("No file uploaded.");
                 }
                 await service.UploadExcelFile(file);
-                return Ok();
+                return Ok("Upload successfully!");
             }
             catch (Exception ex)
             {

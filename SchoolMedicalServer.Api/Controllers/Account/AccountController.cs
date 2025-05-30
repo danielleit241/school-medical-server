@@ -15,12 +15,30 @@ namespace SchoolMedicalServer.Api.Controllers.Account
         [Authorize(Roles = "admin")]
         public async Task<IActionResult?> RegisterStaff([FromBody] RegisterStaffRequest request)
         {
+            if (request is null)
+                return BadRequest("Invalid request data");
+            if (string.IsNullOrEmpty(request.PhoneNumber) || string.IsNullOrEmpty(request.FullName) ||
+                string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password) ||
+                string.IsNullOrEmpty(request.RoleName))
+            {
+                return BadRequest("All fields are required");
+            }
+
             var account = await accountService.RegisterStaffAsync(request);
             if (account is null)
                 return BadRequest("Registration failed");
 
             string templatePath = Path.Combine(_env.WebRootPath, "templates", "register_staff_email_template.html");
+            if (!System.IO.File.Exists(templatePath))
+                return NotFound("Email template not found");
 
+            await SendEmail(account, templatePath);
+
+            return Ok(account);
+        }
+
+        private async Task SendEmail(AccountDto account, string templatePath)
+        {
             string htmlBody = await System.IO.File.ReadAllTextAsync(templatePath);
 
             htmlBody = htmlBody.Replace("{PHONENUMBER}", account.PhoneNumber)
@@ -29,14 +47,12 @@ namespace SchoolMedicalServer.Api.Controllers.Account
 
             var emailDesc = new EmailDto
             {
-                To = request.Email,
-                Subject = "Batch Parent Account Creation",
+                To = account.EmailAddress,
+                Subject = "Account Creation",
                 Body = htmlBody
             };
 
             await emailHelper.SendEmailAsync(emailDesc);
-
-            return Ok(account);
         }
 
         [HttpPost("accounts/parents/batch-create")]
@@ -46,6 +62,14 @@ namespace SchoolMedicalServer.Api.Controllers.Account
             var accounts = await accountService.BatchCreateParentsAsync();
             if (accounts is null)
                 return BadRequest("No accounts created");
+
+            string templatePath = Path.Combine(_env.WebRootPath, "templates", "register_staff_email_template.html");
+            if (!System.IO.File.Exists(templatePath))
+                return NotFound("Email template not found");
+            foreach (var account in accounts)
+            {
+                await SendEmail(account, templatePath);
+            }
 
             return Ok(accounts);
         }

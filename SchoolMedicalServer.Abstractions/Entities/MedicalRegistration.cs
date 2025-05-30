@@ -11,6 +11,12 @@ public partial class MedicalRegistration
 
     public Guid? UserId { get; set; }
 
+    public Guid? StaffNurseId { get; set; }
+
+    public string? StaffNurseNotes { get; set; }
+
+    public DateOnly? DateApproved { get; set; }
+
     public DateOnly? DateSubmitted { get; set; }
 
     public string? MedicationName { get; set; }

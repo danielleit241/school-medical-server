@@ -32,6 +32,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             user.EmailAddress = dto.EmailAddress;
             user.DayOfBirth = dto.DateOfBirth;
             user.AvatarUrl = dto.AvatarUrl;
+            user.Address = dto.Address;
 
             context.Users.Update(user);
             await context.SaveChangesAsync();

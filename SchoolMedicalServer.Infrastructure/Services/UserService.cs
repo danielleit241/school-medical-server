@@ -31,7 +31,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 .OrderBy(u => u.FullName)
                 .Skip((paginationRequest.PageIndex - 1) * paginationRequest.PageSize)
                 .Take(paginationRequest.PageSize)
-                .ToListAsync();     
+                .ToListAsync();
             if (users == null) return null!;
 
             var userDtos = new List<UserDto>();
@@ -42,11 +42,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     UserId = user.UserId,
                     FullName = user.FullName,
+                    PhoneNumber = user.PhoneNumber,
                     EmailAddress = user.EmailAddress,
                     AvatarUrl = user.AvatarUrl ?? "",
                     DayOfBirth = user.DayOfBirth,
                     RoleName = user.Role?.RoleName ?? "",
-                    Status = user.Status ?? false
+                    Status = user.Status ?? false,
+                    Address = user.Address ?? ""
                 });
             }
             return new PaginationResponse<UserDto>(
@@ -65,11 +67,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 UserId = user.UserId,
                 FullName = user.FullName,
+                PhoneNumber = user.PhoneNumber,
                 EmailAddress = user.EmailAddress,
                 AvatarUrl = user.AvatarUrl ?? "",
                 DayOfBirth = user.DayOfBirth,
                 RoleName = user.Role?.RoleName ?? "",
-                Status = user.Status ?? false
+                Status = user.Status ?? false,
+                Address = user.Address ?? ""
             };
             return response;
         }
@@ -114,10 +118,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
 
             user.FullName = request.FullName;
+            user.PhoneNumber = request.PhoneNumber!;
             user.EmailAddress = request.EmailAddress;
             user.DayOfBirth = request.DayOfBirth;
             user.AvatarUrl = request.AvatarUrl;
             user.RoleId = newRole.RoleId;
+            user.Address = request.Address;
 
             context.Users.Update(user);
             try
