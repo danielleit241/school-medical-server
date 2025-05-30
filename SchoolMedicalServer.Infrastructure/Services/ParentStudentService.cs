@@ -8,15 +8,17 @@ namespace SchoolMedicalServer.Infrastructure.Services
     {
         private readonly SchoolMedicalManagementContext context = context;
 
-        public async Task<IEnumerable<StudentDto>?> GetParentStudentsAsync(Guid parentId)
+        public async Task<IEnumerable<StudentDto>> GetParentStudentsAsync(Guid parentId)
         {
-            var students = await context.Students.Include(s => s.User).Where(s => s.UserId == parentId).ToListAsync();
-            if (students == null) return null;
+            var students = await context.Students
+                .Include(s => s.User)
+                .Where(s => s.UserId == parentId)
+                .ToListAsync();
 
             var response = students.Select(s => new StudentDto
             {
                 StudentId = s.StudentId,
-                StudentCode = s.StudentCode,    
+                StudentCode = s.StudentCode,
                 FullName = s.FullName,
                 DayOfBirth = s.DayOfBirth ?? default,
                 Gender = s.Gender,

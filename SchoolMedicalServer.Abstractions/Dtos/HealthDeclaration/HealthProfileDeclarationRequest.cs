@@ -9,6 +9,8 @@
 
     public class HealthProfileDeclarationDtoRequest
     {
+        public Guid StudentId { get; set; }
+
         public DateOnly? DeclarationDate { get; set; }
 
         public string? ChronicDiseases { get; set; }

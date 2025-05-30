@@ -247,7 +247,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             );
         }
 
-
         public async Task<AppointmentResponse> GetUserAppointment(Guid userId, Guid appointmentId)
         {
             var appointment = await context.Appointments
@@ -292,7 +291,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             return response;
         }
-
 
         public async Task<PaginationResponse<AppointmentResponse>> GetUserAppointments(Guid userId, PaginationRequest? paginationRequest)
         {
@@ -361,6 +359,33 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 totalCount,
                 response
             );
+        }
+
+        public async Task<bool> ApproveAppointment(Guid appointmentId, ApproveRequest request)
+        {
+            var appointment = await context.Appointments.FirstOrDefaultAsync(a => a.AppointmentId == appointmentId);
+            if (appointment == null)
+            {
+                return false;
+            }
+            if (request.ConfirmationStatus.HasValue)
+            {
+                appointment.ConfirmationStatus = request.ConfirmationStatus.Value;
+            }
+            if (request.CompletionStatus.HasValue)
+            {
+                appointment.CompletionStatus = request.CompletionStatus.Value;
+            }
+            try
+            {
+                context.Appointments.Update(appointment);
+                await context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

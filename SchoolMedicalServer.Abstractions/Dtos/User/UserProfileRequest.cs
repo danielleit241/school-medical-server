@@ -10,5 +10,7 @@
 
         public string EmailAddress { get; set; } = default!;
 
+        public string Address { get; set; } = string.Empty;
+
     }
 }

@@ -9,13 +9,12 @@ namespace SchoolMedicalServer.Api.Controllers.Student
     [Route("api")]
     public class ParentStudentController(IParentStudentService service) : ControllerBase
     {
-
         [HttpGet("parents/{parentId}/students")]
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> GetParentStudents(Guid parentId)
         {
             var students = await service.GetParentStudentsAsync(parentId);
-            if (students == null || !students.Any())    
+            if (students == null || !students.Any())
             {
                 return NotFound("No students found for this parent.");
             }

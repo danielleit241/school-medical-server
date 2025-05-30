@@ -5,21 +5,12 @@ using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class HealthDeclarationService(SchoolMedicalManagementContext context) : IHealthDeclarationService
+    public class HealthProfileDeclarationService(SchoolMedicalManagementContext context) : IHealthProfileDeclarationService
     {
-        public async Task<bool> CreateHealthDeclarationAsync(Guid studentId, HealthProfileDeclarationRequest request)
+        public async Task<bool> CreateHealthDeclarationAsync(HealthProfileDeclarationRequest request)
         {
-            if (studentId == Guid.Empty)
-            {
-                return false;
-            }
 
-            if (request == null)
-            {
-                return false;
-            }
-
-            var healthProfile = await context.HealthProfiles.FirstOrDefaultAsync(f => f.StudentId == studentId);
+            var healthProfile = await context.HealthProfiles.FirstOrDefaultAsync(f => f.StudentId == request.HealthDeclaration.StudentId);
             if (healthProfile == null)
             {
                 return false;

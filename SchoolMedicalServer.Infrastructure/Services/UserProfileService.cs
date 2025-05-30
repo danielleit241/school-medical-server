@@ -16,7 +16,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 EmailAddress = user.EmailAddress!,
                 PhoneNumber = user.PhoneNumber,
                 DateOfBirth = user.DayOfBirth,
-                AvatarUrl = user.AvatarUrl
+                AvatarUrl = user.AvatarUrl,
+                Address = user.Address ?? string.Empty
             };
 
             return response;
@@ -41,7 +42,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 EmailAddress = user.EmailAddress,
                 PhoneNumber = user.PhoneNumber,
                 DateOfBirth = user.DayOfBirth,
-                AvatarUrl = user.AvatarUrl
+                AvatarUrl = user.AvatarUrl,
+                Address = user.Address ?? string.Empty
             };
 
             return response;

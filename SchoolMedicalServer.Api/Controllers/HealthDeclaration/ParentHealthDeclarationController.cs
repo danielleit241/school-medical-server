@@ -7,14 +7,13 @@ namespace SchoolMedicalServer.Api.Controllers.HealthDeclaration
 {
     [Route("api")]
     [ApiController]
-    public class HealthDeclarationController(IHealthDeclarationService service) : ControllerBase
+    public class ParentHealthDeclarationController(IHealthProfileDeclarationService service) : ControllerBase
     {
 
         [HttpGet("students/{studentId}/health-declarations")]
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> GetHealthProfileDeclaration(Guid studentId)
         {
-
             var response = await service.GetHealthDeclarationAsync(studentId);
             if (response == null)
             {
@@ -23,11 +22,11 @@ namespace SchoolMedicalServer.Api.Controllers.HealthDeclaration
             return Ok(response);
         }
 
-        [HttpPost("students/{studentId}/health-declarations")]
+        [HttpPost("students/health-declarations")]
         [Authorize(Roles = "parent")]
-        public async Task<IActionResult> RegisterHealthProfileDeclaration(Guid studentId, HealthProfileDeclarationRequest request)
+        public async Task<IActionResult> RegisterHealthProfileDeclaration(HealthProfileDeclarationRequest request)
         {
-            var isCreated = await service.CreateHealthDeclarationAsync(studentId, request);
+            var isCreated = await service.CreateHealthDeclarationAsync(request);
             if (!isCreated)
             {
                 return BadRequest();
