@@ -19,7 +19,7 @@ namespace SchoolMedicalServer.Api.Controllers.Appointment
             {
                 return BadRequest("Failed to register appointment. Please check the request data.");
             }
-            return Created();
+            return StatusCode(201, "Create successfully!");
         }
 
         [HttpGet("parents/{userId}/appointments")]

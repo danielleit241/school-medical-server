@@ -28,7 +28,7 @@ namespace SchoolMedicalServer.Api.Controllers.Account
             if (account is null)
                 return BadRequest("Registration failed");
 
-            string templatePath = Path.Combine(_env.WebRootPath, "templates", "register_staff_email_template.html");
+            string templatePath = Path.Combine(_env.WebRootPath, "templates", "register_email_template.html");
             if (!System.IO.File.Exists(templatePath))
                 return NotFound("Email template not found");
 
@@ -63,7 +63,7 @@ namespace SchoolMedicalServer.Api.Controllers.Account
             if (accounts is null)
                 return BadRequest("No accounts created");
 
-            string templatePath = Path.Combine(_env.WebRootPath, "templates", "register_staff_email_template.html");
+            string templatePath = Path.Combine(_env.WebRootPath, "templates", "register_email_template.html");
             if (!System.IO.File.Exists(templatePath))
                 return NotFound("Email template not found");
             foreach (var account in accounts)
