@@ -135,6 +135,15 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     paginationRequest.PageSize = 10;
                 }
+                if (totalCount == 0)
+                {
+                    return new PaginationResponse<MedicalRegistrationResponse?>(
+                        paginationRequest.PageIndex,
+                        paginationRequest.PageSize,
+                        totalCount,
+                        new List<MedicalRegistrationResponse?>()
+                    );
+                }
             }
 
             var registrations = await context.MedicalRegistrations
@@ -213,11 +222,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<PaginationResponse<MedicalRegistrationResponse?>> GetUserMedicalRegistrationsAsync(PaginationRequest? paginationRequest, Guid userId)
         {
-            var query = context.MedicalRegistrations
-                .AsNoTracking()
-                .Where(m => m.UserId == userId);
+          
 
-            var totalCount = await query.CountAsync();
+            var totalCount = await context.MedicalRegistrations.CountAsync();
 
             if (paginationRequest == null)
             {
@@ -237,9 +244,18 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     paginationRequest.PageSize = 10;
                 }
+                if (totalCount == 0)
+                {
+                    return new PaginationResponse<MedicalRegistrationResponse?>(
+                        paginationRequest.PageIndex,
+                        paginationRequest.PageSize,
+                        totalCount,
+                        new List<MedicalRegistrationResponse?>()
+                    );
+                }
             }
 
-            var registrations = await query
+            var registrations = await context.MedicalRegistrations
                 .OrderByDescending(m => m.DateSubmitted)
                 .Skip((paginationRequest.PageIndex - 1) * paginationRequest.PageSize)
                 .Take(paginationRequest.PageSize)
