@@ -3,30 +3,43 @@
 <head>
     <meta charset="UTF-8" />
     <title>Welcome to Medicare!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         body {
-            background: #102436;
-            color: #e7eff7;
-            font-family: "Segoe UI", Arial, sans-serif;
+            background: #0d253f;
+            color: #222;
+            font-family: Helvetica, sans-serif;
             margin: 0;
             padding: 0;
         }
 
         .container {
-            max-width: 650px;
+            max-width: 850px;
             margin: 0 auto;
-            background: #102436;
+            background: #3c8de3;
             padding: 48px 36px 24px 36px;
+            color: #222;
+            box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.1), 0 1.5px 6px 0 rgba(34, 41, 47, 0.08);
+            border-radius: 16px;
         }
 
         .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin-bottom: 28px;
+            width: 100%;
+            height: 150px;
+            border-radius: 20px;
+            overflow: hidden;
+            background-color: #3c8de3;
         }
 
             .logo img {
-                width: 180px;
-                height: auto;
-                display: block;
+                width: 50%;
+                height: 100%;
+                object-fit: cover;
+                object-position: right;
             }
 
         h1,
@@ -38,14 +51,14 @@
         }
 
         .welcome {
-            font-size: 1.5em;
+            font-size: 1.75em;
             margin-bottom: 0.3em;
-            color: #fff;
+            color: #000000;
         }
 
         .underline {
             display: block;
-            width: 38px;
+            width: 100px;
             height: 4px;
             background: #2bd7f1;
             margin-bottom: 18px;
@@ -53,8 +66,7 @@
         }
 
         p {
-            color: #e7eff7;
-            font-size: 1.06em;
+            font-size: 1.1rem;
             margin: 0 0 16px 0;
             line-height: 1.6;
         }
@@ -64,86 +76,125 @@
             text-decoration: underline;
         }
 
+        .footer-bottom-box {
+            background: #f8fafd;
+            border-radius: 0 0 12px 12px;
+            margin-top: 32px;
+            padding: 32px 0 18px 0;
+            border-top: 1px solid #e3eaf3;
+            box-shadow: 0 2px 5px #e3eaf3;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .footer-bottom-content {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .footer-bottom-copy {
+            color: #8a99a8;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .footer-bottom-links {
+            margin-bottom: 8px;
+        }
+
+            .footer-bottom-links a {
+                color: #3b5bdb;
+                text-decoration: none;
+                font-weight: 500;
+                margin: 0 10px;
+                font-size: 15px;
+                transition: color 0.2s;
+            }
+
+                .footer-bottom-links a:hover {
+                    color: #1976d2;
+                    text-decoration: underline;
+                }
+
+        .footer-bottom-address {
+            color: #8a99a8;
+            font-size: 14px;
+        }
+
+        .securityNote {
+            margin: 20px 0;
+            padding: 14px 18px;
+            border-left: 4px solid #2bd7f1;
+            background: #ffffff;
+            color: rgb(252, 55, 21);
+            font-size: 14px;
+            line-height: 1.6;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px dashed #4e4e4e;
+            margin: 28px 0 18px 0;
+            height: 0;
+            background: none;
+        }
+
+        /* Account info responsive */
         .account-info {
-            margin: 32px auto 32px auto;
+            margin: 40px 60px;
             text-align: center;
         }
 
         .account-box {
-            display: inline-block;
-            background: #193656;
+            width: 100%;
+            min-height: 110px;
+            display: block;
+            background: #fff;
             border-radius: 12px;
-            padding: 28px 40px;
-            min-width: 320px;
-            box-shadow: 0 2px 8px #1a2533;
-            margin-bottom: 6px;
+            padding: 20px 16px;
+            box-shadow: 0 0px 8px #a8a8a8;
+            box-sizing: border-box;
         }
 
         .account-label {
-            color: #b4c9dd;
-            font-size: 1.07em;
+            color: #0c273f;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 2px;
         }
 
         .account-value {
             color: #2bd7f1;
-            font-size: 1.17em;
-            font-weight: 700;
-            margin-bottom: 12px;
-            display: block;
-            letter-spacing: 1px;
-        }
-
-        .btn {
-            display: inline-block;
-            background: #16c3ef;
-            color: #fff !important;
-            padding: 14px 36px;
-            border-radius: 28px;
-            font-weight: 600;
-            font-size: 1.08em;
-            letter-spacing: 1px;
-            margin: 20px 0 32px 0;
-            text-decoration: none;
-            transition: background 0.2s;
-        }
-
-            .btn:hover {
-                background: #23a7d9;
-            }
-
-        .footer {
-            border-top: 1px solid #395573;
-            margin-top: 40px;
-            padding-top: 22px;
-            font-size: 1em;
-            color: #b4c9dd;
-        }
-
-            .footer a {
-                color: #b4c9dd;
-                text-decoration: underline;
-            }
-
-        .social {
-            margin-top: 14px;
-        }
-
-        .twitter {
-            display: inline-block;
-            width: 38px;
-            height: 38px;
-            background: #22394e;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 38px;
-            margin-top: 10px;
-            color: #fff;
-            font-size: 1.3em;
+            font-size: 1.25rem;
+            font-weight: bold;
         }
 
         @media (max-width: 700px) {
             .container {
                 padding: 20px 5vw;
+            }
+
+            .account-info {
+                margin: 18px 2vw;
+            }
+
+            .account-box {
+                padding: 10px 4vw;
+            }
+
+            .account-label {
+                font-size: 1.02rem;
+            }
+
+            .account-value {
+                font-size: 1.07rem;
+            }
+
+            .welcome {
+                font-size: 1.08em;
             }
         }
     </style>
@@ -151,26 +202,64 @@
 <body>
     <div class="container">
         <div class="logo">
-            <img src=""
+            <img src="https://res.cloudinary.com/darnrlpag/image/upload/v1748610185/updr4o4duytunc5a3f84.png?fbclid=IwY2xjawKmjCJleHRuA2FlbQIxMABicmlkETFBeFh0ekRON0NXWDRPY2tjAR42e8tMKZWd5EVQtvrYuSP_H_iHDRqj8oPceTh5TX6vmf3SQT4YVAZt_OmcoA_aem_zbAjMNoW8C0f8g_SzxGLGQ"
                  alt="Medicare Logo" />
         </div>
         <div class="welcome"><b>{FULLNAME}, welcome to Medicare!</b></div>
         <span class="underline"></span>
         <p>
-            The school has provided an account to access the Medicare Health Management System. This account allows staff to utilize support functions such as recording and receiving information from parents, monitoring students' health statuses during vaccination programs, and conducting periodic health check-ups. These functionalities enhance personal efficiency and bring added convenience.
+            To enhance student health care and streamline school medical operations,
+            the school has officially launched the
+            <strong>Medicare Health Management System</strong> — a modern platform
+            designed to support school staff and healthcare personnel with:
+            Receiving and responding to health-related information from parents,
+            Monitoring students' health during vaccination programs
         </p>
+
         <div class="account-info">
             <div class="account-box">
-                <div class="account-label">Phone number</div>
-                <span class="account-value">{PHONENUMBER}</span>
-                <div class="account-label">Password</div>
-                <span class="account-value">{PASSWORD}</span>
+                <div style="margin-bottom: 18px">
+                    <div class="account-label">
+                        Phone number
+                    </div>
+                    <div class="account-value">
+                        {PHONENUMBER}
+                    </div>
+                </div>
+                <div>
+                    <div class="account-label">
+                        Password
+                    </div>
+                    <div class="account-value">
+                        {PASSWORD}
+                    </div>
+                </div>
             </div>
         </div>
-        <p>
-            This account empowers the Health Department to take a more proactive and efficient approach in managing students' health, ensuring accuracy and improving convenience during vaccination programs and periodic health check-ups.
+
+        <div class="securityNote">
+            <strong>Security Note:</strong> Please change your password after your
+            first login to keep your account secure.
+        </div>
+        <hr style="color: #ccc" />
+        <p style="margin-top: 20px; color: #000000">
+            This is an automated email, please do not reply to this message.
         </p>
-        <a href="#" class="btn">LOGIN NOW!</a>
+        <div class="footer-bottom-box">
+            <div class="footer-bottom-content">
+                <div class="footer-bottom-copy">
+                    © 2025 Medicare Health Management System. All rights reserved.
+                </div>
+                <div class="footer-bottom-links">
+                    <a href="#">Website</a> | <a href="#">Facebook</a> |
+                    <a href="#">Instagram</a> |
+                    <a href="#">LinkedIn</a>
+                </div>
+                <div class="footer-bottom-address">
+                    Address: Ho Chi Minh City, Vietnam
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

@@ -2,7 +2,6 @@
 {
     public class MedicalRegistrationNurseApprovedRequest
     {
-        public Guid RegistrationId { get; set; }
         public Guid? StaffNurseId { get; set; }
         public string? StaffNurseNotes { get; set; }
         public DateOnly? DateApproved { get; set; }

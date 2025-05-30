@@ -62,7 +62,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 accounts.Add(new AccountDto
                 {
                     Id = user.UserId,
-                    FullName = student.FullName,
+                    FullName = "Parent of " + student.FullName,
                     EmailAddress = user.EmailAddress!,
                     PhoneNumber = user.PhoneNumber,
                     Password = defaultPassword

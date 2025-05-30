@@ -101,7 +101,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 issuer: configuration["Jwt:Issuer"],
                 audience: configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(30),
+                expires: DateTime.UtcNow.AddDays(30),
                 signingCredentials: credentials
             );
 

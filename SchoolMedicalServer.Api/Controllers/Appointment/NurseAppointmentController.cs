@@ -56,7 +56,7 @@ namespace SchoolMedicalServer.Api.Controllers.Appointment
 
         [HttpPut("nurses/appointments/{appointmentId}")]
         [Authorize(Roles = "nurse")]
-        public async Task<IActionResult> UpdateAppointment(Guid appointmentId, [FromBody] ApproveRequest request)
+        public async Task<IActionResult> UpdateAppointment(Guid appointmentId, [FromBody] AppoinmentNurseApprovedRequest request)
         {
             var isUpdated = await service.ApproveAppointment(appointmentId, request);
             if (!isUpdated)
