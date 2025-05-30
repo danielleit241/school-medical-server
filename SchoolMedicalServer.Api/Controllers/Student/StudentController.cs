@@ -19,7 +19,7 @@ namespace SchoolMedicalServer.Api.Controllers.Student
             {
                 return NotFound("No students found.");
             }
-            return Ok(students.Items);
+            return Ok(students);
         }
     }
 }
