@@ -4,7 +4,7 @@ using SchoolMedicalServer.Abstractions.Dtos.User;
 using SchoolMedicalServer.Abstractions.IServices;
 using SchoolMedicalServer.Infrastructure.Services;
 
-namespace SchoolMedicalServer.Api.Controllers.UserProfile
+namespace SchoolMedicalServer.Api.Controllers.User
 {
     [Route("api/user-profile")]
     [ApiController]

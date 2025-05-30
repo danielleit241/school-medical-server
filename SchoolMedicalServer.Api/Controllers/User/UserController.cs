@@ -11,7 +11,7 @@ namespace SchoolMedicalServer.Api.Controllers.User
     public class UserController(IUserService userService) : ControllerBase
     {
 
-        [HttpGet("/roles/{roleName}")]
+        [HttpGet("roles/{roleName}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetUsersByRoleName([FromQuery] PaginationRequest? paginationRequest, string roleName)
         {

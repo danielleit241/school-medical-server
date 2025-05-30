@@ -7,11 +7,11 @@ using SchoolMedicalServer.Api.Helpers.EmailHelper;
 
 namespace SchoolMedicalServer.Api.Controllers.Account
 {
-    [Route("api/accounts")]
+    [Route("api")]
     [ApiController]
-    public class AccountController(IAccountService accountService, IEmailHelper emailHelper) : ControllerBase
+    public class AccountController(IAccountService accountService, IEmailHelper emailHelper, IWebHostEnvironment _env) : ControllerBase
     {
-        [HttpPost("register-staff")]
+        [HttpPost("accounts/register-staff")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult?> RegisterStaff([FromBody] RegisterStaffRequest request)
         {
@@ -19,11 +19,13 @@ namespace SchoolMedicalServer.Api.Controllers.Account
             if (account is null)
                 return BadRequest("Registration failed");
 
-            string htmlBody = System.IO.File.ReadAllText("register_staff_email_template.html");
+            string templatePath = Path.Combine(_env.WebRootPath, "templates", "register_staff_email_template.html");
+
+            string htmlBody = await System.IO.File.ReadAllTextAsync(templatePath);
 
             htmlBody = htmlBody.Replace("{PHONENUMBER}", account.PhoneNumber)
                    .Replace("{PASSWORD}", account.Password)
-                   .Replace("{fullName}", account.FullName);
+                   .Replace("{FULLNAME}", account.FullName);
 
             var emailDesc = new EmailDto
             {
@@ -37,7 +39,7 @@ namespace SchoolMedicalServer.Api.Controllers.Account
             return Ok(account);
         }
 
-        [HttpPost("parents/batch-create")]
+        [HttpPost("accounts/parents/batch-create")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> BatchCreateParents()
         {
