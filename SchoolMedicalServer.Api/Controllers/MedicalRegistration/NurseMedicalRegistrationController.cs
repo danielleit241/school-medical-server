@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration;
+using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
@@ -11,9 +12,9 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
     {
         [HttpGet("nurse/medical-registrations")]
         [Authorize(Roles = "nurse")]
-        public async Task<IActionResult> GetMedicalRegistrations()
+        public async Task<IActionResult> GetMedicalRegistrations([FromQuery] PaginationRequest? paginationRequest)
         {
-            var registrations = await service.GetMedicalRegistrationsAsync();
+            var registrations = await service.GetMedicalRegistrationsAsync(paginationRequest);
             if (registrations == null)
             {
                 return NotFound("No medical registrations found.");

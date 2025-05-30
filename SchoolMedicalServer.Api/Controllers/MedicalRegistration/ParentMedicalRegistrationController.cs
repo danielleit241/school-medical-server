@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration;
+using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
@@ -54,13 +55,13 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
 
         [HttpGet("parents/{userId}/medical-registrations")]
         [Authorize(Roles = "parent")]
-        public async Task<IActionResult> GetUserMedicalRegistrations(Guid userId)
+        public async Task<IActionResult> GetUserMedicalRegistrations([FromQuery] PaginationRequest? paginationRequest, Guid userId)
         {
             if (userId == Guid.Empty)
             {
                 return BadRequest("Invalid user ID.");
             }
-            var registrations = await service.GetUserMedicalRegistrationsAsync(userId);
+            var registrations = await service.GetUserMedicalRegistrationsAsync(paginationRequest, userId);
             if (registrations == null)
             {
                 return NotFound("No medical registrations found for the specified user.");
