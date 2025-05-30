@@ -113,14 +113,201 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return response;
         }
 
-        public Task<PaginationResponse<MedicalRegistrationResponse?>> GetMedicalRegistrationsAsync()
+        public async Task<PaginationResponse<MedicalRegistrationResponse?>> GetMedicalRegistrationsAsync(PaginationRequest? paginationRequest)
         {
-            throw new NotImplementedException();
+            var totalCount = await context.MedicalRegistrations.CountAsync();
+
+            if (paginationRequest == null)
+            {
+                paginationRequest = new PaginationRequest
+                {
+                    PageIndex = 1,
+                    PageSize = 10
+                };
+            }
+            else
+            {
+                if (paginationRequest.PageIndex <= 0)
+                {
+                    paginationRequest.PageIndex = 1;
+                }
+                if (paginationRequest.PageSize <= 0)
+                {
+                    paginationRequest.PageSize = 10;
+                }
+            }
+
+            var registrations = await context.MedicalRegistrations
+                .OrderByDescending(m => m.DateSubmitted)
+                .Skip((paginationRequest.PageIndex - 1) * paginationRequest.PageSize)
+                .Take(paginationRequest.PageSize)
+                .ToListAsync();
+
+            var result = new List<MedicalRegistrationResponse?>();
+
+            foreach (var medicalRegistration in registrations)
+            {
+                var studentInfo = await context.Students
+                    .Where(s => s.StudentId == medicalRegistration.StudentId)
+                    .Select(s => new MedicalRegistrationStudentResponse
+                    {
+                        StudentId = s.StudentId,
+                        StudentFullName = s.FullName
+                    })
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
+
+                var parentInfo = await context.Users
+                    .Where(u => u.UserId == medicalRegistration.UserId)
+                    .Select(u => new MedicalRegistrationParentResponse
+                    {
+                        UserId = u.UserId,
+                        UserFullName = u.FullName
+                    })
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
+
+                var nurseInfo = await context.Users
+                    .Where(u => u.UserId == medicalRegistration.StaffNurseId)
+                    .Select(u => u.FullName ?? string.Empty) 
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
+
+                var nurseApprovedResponse = new MedicalRegistrationNurseApprovedResponse
+                {
+                    StaffNurseId = medicalRegistration.StaffNurseId,
+                    StaffNurseFullName = nurseInfo,
+                    StaffNurseNotes = medicalRegistration.StaffNurseNotes,
+                    DateApproved = medicalRegistration.DateApproved
+                };
+
+                var response = new MedicalRegistrationResponse
+                {
+                    MedicalRegistration = new MedicalRegistrationDto
+                    {
+                        RegistrationId = medicalRegistration.RegistrationId,
+                        MedicationName = medicalRegistration.MedicationName,
+                        Dosage = medicalRegistration.Dosage,
+                        Notes = medicalRegistration.Notes,
+                        ParentConsent = medicalRegistration.ParentalConsent ?? false,
+                        DateSubmitted = medicalRegistration.DateSubmitted
+                    },
+                    NurseApproved = nurseApprovedResponse,
+                    Student = studentInfo,
+                    Parent = parentInfo
+                };
+
+                result.Add(response);
+            }
+
+            return new PaginationResponse<MedicalRegistrationResponse?>(
+                paginationRequest.PageIndex,
+                paginationRequest.PageSize,
+                totalCount,
+                result
+            );
+            
         }
 
-        public Task<PaginationResponse<MedicalRegistrationResponse?>> GetUserMedicalRegistrationsAsync(Guid userId)
+
+
+        public async Task<PaginationResponse<MedicalRegistrationResponse?>> GetUserMedicalRegistrationsAsync(PaginationRequest? paginationRequest, Guid userId)
         {
-            throw new NotImplementedException();
+            var query = context.MedicalRegistrations
+                .AsNoTracking()
+                .Where(m => m.UserId == userId);
+
+            var totalCount = await query.CountAsync();
+
+            if (paginationRequest == null)
+            {
+                paginationRequest = new PaginationRequest
+                {
+                    PageIndex = 1,
+                    PageSize = 10
+                };
+            }
+            else
+            {
+                if (paginationRequest.PageIndex <= 0)
+                {
+                    paginationRequest.PageIndex = 1;
+                }
+                if (paginationRequest.PageSize <= 0)
+                {
+                    paginationRequest.PageSize = 10;
+                }
+            }
+
+            var registrations = await query
+                .OrderByDescending(m => m.DateSubmitted)
+                .Skip((paginationRequest.PageIndex - 1) * paginationRequest.PageSize)
+                .Take(paginationRequest.PageSize)
+                .ToListAsync();
+
+            var result = new List<MedicalRegistrationResponse?>();
+
+            foreach (var medicalRegistration in registrations)
+            {
+                var studentInfo = await context.Students
+                    .Where(s => s.StudentId == medicalRegistration.StudentId)
+                    .Select(s => new MedicalRegistrationStudentResponse
+                    {
+                        StudentId = s.StudentId,
+                        StudentFullName = s.FullName
+                    })
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
+
+                var parentInfo = await context.Users
+                    .Where(u => u.UserId == medicalRegistration.UserId)
+                    .Select(u => new MedicalRegistrationParentResponse
+                    {
+                        UserId = u.UserId,
+                        UserFullName = u.FullName
+                    })
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
+
+                var nurseInfo = await context.Users
+                   .Where(u => u.UserId == medicalRegistration.StaffNurseId)
+                   .Select(u => u.FullName ?? string.Empty)
+                   .AsNoTracking()
+                   .FirstOrDefaultAsync();
+
+                var nurseApprovedResponse = new MedicalRegistrationNurseApprovedResponse
+                {
+                    StaffNurseId = medicalRegistration.StaffNurseId,
+                    StaffNurseFullName = nurseInfo,
+                    StaffNurseNotes = medicalRegistration.StaffNurseNotes,
+                    DateApproved = medicalRegistration.DateApproved
+                };
+
+                var response = new MedicalRegistrationResponse
+                {
+                    MedicalRegistration = new MedicalRegistrationDto
+                    {
+                        RegistrationId = medicalRegistration.RegistrationId,
+                        MedicationName = medicalRegistration.MedicationName,
+                        Dosage = medicalRegistration.Dosage,
+                        Notes = medicalRegistration.Notes,
+                        ParentConsent = medicalRegistration.ParentalConsent ?? false,
+                        DateSubmitted = medicalRegistration.DateSubmitted
+                    },
+                    NurseApproved = nurseApprovedResponse,
+                    Student = studentInfo,
+                    Parent = parentInfo
+                };
+
+                result.Add(response);
+            }
+
+            return new PaginationResponse<MedicalRegistrationResponse?>(
+                paginationRequest.PageIndex,
+                paginationRequest.PageSize,
+                totalCount,
+                result
+            );
         }
     }
 }

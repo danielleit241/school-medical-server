@@ -8,7 +8,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task<bool> ApproveMedicalRegistration(Guid medicalRegistrationId, MedicalRegistrationNurseApprovedRequest request);
         Task<bool> CreateMedicalRegistrationAsync(MedicalRegistrationRequest request);
         Task<MedicalRegistrationResponse?> GetMedicalRegistrationAsync(Guid medicalRegistrationId);
-        Task<PaginationResponse<MedicalRegistrationResponse?>> GetMedicalRegistrationsAsync(); //paginantion
-        Task<PaginationResponse<MedicalRegistrationResponse?>> GetUserMedicalRegistrationsAsync(Guid userId); //paginantion
+        Task<PaginationResponse<MedicalRegistrationResponse?>> GetMedicalRegistrationsAsync(PaginationRequest? paginationRequest); //paginantion
+        Task<PaginationResponse<MedicalRegistrationResponse?>> GetUserMedicalRegistrationsAsync(PaginationRequest? paginationRequest, Guid userId); //paginantion
     }
 }
