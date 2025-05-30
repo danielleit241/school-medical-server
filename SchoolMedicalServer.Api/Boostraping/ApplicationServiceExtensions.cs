@@ -83,6 +83,7 @@ namespace SchoolMedicalServer.Api.Boostraping
 
             services.AddScoped<IParentStudentService, ParentStudentService>();
             services.AddTransient<IUploadService, UploadService>();
+            services.AddScoped<IStudentService, StudentService>();
 
             services.AddTransient<IMedicalRegistrationService, MedicalRegistrationService>();
 
