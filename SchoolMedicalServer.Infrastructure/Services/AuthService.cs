@@ -15,11 +15,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
     {
         public async Task<TokensResponse?> LoginAsync(LoginRequest request)
         {
-            //var user = await context.Users.Include(u => u.Role)
-            //    .FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
             var user = await context.Users.Include("Role").Where(u => u.Status == true)
-
-                .FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
+                                        .FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
             if (user == null)
             {
                 return null;
@@ -119,10 +116,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return null!;
             }
             if (new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.OldPassword) == PasswordVerificationResult.Failed)
-            {
-                return null;
-            }
-            if (request.NewPassword != request.ConfirmNewPassword)
             {
                 return null;
             }

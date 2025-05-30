@@ -242,6 +242,10 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.StudentId).HasColumnName("StudentID");
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
+            entity.Property(e => e.StaffNurseId).HasColumnName("StaffNurseID");
+            entity.Property(e => e.StaffNurseNotes).HasMaxLength(255);
+            entity.Property(e => e.DateApproved);
+
             entity.HasOne(d => d.Student).WithMany(p => p.MedicalRegistrations)
                 .HasForeignKey(d => d.StudentId)
                 .HasConstraintName("FK__MedicalRe__Stude__5629CD9C");
@@ -323,6 +327,10 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.StudentCode)
                 .HasMaxLength(8)
                 .IsUnicode(false);
+            entity.HasIndex(e => e.StudentCode)
+                .IsUnique()
+                .HasDatabaseName("IX_Student_StudentCode_Unique");
+
             entity.Property(e => e.FullName).HasMaxLength(50);
             entity.Property(e => e.DayOfBirth).HasColumnName("DayOfBirth");
             entity.Property(e => e.Gender).HasMaxLength(3);
