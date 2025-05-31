@@ -5,7 +5,7 @@ namespace SchoolMedicalServer.Abstractions.Dtos.Authentication
     public class ResetPasswordRequest
     {
         [Required]
-        public string Opt { get; set; } = default!;
+        public string Otp { get; set; } = default!;
         [Required]
         public string PhoneNumber { get; set; } = default!;
         [Required]

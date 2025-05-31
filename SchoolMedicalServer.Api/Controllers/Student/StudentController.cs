@@ -6,13 +6,13 @@ using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Api.Controllers.Student
 {
-    [Route("api/students")]
+    [Route("api")]
     [ApiController]
-    public class StudentController(IStudentService service) : ControllerBase    
+    public class StudentController(IStudentService service) : ControllerBase
     {
-        [HttpGet]
+        [HttpGet("students")]
         [Authorize(Roles = "admin, manager")]
-        public async Task<ActionResult<IEnumerable<StudentDto>>> GetAllStudents([FromQuery] PaginationRequest? paginationRequest)
+        public async Task<IActionResult> GetAllStudents([FromQuery] PaginationRequest? paginationRequest)
         {
             var students = await service.GetAllStudentsAsync(paginationRequest);
             if (students == null || !students.Items.Any())
