@@ -149,7 +149,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<bool> ResetPasswordAsync(ResetPasswordRequest request)
         {
-            var user = await context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
+            var user = await context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber && u.Otp == request.Otp);
             if (user == null)
             {
                 return false;
