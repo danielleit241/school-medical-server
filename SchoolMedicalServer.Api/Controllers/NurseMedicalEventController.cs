@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos.MedicalEvent;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.IServices;
@@ -11,6 +12,7 @@ namespace SchoolMedicalServer.Api.Controllers
     public class NurseMedicalEventController(IMedicalEventService service) : ControllerBase
     {
         [HttpGet("nurses/students/medical-events")]
+        [Authorize(Roles = "nurse")]
         public async Task<IActionResult> GetAllStudentMedicalEvents([FromQuery] PaginationRequest? paginationRequest)
         {
             var medicalEvents = await service.GetAllStudentMedicalEventsAsync(paginationRequest);
@@ -21,7 +23,8 @@ namespace SchoolMedicalServer.Api.Controllers
             return Ok(medicalEvents);
         }
 
-        [HttpGet("nurse/students/medical-events/{medicalEventId}")]
+        [HttpGet("nurses/students/medical-events/{medicalEventId}")]
+        [Authorize(Roles = "nurse")]
         public async Task<IActionResult> GetMedicalEventDetail([FromQuery] PaginationRequest? paginationRequest, Guid medicalEventId)
         {
             var medicalEvent = await service.GetMedicalEventDetailAsync(paginationRequest, medicalEventId);
@@ -33,6 +36,7 @@ namespace SchoolMedicalServer.Api.Controllers
         }
 
         [HttpPost("nurses/students/medical-events")]
+        [Authorize(Roles = "nurse")]
         public async Task<IActionResult> CreateStudentMedicalEvent([FromBody] MedicalEventRequest request)
         {
             if (request.MedicalRequests != null)

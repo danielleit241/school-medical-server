@@ -10,7 +10,7 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
     [ApiController]
     public class NurseMedicalRegistrationController(IMedicalRegistrationService service) : ControllerBase
     {
-        [HttpGet("nurse/medical-registrations")]
+        [HttpGet("nurses/medical-registrations")]
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> GetMedicalRegistrations([FromQuery] PaginationRequest? paginationRequest)
         {
@@ -22,7 +22,7 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
             return Ok(registrations);
         }
 
-        [HttpGet("nurse/medical-registrations/{medicalRegistrationId}")]
+        [HttpGet("nurses/medical-registrations/{medicalRegistrationId}")]
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> GetMedicalRegistrationById(Guid medicalRegistrationId)
         {
@@ -34,7 +34,7 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
             return Ok(registration);
         }
 
-        [HttpPut("nurse/medical-registrations/{medicalRegistrationId}")]
+        [HttpPut("nurses/medical-registrations/{medicalRegistrationId}")]
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> ApproveMedicalRegistration(Guid medicalRegistrationId, MedicalRegistrationNurseApprovedRequest request)
         {

@@ -83,7 +83,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 .Select(v => new VaccinationDeclarationDtoResponse
                 {
                     VaccineName = v.VaccineName,
-                    BatchNumber = v.DoseNumber,
+                    DoseNumber = v.DoseNumber,
                     VaccinatedDate = v.VaccinatedDate,
                 }).ToList() ?? [];
 
