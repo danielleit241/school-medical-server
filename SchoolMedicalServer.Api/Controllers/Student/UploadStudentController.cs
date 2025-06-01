@@ -6,7 +6,7 @@ namespace SchoolMedicalServer.Api.Controllers.Student
 {
     [Route("api")]
     [ApiController]
-    public class UploadController(IUploadService service) : ControllerBase
+    public class UploadStudentController(IUploadService service) : ControllerBase
     {
         [HttpPost("students/upload-excel")]
         [Authorize(Roles = "admin,manager")]

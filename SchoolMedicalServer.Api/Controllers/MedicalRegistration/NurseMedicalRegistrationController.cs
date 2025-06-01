@@ -43,7 +43,7 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
             {
                 return BadRequest("Failed to approve medical registration.");
             }
-            return NoContent();
+            return StatusCode(204, "Update successfully");
         }
     }
 

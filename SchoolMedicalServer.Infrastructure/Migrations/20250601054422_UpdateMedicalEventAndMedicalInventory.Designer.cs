@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolMedicalServer.Infrastructure;
 
@@ -11,9 +12,11 @@ using SchoolMedicalServer.Infrastructure;
 namespace SchoolMedicalServer.Infrastructure.Migrations
 {
     [DbContext(typeof(SchoolMedicalManagementContext))]
-    partial class SchoolMedicalManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20250601054422_UpdateMedicalEventAndMedicalInventory")]
+    partial class UpdateMedicalEventAndMedicalInventory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -252,10 +255,6 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasMaxLength(60)
                         .HasColumnType("nvarchar(60)");
 
-                    b.Property<string>("Notes")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<bool?>("ParentNotified")
                         .HasColumnType("bit")
                         .HasColumnName("ParentNotified");
@@ -413,6 +412,10 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.Property<Guid?>("MedicalEventId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("MedicalEventID");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Purpose")
                         .HasMaxLength(255)

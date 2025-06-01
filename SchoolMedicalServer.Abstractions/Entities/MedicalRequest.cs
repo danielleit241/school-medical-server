@@ -5,19 +5,17 @@ namespace SchoolMedicalServer.Abstractions.Entities;
 
 public partial class MedicalRequest
 {
-    public Guid RequestItemId { get; set; }
+    public Guid RequestId { get; set; }
 
-    public Guid? EventId { get; set; }
+    public Guid? MedicalEventId { get; set; }
 
     public Guid? ItemId { get; set; }
 
-    public int? RequestedQuantity { get; set; }
+    public int? RequestQuantity { get; set; }
 
     public string? Purpose { get; set; }
 
     public DateOnly? RequestDate { get; set; }
-
-    public string? Notes { get; set; }
 
     public virtual MedicalEvent? Event { get; set; }
 

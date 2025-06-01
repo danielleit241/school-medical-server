@@ -58,8 +58,10 @@ namespace SchoolMedicalServer.Api.Boostraping
 
             services.AddDbContext<SchoolMedicalManagementContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("DBDefault"));
+                options.UseSqlServer(configuration.GetConnectionString("DBDefault"),
+                    sqlOptions => sqlOptions.MigrationsAssembly("SchoolMedicalServer.Infrastructure"));
             });
+
 
             services.AddCors(options =>
             {
@@ -86,6 +88,7 @@ namespace SchoolMedicalServer.Api.Boostraping
             services.AddScoped<IStudentService, StudentService>();
 
             services.AddTransient<IMedicalRegistrationService, MedicalRegistrationService>();
+            services.AddTransient<IMedicalEventService, MedicalEventService>();
 
             return services;
         }

@@ -188,28 +188,30 @@ public partial class SchoolMedicalManagementContext : DbContext
         modelBuilder.Entity<MedicalEvent>(entity =>
         {
             entity.HasKey(e => e.EventId).HasName("PK__MedicalE__7944C8702997A560");
-
             entity.ToTable("MedicalEvent");
 
             entity.Property(e => e.EventId)
                 .ValueGeneratedNever()
                 .HasColumnName("EventID");
-            entity.Property(e => e.EventDateTime).HasColumnType("datetime");
-            entity.Property(e => e.EventDescription).HasMaxLength(255);
-            entity.Property(e => e.EventType).HasMaxLength(30);
-            entity.Property(e => e.Location).HasMaxLength(60);
-            entity.Property(e => e.RecordedId).HasColumnName("RecordedID");
-            entity.Property(e => e.SeverityLevel).HasMaxLength(30);
             entity.Property(e => e.StudentId).HasColumnName("StudentID");
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+            entity.Property(e => e.StaffNurseId).HasColumnName("StaffNurseID");
+            entity.Property(e => e.EventDate).HasColumnName("EventDate").HasColumnType("date");
+            entity.Property(e => e.EventType).HasMaxLength(30);
+            entity.Property(e => e.EventDescription).HasMaxLength(255);
+            entity.Property(e => e.Location).HasMaxLength(60);
+            entity.Property(e => e.SeverityLevel).HasMaxLength(30);
+            entity.Property(e => e.ParentNotified).HasColumnName("ParentNotified");
+            entity.Property(e => e.Notes).HasMaxLength(255);
 
-            entity.HasOne(d => d.Student).WithMany(p => p.MedicalEvents)
+            entity.HasOne(d => d.Student)
+                .WithMany(p => p.MedicalEvents)
                 .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK__MedicalEv__Stude__59FA5E80");
+                .HasConstraintName("FK_MedicalEvent_Student");
 
-            entity.HasOne(d => d.User).WithMany(p => p.MedicalEvents)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__MedicalEv__UserI__5AEE82B9");
+            entity.HasOne(d => d.User)
+                .WithMany(p => p.MedicalEvents)
+                .HasForeignKey(d => d.StaffNurseId)
+                .HasConstraintName("FK_MedicalEvent_User");
         });
 
         modelBuilder.Entity<MedicalInventory>(entity =>
@@ -221,10 +223,37 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.ItemId)
                 .ValueGeneratedNever()
                 .HasColumnName("ItemID");
-            entity.Property(e => e.Category).HasMaxLength(50);
-            entity.Property(e => e.Description).HasMaxLength(255);
-            entity.Property(e => e.ItemName).HasMaxLength(100);
-            entity.Property(e => e.UnitOfMeasure).HasMaxLength(20);
+            entity.Property(e => e.ItemName)
+                .HasMaxLength(100)
+                .HasColumnName("ItemName");
+            entity.Property(e => e.Category)
+                .HasMaxLength(50)
+                .HasColumnName("Category");
+            entity.Property(e => e.Description)
+                .HasMaxLength(255)
+                .HasColumnName("Description");
+            entity.Property(e => e.QuantityInStock)
+                .HasColumnName("QuantityInStock");
+            entity.Property(e => e.UnitOfMeasure)
+                .HasMaxLength(20)
+                .HasColumnName("UnitOfMeasure");
+            entity.Property(e => e.MinimumStockLevel)
+                .HasColumnName("MinimumStockLevel");
+            entity.Property(e => e.MaximumStockLevel)
+                .HasColumnName("MaximumStockLevel");
+            entity.Property(e => e.LastImportDate)
+                .HasColumnType("datetime")
+                .HasColumnName("LastImportDate");
+            entity.Property(e => e.LastExportDate)
+                .HasColumnType("datetime")
+                .HasColumnName("LastExportDate");
+            entity.Property(e => e.ExpiryDate)
+                .HasColumnType("datetime")
+                .HasColumnName("ExpiryDate");
+            entity.Property(e => e.Status)
+                .HasColumnType("bit")
+                .HasDefaultValue(true)
+                .HasColumnName("Status");
         });
 
         modelBuilder.Entity<MedicalRegistration>(entity =>
@@ -257,25 +286,28 @@ public partial class SchoolMedicalManagementContext : DbContext
 
         modelBuilder.Entity<MedicalRequest>(entity =>
         {
-            entity.HasKey(e => e.RequestItemId).HasName("PK__MedicalR__3F51AD77BE2FAFF0");
-
+            entity.HasKey(e => e.RequestId).HasName("PK__MedicalR__RequestId");
             entity.ToTable("MedicalRequest");
 
-            entity.Property(e => e.RequestItemId)
+            entity.Property(e => e.RequestId)
                 .ValueGeneratedNever()
-                .HasColumnName("RequestItemID");
-            entity.Property(e => e.EventId).HasColumnName("EventID");
+                .HasColumnName("RequestID");
+            entity.Property(e => e.MedicalEventId).HasColumnName("MedicalEventID");
             entity.Property(e => e.ItemId).HasColumnName("ItemID");
-            entity.Property(e => e.Notes).HasMaxLength(255);
+            entity.Property(e => e.RequestQuantity).HasColumnName("RequestQuantity");
             entity.Property(e => e.Purpose).HasMaxLength(255);
+            entity.Property(e => e.RequestDate).HasColumnName("RequestDate").HasColumnType("date");
 
-            entity.HasOne(d => d.Event).WithMany(p => p.MedicalRequests)
-                .HasForeignKey(d => d.EventId)
-                .HasConstraintName("FK__MedicalRe__Event__5FB337D6");
 
-            entity.HasOne(d => d.Item).WithMany(p => p.MedicalRequests)
+            entity.HasOne(d => d.Event)
+                .WithMany(p => p.MedicalRequests)
+                .HasForeignKey(d => d.MedicalEventId)
+                .HasConstraintName("FK_MedicalRequest_MedicalEvent");
+
+            entity.HasOne(d => d.Item)
+                .WithMany(p => p.MedicalRequests)
                 .HasForeignKey(d => d.ItemId)
-                .HasConstraintName("FK__MedicalRe__ItemI__60A75C0F");
+                .HasConstraintName("FK_MedicalRequest_MedicalInventory");
         });
 
         modelBuilder.Entity<Notification>(entity =>
@@ -489,7 +521,7 @@ public partial class SchoolMedicalManagementContext : DbContext
                 .HasColumnName("VaccinationDeclarationID");
             entity.Property(e => e.HealthProfileId).HasColumnName("HealthProfileID");
             entity.Property(e => e.VaccineName).HasMaxLength(100);
-            entity.Property(e => e.BatchNumber).HasMaxLength(50);
+            entity.Property(e => e.DoseNumber).HasMaxLength(50);
             entity.Property(e => e.VaccinatedDate).HasColumnType("date");
 
             entity.HasOne(d => d.HealthProfile)
