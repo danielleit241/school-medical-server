@@ -1,7 +1,8 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos.MedicalEvent;
+using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.IServices;
+using System.Threading.Tasks;
 
 namespace SchoolMedicalServer.Api.Controllers
 {
@@ -10,9 +11,9 @@ namespace SchoolMedicalServer.Api.Controllers
     public class NurseMedicalEventController(IMedicalEventService service) : ControllerBase
     {
         [HttpGet("nurses/students/medical-events")]
-        public async Task<IActionResult> GetAllStudentMedicalEvents()
+        public async Task<IActionResult> GetAllStudentMedicalEvents([FromQuery] PaginationRequest? paginationRequest)
         {
-            var medicalEvents = await service.GetAllStudentMedicalEventsAsync();
+            var medicalEvents = await service.GetAllStudentMedicalEventsAsync(paginationRequest);
             if (medicalEvents == null)
             {
                 return NotFound(new { Message = "No medical events found." });
@@ -21,9 +22,9 @@ namespace SchoolMedicalServer.Api.Controllers
         }
 
         [HttpGet("nurse/students/medical-events/{medicalEventId}")]
-        public async Task<IActionResult> GetMedicalEventDetail(Guid medicalEventId)
+        public async Task<IActionResult> GetMedicalEventDetail([FromQuery] PaginationRequest? paginationRequest, Guid medicalEventId)
         {
-            var medicalEvent = await service.GetMedicalEventDetailAsync(medicalEventId);
+            var medicalEvent = await service.GetMedicalEventDetailAsync(paginationRequest, medicalEventId);
             if (medicalEvent == null)
             {
                 return NotFound(new { Message = "Medical event not found." });

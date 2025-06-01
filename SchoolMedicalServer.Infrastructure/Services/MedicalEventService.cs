@@ -72,19 +72,184 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return true;
         }
 
-        public Task<PaginationResponse<MedicalEventResponse>?> GetAllStudentMedicalEventsAsync()
+        public async Task<PaginationResponse<MedicalEventResponse>?> GetAllStudentMedicalEventsAsync(PaginationRequest? paginationRequest)
         {
-            throw new NotImplementedException();
+            var totalCount = await context.MedicalEvents.CountAsync();
+            if (totalCount == 0)
+            {
+                return null!;
+            }
+
+            var events = await context.MedicalEvents
+                .OrderByDescending(e => e.EventDate)
+                .Skip((paginationRequest!.PageIndex - 1) * paginationRequest.PageSize)
+                .Take(paginationRequest.PageSize)
+                .ToListAsync();
+
+            var result = new List<MedicalEventResponse>();
+
+            foreach (var medicalEvent in events)
+            {
+                var medicalRequests = await context.MedicalRequests
+                    .Where(r => r.MedicalEventId == medicalEvent.EventId)
+                    .Join(context.MedicalInventories,
+                          r => r.ItemId,
+                          i => i.ItemId,
+                          (r, i) => new MedicalRequestDtoResponse
+                          {
+                              RequestId = r.RequestId,
+                              ItemId = r.ItemId,
+                              ItemName = i.ItemName,
+                              RequestQuantity = r.RequestQuantity
+                          })
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                var medicalEventDto = new MedicalEventDtoResponse
+                {
+                    EventId = medicalEvent.EventId,
+                    StudentId = medicalEvent.StudentId,
+                    StaffNurseId = medicalEvent.StaffNurseId,
+                    EventDate = medicalEvent.EventDate,
+                    EventType = medicalEvent.EventType,
+                    EventDescription = medicalEvent.EventDescription,
+                    Location = medicalEvent.Location,
+                    SeverityLevel = medicalEvent.SeverityLevel,
+                    Notes = medicalEvent.Notes
+                };
+
+                var response = new MedicalEventResponse
+                {
+                    MedicalEvent = medicalEventDto,
+                    MedicalRequests = medicalRequests
+                };
+
+                result.Add(response);
+            }
+
+            return new PaginationResponse<MedicalEventResponse>(
+                paginationRequest.PageIndex,
+                paginationRequest.PageSize,
+                totalCount,
+                result
+            );
         }
 
-        public Task<MedicalEventResponse?> GetMedicalEventDetailAsync(Guid medicalEventId)
+        public async Task<MedicalEventResponse?> GetMedicalEventDetailAsync(PaginationRequest? paginationRequest, Guid medicalEventId)
         {
-            throw new NotImplementedException();
+            var medicalEvent = await context.MedicalEvents
+                .Where(e => e.EventId == medicalEventId)
+                .FirstOrDefaultAsync();
+
+            if (medicalEvent == null)
+            {
+                return null!;
+            }
+
+            var medicalRequests = await context.MedicalRequests
+                .Where(r => r.MedicalEventId == medicalEvent.EventId)
+                .Join(context.MedicalInventories,
+                      r => r.ItemId,
+                      i => i.ItemId,
+                      (r, i) => new MedicalRequestDtoResponse
+                      {
+                          RequestId = r.RequestId,
+                          ItemId = r.ItemId,
+                          ItemName = i.ItemName,
+                          RequestQuantity = r.RequestQuantity
+                      })
+                .AsNoTracking()
+                .ToListAsync();
+
+            var medicalEventDto = new MedicalEventDtoResponse
+            {
+                EventId = medicalEvent.EventId,
+                StudentId = medicalEvent.StudentId,
+                StaffNurseId = medicalEvent.StaffNurseId,
+                EventDate = medicalEvent.EventDate,
+                EventType = medicalEvent.EventType,
+                EventDescription = medicalEvent.EventDescription,
+                Location = medicalEvent.Location,
+                SeverityLevel = medicalEvent.SeverityLevel,
+                Notes = medicalEvent.Notes
+            };
+
+            var response = new MedicalEventResponse
+            {
+                MedicalEvent = medicalEventDto,
+                MedicalRequests = medicalRequests
+            };
+
+            return response;
         }
 
-        public Task<PaginationResponse<MedicalEventResponse>?> GetMedicalEventsByStudentIdAsync(Guid studentId)
+
+
+        public async Task<PaginationResponse<MedicalEventResponse>?> GetMedicalEventsByStudentIdAsync(PaginationRequest? paginationRequest, Guid studentId)
         {
-            throw new NotImplementedException();
+            var totalCount = await context.MedicalEvents
+                .Where(e => e.StudentId == studentId)
+                .CountAsync();
+
+            if (totalCount == 0)
+            {
+                return null!;
+            }
+
+            var events = await context.MedicalEvents
+                .Where(e => e.StudentId == studentId)
+                .OrderByDescending(e => e.EventDate)
+                .Skip((paginationRequest!.PageIndex - 1) * paginationRequest.PageSize)
+                .Take(paginationRequest.PageSize)
+                .ToListAsync();
+
+            var result = new List<MedicalEventResponse>();
+
+            foreach (var medicalEvent in events)
+            {
+                var medicalRequests = await context.MedicalRequests
+                    .Where(r => r.MedicalEventId == medicalEvent.EventId)
+                    .Join(context.MedicalInventories,
+                          r => r.ItemId,
+                          i => i.ItemId,
+                          (r, i) => new MedicalRequestDtoResponse
+                          {
+                              RequestId = r.RequestId,
+                              ItemId = r.ItemId,
+                              ItemName = i.ItemName,
+                              RequestQuantity = r.RequestQuantity
+                          })
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                var medicalEventDto = new MedicalEventDtoResponse
+                {
+                    EventId = medicalEvent.EventId,
+                    StudentId = medicalEvent.StudentId,
+                    StaffNurseId = medicalEvent.StaffNurseId,
+                    EventDate = medicalEvent.EventDate,
+                    EventType = medicalEvent.EventType,
+                    EventDescription = medicalEvent.EventDescription,
+                    Location = medicalEvent.Location,
+                    SeverityLevel = medicalEvent.SeverityLevel,
+                    Notes = medicalEvent.Notes
+                };
+
+                var response = new MedicalEventResponse
+                {
+                    MedicalEvent = medicalEventDto,
+                    MedicalRequests = medicalRequests
+                };
+
+                result.Add(response);
+            }
+
+            return new PaginationResponse<MedicalEventResponse>(
+                paginationRequest.PageIndex,
+                paginationRequest.PageSize,
+                totalCount,
+                result
+            );
         }
     }
 }
