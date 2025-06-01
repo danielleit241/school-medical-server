@@ -36,7 +36,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         HealthProfileId = healthProfile.HealthProfileId,
                         VaccinationDeclarationId = Guid.NewGuid(),
                         VaccineName = vaccination.VaccineName,
-                        DoseNumber = vaccination.BatchNumber,
+                        DoseNumber = vaccination.DoseNumber,
                         VaccinatedDate = vaccination.VaccinatedDate,
                     };
                     context.VaccinationDeclarations.Add(vaccinationDeclaration);
