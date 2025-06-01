@@ -37,8 +37,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             foreach (var item in request.MedicalRequests!)
             {
-                var inventoryItem = await context.MedicalInventories.FindAsync(item.ItemId);
+                var inventoryItem = await context.MedicalInventories.Where(i => i.ItemId == item.ItemId && i.Status == true).FirstOrDefaultAsync();
                 inventoryItem!.QuantityInStock -= item.RequestQuantity ?? 0;
+                if (inventoryItem.QuantityInStock == inventoryItem.MinimumStockLevel)
+                {
+                    inventoryItem.Status = false;
+                }
                 context.MedicalInventories.Update(inventoryItem);
             }
 

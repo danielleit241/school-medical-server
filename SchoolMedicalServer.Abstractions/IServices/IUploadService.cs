@@ -5,6 +5,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
 {
     public interface IUploadService
     {
-        Task UploadExcelFile(IFormFile file);
+        Task UploadMedicalInventoriesExcelFile(IFormFile file);
+        Task UploadStudentsExcelFile(IFormFile file);
     }
 }

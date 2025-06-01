@@ -26,6 +26,10 @@ namespace SchoolMedicalServer.Api.Controllers.Appointment
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> GetUserAppointments(Guid userId, [FromQuery] PaginationRequest? paginationRequest)
         {
+            if (userId == Guid.Empty)
+            {
+                return BadRequest("User ID cannot be empty.");
+            }
             var userAppointments = await service.GetUserAppointments(userId, paginationRequest);
             if (userAppointments is null || !userAppointments.Items.Any())
             {
@@ -38,6 +42,10 @@ namespace SchoolMedicalServer.Api.Controllers.Appointment
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> GetUserAppointment(Guid userId, Guid appointmentId)
         {
+            if (userId == Guid.Empty || appointmentId == Guid.Empty)
+            {
+                return BadRequest("User ID and appointment ID cannot be empty.");
+            }
             var appointment = await service.GetUserAppointment(userId, appointmentId);
 
             return Ok(appointment);

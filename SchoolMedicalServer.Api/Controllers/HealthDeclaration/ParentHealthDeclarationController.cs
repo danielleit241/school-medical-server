@@ -14,6 +14,10 @@ namespace SchoolMedicalServer.Api.Controllers.HealthDeclaration
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> GetHealthProfileDeclaration(Guid studentId)
         {
+            if (studentId == Guid.Empty)
+            {
+                return BadRequest("Student ID cannot be empty.");
+            }
             var response = await service.GetHealthDeclarationAsync(studentId);
             if (response == null)
             {
