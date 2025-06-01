@@ -31,7 +31,7 @@ namespace SchoolMedicalServer.Api.Controllers.HealthDeclaration
             {
                 return BadRequest();
             }
-            return Ok();
+            return StatusCode(201, "Create successfully");
         }
     }
 }

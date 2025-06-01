@@ -36,7 +36,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         HealthProfileId = healthProfile.HealthProfileId,
                         VaccinationDeclarationId = Guid.NewGuid(),
                         VaccineName = vaccination.VaccineName,
-                        BatchNumber = vaccination.BatchNumber,
+                        DoseNumber = vaccination.BatchNumber,
                         VaccinatedDate = vaccination.VaccinatedDate,
                     };
                     context.VaccinationDeclarations.Add(vaccinationDeclaration);
@@ -83,7 +83,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 .Select(v => new VaccinationDeclarationDtoResponse
                 {
                     VaccineName = v.VaccineName,
-                    BatchNumber = v.BatchNumber,
+                    BatchNumber = v.DoseNumber,
                     VaccinatedDate = v.VaccinatedDate,
                 }).ToList() ?? [];
 

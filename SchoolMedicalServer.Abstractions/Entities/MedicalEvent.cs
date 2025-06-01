@@ -9,9 +9,9 @@ public partial class MedicalEvent
 
     public Guid? StudentId { get; set; }
 
-    public Guid? UserId { get; set; }
+    public Guid? StaffNurseId { get; set; }
 
-    public DateTime? EventDateTime { get; set; }
+    public DateOnly? EventDate { get; set; }
 
     public string? EventType { get; set; }
 
@@ -19,11 +19,11 @@ public partial class MedicalEvent
 
     public string? Location { get; set; }
 
-    public Guid? RecordedId { get; set; }
-
     public string? SeverityLevel { get; set; }
 
     public bool? ParentNotified { get; set; }
+
+    public string? Notes { get; set; }
 
     public virtual ICollection<MedicalRequest> MedicalRequests { get; set; } = new List<MedicalRequest>();
 
