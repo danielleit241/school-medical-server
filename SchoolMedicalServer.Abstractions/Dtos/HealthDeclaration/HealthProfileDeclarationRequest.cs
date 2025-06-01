@@ -26,7 +26,7 @@
     {
         public string VaccineName { get; set; } = default!;
 
-        public string? BatchNumber { get; set; }
+        public string? DoseNumber { get; set; }
 
         public DateOnly? VaccinatedDate { get; set; }
 

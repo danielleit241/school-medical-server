@@ -24,7 +24,7 @@ namespace SchoolMedicalServer.Api.Controllers.Appointment
         }
 
         [HttpGet("nurses/{staffNurseId}/appointments")]
-        [Authorize(Roles = "nurse")]
+        [Authorize(Roles = "nurse, parent")]
         public async Task<IActionResult> GetStaffNurseAppointments(Guid staffNurseId, [FromQuery] DateOnly? dateRequest, [FromQuery] PaginationRequest? paginationRequest)
         {
             if (dateRequest.HasValue)
