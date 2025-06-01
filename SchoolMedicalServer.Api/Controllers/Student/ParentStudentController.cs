@@ -13,6 +13,10 @@ namespace SchoolMedicalServer.Api.Controllers.Student
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> GetParentStudents(Guid parentId)
         {
+            if (parentId == Guid.Empty)
+            {
+                return BadRequest("Parent ID cannot be empty.");
+            }
             var students = await service.GetParentStudentsAsync(parentId);
             if (students == null || !students.Any())
             {
@@ -25,7 +29,10 @@ namespace SchoolMedicalServer.Api.Controllers.Student
         [Authorize(Roles = "parent")]
         public async Task<ActionResult<StudentDto>> GetStudent(Guid parentId, Guid studentId)
         {
-
+            if (parentId == Guid.Empty || studentId == Guid.Empty)
+            {
+                return BadRequest("Parent ID and Student ID cannot be empty.");
+            }
             var student = await service.GetParentStudentAsync(parentId, studentId);
             if (student == null) return NotFound();
 

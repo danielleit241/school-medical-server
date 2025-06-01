@@ -4,9 +4,11 @@ namespace SchoolMedicalServer.Abstractions.Dtos.Authentication
 {
     public class ResetPasswordRequest
     {
-        [Required]
+        [Required(ErrorMessage = "Otp is required.")]
         public string Otp { get; set; } = default!;
-        [Required]
+        [Required(ErrorMessage = "Phone number is required."),
+            MinLength(10, ErrorMessage = "Phone number must be between 10 and 11 digits"),
+            MaxLength(11, ErrorMessage = "Phone number must be between 10 and 11 digits")]
         public string PhoneNumber { get; set; } = default!;
         [Required]
         public string NewPassword { get; set; } = default!;

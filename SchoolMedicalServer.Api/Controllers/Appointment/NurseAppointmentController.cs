@@ -27,6 +27,10 @@ namespace SchoolMedicalServer.Api.Controllers.Appointment
         [Authorize(Roles = "nurse, parent")]
         public async Task<IActionResult> GetStaffNurseAppointments(Guid staffNurseId, [FromQuery] DateOnly? dateRequest, [FromQuery] PaginationRequest? paginationRequest)
         {
+            if (staffNurseId == Guid.Empty)
+            {
+                return BadRequest("Staff nurse ID cannot be empty.");
+            }
             if (dateRequest.HasValue)
             {
                 var appointments = await service.GetAppointmentsByStaffNurseAndDate(staffNurseId, dateRequest);
@@ -49,6 +53,10 @@ namespace SchoolMedicalServer.Api.Controllers.Appointment
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> GetStaffNurseAppointment(Guid staffNurseId, Guid appointmentId)
         {
+            if (staffNurseId == Guid.Empty || appointmentId == Guid.Empty)
+            {
+                return BadRequest("Staff nurse ID and appointment ID cannot be empty.");
+            }
             var appointment = await service.GetStaffNurseAppointment(staffNurseId, appointmentId);
 
             return Ok(appointment);
@@ -58,6 +66,10 @@ namespace SchoolMedicalServer.Api.Controllers.Appointment
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> UpdateAppointment(Guid appointmentId, [FromBody] AppoinmentNurseApprovedRequest request)
         {
+            if (appointmentId == Guid.Empty)
+            {
+                return BadRequest("Appointment ID cannot be empty.");
+            }
             var isUpdated = await service.ApproveAppointment(appointmentId, request);
             if (!isUpdated)
             {

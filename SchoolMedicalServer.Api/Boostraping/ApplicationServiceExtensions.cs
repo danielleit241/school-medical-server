@@ -90,6 +90,8 @@ namespace SchoolMedicalServer.Api.Boostraping
             services.AddTransient<IMedicalRegistrationService, MedicalRegistrationService>();
             services.AddTransient<IMedicalEventService, MedicalEventService>();
 
+            services.AddScoped<IMedicalInventoryService, MedicalInventoryService>();
+
             return services;
         }
     }

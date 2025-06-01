@@ -7,7 +7,82 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class UploadService(SchoolMedicalManagementContext context) : IUploadService
     {
-        public async Task UploadExcelFile(IFormFile file)
+        public async Task UploadMedicalInventoriesExcelFile(IFormFile file)
+        {
+            try
+            {
+                using var stream = new MemoryStream();
+                await file.CopyToAsync(stream);
+                stream.Position = 0;
+
+                using (var workbook = new XLWorkbook(stream))
+                {
+                    var worksheet = workbook.Worksheet(1);
+                    bool isFirstRow = true;
+
+                    foreach (var row in worksheet.RowsUsed())
+                    {
+                        if (isFirstRow)
+                        {
+                            isFirstRow = false;
+                            continue;
+                        }
+
+                        var itemId = Guid.NewGuid();
+                        var itemName = row.Cell(1).GetString();
+                        var category = row.Cell(2).GetString();
+                        var description = row.Cell(3).GetString();
+                        var unitOfMeasure = row.Cell(4).GetString();
+
+                        DateTime? expiryDate = null;
+                        var expiryCell = row.Cell(5);
+                        if (!expiryCell.IsEmpty())
+                        {
+                            if (DateTime.TryParse(expiryCell.GetString(), out DateTime parsedDate))
+                            {
+                                expiryDate = parsedDate;
+                            }
+                            else if (expiryCell.DataType == XLDataType.DateTime)
+                            {
+                                expiryDate = expiryCell.GetDateTime();
+                            }
+                        }
+
+                        var maxStockLevel = row.Cell(6).GetValue<int>();
+                        var minStockLevel = row.Cell(7).GetValue<int>();
+                        var quantityInStock = row.Cell(8).GetValue<int>();
+                        var statusCell = row.Cell(9).GetString();
+                        bool status = statusCell.Equals("True", StringComparison.OrdinalIgnoreCase)
+                                    || statusCell.Equals("Available", StringComparison.OrdinalIgnoreCase)
+                                    || statusCell.Equals("1");
+
+                        var medicalInventory = new MedicalInventory
+                        {
+                            ItemId = itemId,
+                            ItemName = itemName,
+                            Category = category,
+                            Description = description ?? "",
+                            UnitOfMeasure = unitOfMeasure ?? "",
+                            ExpiryDate = expiryDate,
+                            MaximumStockLevel = maxStockLevel,
+                            MinimumStockLevel = minStockLevel,
+                            LastImportDate = DateTime.UtcNow,
+                            QuantityInStock = quantityInStock,
+                            Status = status
+                        };
+
+                        context.MedicalInventories.Add(medicalInventory);
+                    }
+                    await context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error uploading medical inventories: {ex.Message}", ex);
+            }
+        }
+
+        public async Task UploadStudentsExcelFile(IFormFile file)
         {
             try
             {
@@ -79,7 +154,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while uploading the Excel file.", ex);
+                throw new Exception($"Error uploading students: {ex.Message}", ex);
             }
         }
     }

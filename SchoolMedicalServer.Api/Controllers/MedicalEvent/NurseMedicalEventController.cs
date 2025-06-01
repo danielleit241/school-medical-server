@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos.MedicalEvent;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.IServices;
-using System.Threading.Tasks;
 
-namespace SchoolMedicalServer.Api.Controllers
+namespace SchoolMedicalServer.Api.Controllers.MedicalEvent
 {
     [Route("api")]
     [ApiController]
@@ -27,6 +26,10 @@ namespace SchoolMedicalServer.Api.Controllers
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> GetMedicalEventDetail([FromQuery] PaginationRequest? paginationRequest, Guid medicalEventId)
         {
+            if (medicalEventId == Guid.Empty)
+            {
+                return BadRequest(new { Message = "Medical event ID cannot be empty." });
+            }
             var medicalEvent = await service.GetMedicalEventDetailAsync(paginationRequest, medicalEventId);
             if (medicalEvent == null)
             {

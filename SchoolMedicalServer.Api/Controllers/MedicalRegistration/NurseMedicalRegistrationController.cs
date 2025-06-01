@@ -26,6 +26,10 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> GetMedicalRegistrationById(Guid medicalRegistrationId)
         {
+            if (medicalRegistrationId == Guid.Empty)
+            {
+                return BadRequest("Medical registration ID cannot be empty.");
+            }
             var registration = await service.GetMedicalRegistrationAsync(medicalRegistrationId);
             if (registration == null)
             {
@@ -38,6 +42,10 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> ApproveMedicalRegistration(Guid medicalRegistrationId, MedicalRegistrationNurseApprovedRequest request)
         {
+            if (medicalRegistrationId == Guid.Empty)
+            {
+                return BadRequest("Medical registration ID cannot be empty.");
+            }
             var isApproved = await service.ApproveMedicalRegistration(medicalRegistrationId, request);
             if (!isApproved)
             {
