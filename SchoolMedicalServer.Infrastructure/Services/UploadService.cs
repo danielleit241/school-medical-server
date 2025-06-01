@@ -1,5 +1,6 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IServices;
 
@@ -155,6 +156,50 @@ namespace SchoolMedicalServer.Infrastructure.Services
             catch (Exception ex)
             {
                 throw new Exception($"Error uploading students: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<byte[]> ExportStudentsExcelFileAsync()
+        {
+            try
+            {
+                var students = await context.Students.ToListAsync();
+
+                using var workbook = new XLWorkbook();
+                var worksheet = workbook.Worksheets.Add("Students");
+
+                worksheet.Cell(1, 1).Value = "StudentCode";
+                worksheet.Cell(1, 2).Value = "FullName";
+                worksheet.Cell(1, 3).Value = "DayOfBirth";
+                worksheet.Cell(1, 4).Value = "Gender";
+                worksheet.Cell(1, 5).Value = "Grade";
+                worksheet.Cell(1, 6).Value = "Address";
+                worksheet.Cell(1, 7).Value = "ParentPhoneNumber";
+                worksheet.Cell(1, 8).Value = "ParentEmailAddress";
+
+                int row = 2;
+                foreach (var student in students)
+                {
+                    worksheet.Cell(row, 1).Value = student.StudentCode;
+                    worksheet.Cell(row, 2).Value = student.FullName;
+                    worksheet.Cell(row, 3).Value = student.DayOfBirth.HasValue
+                        ? student.DayOfBirth.Value.ToString("yyyy-MM-dd")
+                        : "";
+                    worksheet.Cell(row, 4).Value = student.Gender;
+                    worksheet.Cell(row, 5).Value = student.Grade;
+                    worksheet.Cell(row, 6).Value = student.Address ?? "";
+                    worksheet.Cell(row, 7).Value = student.ParentPhoneNumber;
+                    worksheet.Cell(row, 8).Value = student.ParentEmailAddress;
+                    row++;
+                }
+
+                using var stream = new MemoryStream();
+                workbook.SaveAs(stream);
+                return stream.ToArray();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error exporting students: {ex.Message}", ex);
             }
         }
     }
