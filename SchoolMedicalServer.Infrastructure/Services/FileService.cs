@@ -202,5 +202,61 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 throw new Exception($"Error exporting students: {ex.Message}", ex);
             }
         }
+
+        public async Task<byte[]> ExportMedicalInventoriesExcelFileAsync()
+        {
+            try
+            {
+                var inventories = await context.MedicalInventories.ToListAsync();
+
+                using var workbook = new XLWorkbook();
+                var worksheet = workbook.Worksheets.Add("MedicalInventories");
+
+                worksheet.Cell(1, 1).Value = "ItemId";
+                worksheet.Cell(1, 2).Value = "ItemName";
+                worksheet.Cell(1, 3).Value = "Category";
+                worksheet.Cell(1, 4).Value = "Description";
+                worksheet.Cell(1, 5).Value = "QuantityInStock";
+                worksheet.Cell(1, 6).Value = "UnitOfMeasure";
+                worksheet.Cell(1, 7).Value = "MinimumStockLevel";
+                worksheet.Cell(1, 8).Value = "MaximumStockLevel";
+                worksheet.Cell(1, 9).Value = "LastImportDate";
+                worksheet.Cell(1, 10).Value = "LastExportDate";
+                worksheet.Cell(1, 11).Value = "ExpiryDate";
+                worksheet.Cell(1, 12).Value = "Status";
+
+                int row = 2;
+                foreach (var inventory in inventories)
+                {
+                    worksheet.Cell(row, 1).Value = inventory.ItemId.ToString();
+                    worksheet.Cell(row, 2).Value = inventory.ItemName;
+                    worksheet.Cell(row, 3).Value = inventory.Category;
+                    worksheet.Cell(row, 4).Value = inventory.Description;
+                    worksheet.Cell(row, 5).Value = inventory.QuantityInStock;
+                    worksheet.Cell(row, 6).Value = inventory.UnitOfMeasure;
+                    worksheet.Cell(row, 7).Value = inventory.MinimumStockLevel;
+                    worksheet.Cell(row, 8).Value = inventory.MaximumStockLevel;
+                    worksheet.Cell(row, 9).Value = inventory.LastImportDate.HasValue
+                        ? inventory.LastImportDate.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                        : "";
+                    worksheet.Cell(row, 10).Value = inventory.LastExportDate.HasValue
+                        ? inventory.LastExportDate.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                        : "";
+                    worksheet.Cell(row, 11).Value = inventory.ExpiryDate.HasValue
+                        ? inventory.ExpiryDate.Value.ToString("yyyy-MM-dd")
+                        : "";
+                    worksheet.Cell(row, 12).Value = inventory.Status ? "Available" : "Unavailable";
+                    row++;
+                }
+
+                using var stream = new MemoryStream();
+                workbook.SaveAs(stream);
+                return stream.ToArray();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error exporting medical inventories: {ex.Message}", ex);
+            }
+        }
     }
 }
