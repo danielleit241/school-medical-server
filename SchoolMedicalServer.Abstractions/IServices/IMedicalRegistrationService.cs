@@ -5,7 +5,8 @@ namespace SchoolMedicalServer.Abstractions.IServices
 {
     public interface IMedicalRegistrationService
     {
-        Task<bool> ApproveMedicalRegistration(Guid medicalRegistrationId, MedicalRegistrationNurseApprovedRequest request);
+        Task<bool> ApproveMedicalRegistrationAsync(Guid medicalRegistrationId, MedicalRegistrationNurseApprovedRequest request);
+        Task<bool> CompletedMedicalRegistrationDetailsAsync(Guid medicalRegistrationId, MedicalRegistrationNurseCompletedDetailsRequest request);
         Task<bool> CreateMedicalRegistrationAsync(MedicalRegistrationRequest request);
         Task<MedicalRegistrationResponse?> GetMedicalRegistrationAsync(Guid medicalRegistrationId);
         Task<PaginationResponse<MedicalRegistrationResponse?>> GetMedicalRegistrationsAsync(PaginationRequest? paginationRequest); //paginantion

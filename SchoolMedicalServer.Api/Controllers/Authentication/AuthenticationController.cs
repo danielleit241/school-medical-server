@@ -13,7 +13,7 @@ namespace SchoolMedicalServer.Api.Controllers.Authentication
     {
 
         [HttpPost("login")]
-        public async Task<IActionResult?> Login([FromBody] LoginRequest request)
+        public async Task<IActionResult?> Login([FromBody] UserLoginRequest request)
         {
             if (request is null || string.IsNullOrEmpty(request.PhoneNumber) || string.IsNullOrEmpty(request.Password))
                 return BadRequest("Invalid login request");
@@ -70,7 +70,7 @@ namespace SchoolMedicalServer.Api.Controllers.Authentication
 
             string htmlBody = await System.IO.File.ReadAllTextAsync(templatePath);
             htmlBody = htmlBody.Replace("{OTP}", otp);
-            var email = new EmailDto
+            var email = new EmailFrom
             {
                 To = request.EmailAddress,
                 Subject = "Your Password Reset OTP",

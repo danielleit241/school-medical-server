@@ -8,7 +8,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class UserService(SchoolMedicalManagementContext context) : IUserService
     {
-        public async Task<PaginationResponse<UserDto>> GetUsersByRoleNamePaginationAsync(PaginationRequest paginationRequest, string roleName)
+        public async Task<PaginationResponse<UserInformation>> GetUsersByRoleNamePaginationAsync(PaginationRequest paginationRequest, string roleName)
         {
             if (paginationRequest == null)
             {
@@ -34,11 +34,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 .ToListAsync();
             if (users == null) return null!;
 
-            var userDtos = new List<UserDto>();
+            var userDtos = new List<UserInformation>();
 
             foreach (var user in users)
             {
-                userDtos.Add(new UserDto
+                userDtos.Add(new UserInformation
                 {
                     UserId = user.UserId,
                     FullName = user.FullName,
@@ -51,7 +51,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     Address = user.Address ?? ""
                 });
             }
-            return new PaginationResponse<UserDto>(
+            return new PaginationResponse<UserInformation>(
                     paginationRequest.PageIndex,
                     paginationRequest.PageSize,
                     totalCount,
@@ -59,11 +59,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
             );
         }
 
-        public async Task<UserDto?> GetUserAsync(Guid userId)
+        public async Task<UserInformation?> GetUserAsync(Guid userId)
         {
             var user = await context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
             if (user == null) return null;
-            var response = new UserDto
+            var response = new UserInformation
             {
                 UserId = user.UserId,
                 FullName = user.FullName,
@@ -98,7 +98,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
         }
 
-        public async Task<bool> UpdateUserAsync(Guid userid, UserDto request)
+        public async Task<bool> UpdateUserAsync(Guid userid, UserInformation request)
         {
             var user = await context.Users.Include(u => u.Role).FirstOrDefaultAsync(x => x.UserId == userid);
             if (user == null)

@@ -1,6 +1,6 @@
 ﻿namespace SchoolMedicalServer.Abstractions.Dtos.User
 {
-    public class UserDto
+    public class UserInformation
     {
         public Guid UserId { get; set; }
 

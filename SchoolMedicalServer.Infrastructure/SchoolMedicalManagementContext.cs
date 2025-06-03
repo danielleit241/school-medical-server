@@ -48,6 +48,8 @@ public partial class SchoolMedicalManagementContext : DbContext
 
     public virtual DbSet<VaccinationDeclaration> VaccinationDeclarations { get; set; }
 
+    public virtual DbSet<MedicalRegistrationDetails> MedicalRegistrationDetails { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Appointment>(entity =>
@@ -265,23 +267,32 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.RegistrationId)
                 .ValueGeneratedNever()
                 .HasColumnName("RegistrationID");
-            entity.Property(e => e.Dosage).HasMaxLength(30);
-            entity.Property(e => e.MedicationName).HasMaxLength(100);
-            entity.Property(e => e.Notes).HasMaxLength(255);
             entity.Property(e => e.StudentId).HasColumnName("StudentID");
             entity.Property(e => e.UserId).HasColumnName("UserID");
-
+            entity.Property(e => e.MedicationName).HasMaxLength(100);
+            entity.Property(e => e.TotalDosages).HasMaxLength(30);
+            entity.Property(e => e.Notes).HasMaxLength(255);
+            entity.Property(e => e.ParentalConsent);
             entity.Property(e => e.StaffNurseId).HasColumnName("StaffNurseID");
-            entity.Property(e => e.StaffNurseNotes).HasMaxLength(255);
-            entity.Property(e => e.DateApproved);
-
-            entity.HasOne(d => d.Student).WithMany(p => p.MedicalRegistrations)
+            entity.Property(e => e.DateApproved).HasColumnName("DateApproved");
+            entity.Property(e => e.Status)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("Status");
+            entity.HasOne(d => d.Student)
+                .WithMany(p => p.MedicalRegistrations)
                 .HasForeignKey(d => d.StudentId)
                 .HasConstraintName("FK__MedicalRe__Stude__5629CD9C");
 
-            entity.HasOne(d => d.User).WithMany(p => p.MedicalRegistrations)
+            entity.HasOne(d => d.User)
+                .WithMany(p => p.MedicalRegistrations)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK__MedicalRe__UserI__571DF1D5");
+
+            entity.HasMany(mr => mr.Details)
+                .WithOne(d => d.MedicalRegistration)
+                .HasForeignKey(d => d.RegistrationId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<MedicalRequest>(entity =>
@@ -308,6 +319,34 @@ public partial class SchoolMedicalManagementContext : DbContext
                 .WithMany(p => p.MedicalRequests)
                 .HasForeignKey(d => d.ItemId)
                 .HasConstraintName("FK_MedicalRequest_MedicalInventory");
+        });
+
+        modelBuilder.Entity<MedicalRegistrationDetails>(entity =>
+        {
+            entity.HasKey(e => e.MedicalRegistrationDetailsId).HasName("PK__MedicalRegistrationDetails");
+            entity.ToTable("MedicalRegistrationDetails");
+
+            entity.Property(e => e.MedicalRegistrationDetailsId)
+                .ValueGeneratedNever()
+                .HasColumnName("MedicalRegistrationDetailsID");
+
+            entity.Property(e => e.StaffNurseId).HasColumnName("StaffNurseID");
+            entity.Property(e => e.RegistrationId).HasColumnName("RegistrationID");
+            entity.Property(e => e.DoseTime).HasMaxLength(30);
+            entity.Property(e => e.Notes).HasMaxLength(255);
+            entity.Property(e => e.IsCompleted);
+            entity.Property(e => e.DoseNumber)
+            .HasColumnName("DoseNumber")
+            .IsRequired();
+            entity.Property(e => e.DateCompleted)
+            .HasColumnType("datetime")
+            .HasColumnName("DateCompleted");
+
+
+            entity.HasOne(d => d.MedicalRegistration)
+                .WithMany(p => p.Details)
+                .HasForeignKey(d => d.RegistrationId)
+                .HasConstraintName("FK_MedicalRegistrationDetails_MedicalRegistration");
         });
 
         modelBuilder.Entity<Notification>(entity =>

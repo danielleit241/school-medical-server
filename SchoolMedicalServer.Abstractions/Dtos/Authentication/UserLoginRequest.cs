@@ -2,7 +2,7 @@
 
 namespace SchoolMedicalServer.Abstractions.Dtos.Authentication
 {
-    public class LoginRequest
+    public class UserLoginRequest
     {
         [Required(ErrorMessage = "Phone number is required."),
             MinLength(10, ErrorMessage = ("Phone number must be between 10 and 11 digitss")),

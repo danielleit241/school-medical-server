@@ -7,7 +7,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class MedicalInventoryService(SchoolMedicalManagementContext context) : IMedicalInventoryService
     {
-        public async Task<PaginationResponse<MedicalInventoryDto>?> PaginationMedicalInventoriesAsync(PaginationRequest? pagination)
+        public async Task<PaginationResponse<MedicalInventoryResponse>?> PaginationMedicalInventoriesAsync(PaginationRequest? pagination)
         {
             var totalCount = await context.MedicalInventories.CountAsync();
 
@@ -23,11 +23,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 .AsNoTracking()
                 .ToListAsync();
 
-            var result = new List<MedicalInventoryDto>();
+            var result = new List<MedicalInventoryResponse>();
 
             foreach (var item in items)
             {
-                var dto = new MedicalInventoryDto
+                var dto = new MedicalInventoryResponse
                 {
                     ItemId = item.ItemId,
                     ItemName = item.ItemName,
@@ -46,7 +46,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 result.Add(dto);
             }
 
-            return new PaginationResponse<MedicalInventoryDto>(
+            return new PaginationResponse<MedicalInventoryResponse>(
                 pagination.PageIndex,
                 pagination.PageSize,
                 totalCount,

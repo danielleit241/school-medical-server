@@ -13,7 +13,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class AuthService(SchoolMedicalManagementContext context, IConfiguration configuration) : IAuthService
     {
-        public async Task<TokensResponse?> LoginAsync(LoginRequest request)
+        public async Task<TokensResponse?> LoginAsync(UserLoginRequest request)
         {
             var user = await context.Users.Include("Role").Where(u => u.Status == true)
                                         .FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
@@ -22,7 +22,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return null;
             }
 
-            if (request.Password == configuration["Default:Password"])
+            if (request.Password == configuration["DefaultAccountCreate:Password"])
             {
                 return null;
             }

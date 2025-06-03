@@ -13,14 +13,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class StudentService(SchoolMedicalManagementContext context) : IStudentService
     {
-        public async Task<PaginationResponse<StudentDto>> GetAllStudentsAsync(PaginationRequest? paginationRequest)
+        public async Task<PaginationResponse<StudentInformationResponse>> GetAllStudentsAsync(PaginationRequest? paginationRequest)
         {
             var totalCount = await context.Students.CountAsync();
 
             var students = await context.Students
                 .Skip((paginationRequest.PageIndex - 1) * paginationRequest.PageSize)
                 .Take(paginationRequest.PageSize)
-                .Select(s => new StudentDto
+                .Select(s => new StudentInformationResponse
                 {
                     StudentId = s.StudentId,
                     StudentCode = s.StudentCode,
@@ -34,7 +34,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 })
                 .ToListAsync();
 
-            return new PaginationResponse<StudentDto>(
+            return new PaginationResponse<StudentInformationResponse>(
                 paginationRequest.PageIndex,
                 paginationRequest.PageSize,
                 totalCount,

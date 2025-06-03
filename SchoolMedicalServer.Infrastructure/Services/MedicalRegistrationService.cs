@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DocumentFormat.OpenXml.Office.CustomUI;
+using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -8,7 +9,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class MedicalRegistrationService(SchoolMedicalManagementContext context) : IMedicalRegistrationService
     {
-        public async Task<bool> ApproveMedicalRegistration(Guid medicalRegistrationId, MedicalRegistrationNurseApprovedRequest request)
+        public async Task<bool> ApproveMedicalRegistrationAsync(Guid medicalRegistrationId, MedicalRegistrationNurseApprovedRequest request)
         {
             var medicalRegistration = await context.MedicalRegistrations.FirstOrDefaultAsync(m => m.RegistrationId == medicalRegistrationId);
             if (medicalRegistration == null)
@@ -25,7 +26,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
 
             medicalRegistration.StaffNurseId = request.StaffNurseId;
-            medicalRegistration.StaffNurseNotes = request.StaffNurseNotes;
             medicalRegistration.DateApproved = request.DateApproved ?? DateOnly.FromDateTime(DateTime.Now);
             medicalRegistration.Status = true;
 
@@ -34,20 +34,60 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return true;
         }
 
+        public async Task<bool> CompletedMedicalRegistrationDetailsAsync(Guid medicalRegistrationId, MedicalRegistrationNurseCompletedDetailsRequest request)
+        {
+            var medicalRegistration = await context.MedicalRegistrations.FirstOrDefaultAsync(m => m.RegistrationId == medicalRegistrationId && m.StaffNurseId == request.StaffNurseId);
+            if (medicalRegistration == null)
+            {
+                return false;
+            }
+
+            if (request.StaffNurseId == null)
+            {
+                return false;
+            }
+
+            var medicalRegistrationDetails = await context.MedicalRegistrationDetails.FirstOrDefaultAsync(mrd => mrd.RegistrationId == medicalRegistrationId && mrd.DoseNumber == request.DoseNumber);
+            if (medicalRegistrationDetails == null)
+                return false;
+
+            medicalRegistrationDetails.StaffNurseId = request.StaffNurseId;
+            medicalRegistrationDetails.DateCompleted = DateTime.UtcNow;
+            medicalRegistrationDetails.IsCompleted = true;
+
+            context.MedicalRegistrationDetails.Update(medicalRegistrationDetails);
+            await context.SaveChangesAsync();
+
+            return true;
+        }
+
         public async Task<bool> CreateMedicalRegistrationAsync(MedicalRegistrationRequest request)
         {
             var medicalRegistration = new MedicalRegistration
             {
                 RegistrationId = Guid.NewGuid(),
-                StudentId = request.StudentId,
-                UserId = request.UserId,
-                DateSubmitted = request.DateSubmitted ?? DateOnly.FromDateTime(DateTime.Now),
-                MedicationName = request.MedicationName,
-                Dosage = request.Dosage,
-                Notes = request.Notes,
-                ParentalConsent = request.ParentConsent,
-                Status = false
+                StudentId = request.MedicalRegistration.StudentId,
+                UserId = request.MedicalRegistration.UserId,
+                DateSubmitted = request.MedicalRegistration.DateSubmitted ?? DateOnly.FromDateTime(DateTime.Now),
+                MedicationName = request.MedicalRegistration.MedicationName,
+                TotalDosages = request.MedicalRegistration.TotalDosages,
+                Notes = request.MedicalRegistration.Notes,
+                ParentalConsent = request.MedicalRegistration.ParentConsent,
             };
+
+            foreach (var detail in request.MedicalRegistrationDetails)
+            {
+                var registrationDetail = new MedicalRegistrationDetails
+                {
+                    MedicalRegistrationDetailsId = Guid.NewGuid(),
+                    RegistrationId = medicalRegistration.RegistrationId,
+                    DoseNumber = detail.DoseNumber,
+                    DoseTime = detail.DoseTime,
+                    Notes = detail.Notes,
+                    IsCompleted = false
+                };
+                medicalRegistration.Details.Add(registrationDetail);
+            }
 
             context.MedicalRegistrations.Add(medicalRegistration);
             await context.SaveChangesAsync();
@@ -63,53 +103,17 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return null!;
             }
 
-            var studentInfo = await context.Students.Where(s => s.StudentId == medicalRegistration.StudentId)
-                                    .Select(s => new MedicalRegistrationStudentResponse
-                                    {
-                                        StudentId = s.StudentId,
-                                        StudentFullName = s.FullName
-                                    })
-                                    .AsNoTracking()
-                                    .FirstOrDefaultAsync();
+            var details = await GetDetailsAsync(medicalRegistrationId);
 
-            var parentInfor = await context.Users.Where(u => u.UserId == medicalRegistration.UserId)
-                                    .Select(u => new MedicalRegistrationParentResponse
-                                    {
-                                        UserId = u.UserId,
-                                        UserFullName = u.FullName
-                                    })
-                                    .AsNoTracking()
-                                    .FirstOrDefaultAsync();
+            var studentInfo = await GetStudentInforAsync(medicalRegistration.StudentId);
 
-            var nurseInfo = await context.Users
-                                    .Where(u => u.UserId == medicalRegistration.StaffNurseId)
-                                    .Select(u => u.FullName!)
-                                    .AsNoTracking()
-                                    .FirstOrDefaultAsync();
+            var parentInfo = await GetParentInforAsync(medicalRegistration.UserId);
 
-            var nurseApprovedResponse = new MedicalRegistrationNurseApprovedResponse
-            {
-                StaffNurseId = medicalRegistration.StaffNurseId,
-                StaffNurseFullName = nurseInfo,
-                StaffNurseNotes = medicalRegistration.StaffNurseNotes,
-                DateApproved = medicalRegistration.DateApproved
-            };
+            var nurseApprovedResponse = await GetNuserInforAsync(medicalRegistration.StaffNurseId, medicalRegistration);
 
-            var response = new MedicalRegistrationResponse
-            {
-                MedicalRegistration = new MedicalRegistrationDto
-                {
-                    RegistrationId = medicalRegistration.RegistrationId,
-                    MedicationName = medicalRegistration.MedicationName,
-                    Dosage = medicalRegistration.Dosage,
-                    Notes = medicalRegistration.Notes,
-                    ParentConsent = medicalRegistration.ParentalConsent ?? false,
-                    DateSubmitted = medicalRegistration.DateSubmitted
-                },
-                NurseApproved = nurseApprovedResponse,
-                Student = studentInfo,
-                Parent = parentInfor
-            };
+            if (details == null || studentInfo == null || parentInfo == null || nurseApprovedResponse == null) return null;
+
+            var response = GetResponse(medicalRegistration, details, studentInfo, parentInfo, nurseApprovedResponse);
             return response;
         }
 
@@ -131,55 +135,17 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             foreach (var medicalRegistration in registrations)
             {
-                var studentInfo = await context.Students
-                    .Where(s => s.StudentId == medicalRegistration.StudentId)
-                    .Select(s => new MedicalRegistrationStudentResponse
-                    {
-                        StudentId = s.StudentId,
-                        StudentFullName = s.FullName
-                    })
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync();
+                var details = await GetDetailsAsync(medicalRegistration.RegistrationId);
 
-                var parentInfo = await context.Users
-                    .Where(u => u.UserId == medicalRegistration.UserId)
-                    .Select(u => new MedicalRegistrationParentResponse
-                    {
-                        UserId = u.UserId,
-                        UserFullName = u.FullName
-                    })
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync();
+                var studentInfo = await GetStudentInforAsync(medicalRegistration.StudentId);
 
-                var nurseInfo = await context.Users
-                    .Where(u => u.UserId == medicalRegistration.StaffNurseId)
-                    .Select(u => u.FullName ?? string.Empty)
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync();
+                var parentInfo = await GetParentInforAsync(medicalRegistration.UserId);
 
-                var nurseApprovedResponse = new MedicalRegistrationNurseApprovedResponse
-                {
-                    StaffNurseId = medicalRegistration.StaffNurseId,
-                    StaffNurseFullName = nurseInfo,
-                    StaffNurseNotes = medicalRegistration.StaffNurseNotes,
-                    DateApproved = medicalRegistration.DateApproved
-                };
+                MedicalRegistrationNurseApprovedResponse? nurseApprovedResponse = await GetNuserInforAsync(medicalRegistration.StaffNurseId, medicalRegistration);
 
-                var response = new MedicalRegistrationResponse
-                {
-                    MedicalRegistration = new MedicalRegistrationDto
-                    {
-                        RegistrationId = medicalRegistration.RegistrationId,
-                        MedicationName = medicalRegistration.MedicationName,
-                        Dosage = medicalRegistration.Dosage,
-                        Notes = medicalRegistration.Notes,
-                        ParentConsent = medicalRegistration.ParentalConsent ?? false,
-                        DateSubmitted = medicalRegistration.DateSubmitted
-                    },
-                    NurseApproved = nurseApprovedResponse,
-                    Student = studentInfo,
-                    Parent = parentInfo
-                };
+                if (details == null || studentInfo == null || parentInfo == null || nurseApprovedResponse == null) return null;
+
+                var response = GetResponse(medicalRegistration, details, studentInfo, parentInfo, nurseApprovedResponse);
 
                 result.Add(response);
             }
@@ -192,8 +158,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             );
         }
 
-
-
         public async Task<PaginationResponse<MedicalRegistrationResponse?>> GetUserMedicalRegistrationsAsync(PaginationRequest? paginationRequest, Guid userId)
         {
             var totalCount = await context.MedicalRegistrations.Where(m => m.UserId == userId).CountAsync();
@@ -204,6 +168,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
 
             var registrations = await context.MedicalRegistrations
+                .Where(m => m.UserId == userId)
                 .OrderByDescending(m => m.DateSubmitted)
                 .Skip((paginationRequest!.PageIndex - 1) * paginationRequest.PageSize)
                 .Take(paginationRequest.PageSize)
@@ -213,55 +178,17 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             foreach (var medicalRegistration in registrations)
             {
-                var studentInfo = await context.Students
-                    .Where(s => s.StudentId == medicalRegistration.StudentId)
-                    .Select(s => new MedicalRegistrationStudentResponse
-                    {
-                        StudentId = s.StudentId,
-                        StudentFullName = s.FullName
-                    })
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync();
+                var details = await GetDetailsAsync(medicalRegistration.RegistrationId);
 
-                var parentInfo = await context.Users
-                    .Where(u => u.UserId == medicalRegistration.UserId)
-                    .Select(u => new MedicalRegistrationParentResponse
-                    {
-                        UserId = u.UserId,
-                        UserFullName = u.FullName
-                    })
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync();
+                var studentInfo = await GetStudentInforAsync(medicalRegistration.StudentId);
 
-                var nurseInfo = await context.Users
-                   .Where(u => u.UserId == medicalRegistration.StaffNurseId)
-                   .Select(u => u.FullName ?? string.Empty)
-                   .AsNoTracking()
-                   .FirstOrDefaultAsync();
+                var parentInfo = await GetParentInforAsync(medicalRegistration.UserId);
 
-                var nurseApprovedResponse = new MedicalRegistrationNurseApprovedResponse
-                {
-                    StaffNurseId = medicalRegistration.StaffNurseId,
-                    StaffNurseFullName = nurseInfo,
-                    StaffNurseNotes = medicalRegistration.StaffNurseNotes,
-                    DateApproved = medicalRegistration.DateApproved
-                };
+                var nurseApprovedResponse = await GetNuserInforAsync(medicalRegistration.StaffNurseId, medicalRegistration);
 
-                var response = new MedicalRegistrationResponse
-                {
-                    MedicalRegistration = new MedicalRegistrationDto
-                    {
-                        RegistrationId = medicalRegistration.RegistrationId,
-                        MedicationName = medicalRegistration.MedicationName,
-                        Dosage = medicalRegistration.Dosage,
-                        Notes = medicalRegistration.Notes,
-                        ParentConsent = medicalRegistration.ParentalConsent ?? false,
-                        DateSubmitted = medicalRegistration.DateSubmitted
-                    },
-                    NurseApproved = nurseApprovedResponse,
-                    Student = studentInfo,
-                    Parent = parentInfo
-                };
+                if (details == null || studentInfo == null || parentInfo == null) return null;
+
+                var response = GetResponse(medicalRegistration, details, studentInfo, parentInfo, nurseApprovedResponse);
 
                 result.Add(response);
             }
@@ -272,6 +199,100 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 totalCount,
                 result
             );
+        }
+
+        private async Task<MedicalRegistrationStudentResponse?> GetStudentInforAsync(Guid? studentId)
+        {
+            var studentInfo = await context.Students
+                    .Where(s => s.StudentId == studentId)
+                    .Select(s => new MedicalRegistrationStudentResponse
+                    {
+                        StudentId = s.StudentId,
+                        StudentFullName = s.FullName
+                    })
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
+            if (studentInfo == null)
+                return null;
+
+            return studentInfo;
+        }
+        private async Task<MedicalRegistrationParentResponse?> GetParentInforAsync(Guid? UserId)
+        {
+            var parentInfo = await context.Users
+                        .Where(u => u.UserId == UserId)
+                        .Select(u => new MedicalRegistrationParentResponse
+                        {
+                            UserId = u.UserId,
+                            UserFullName = u.FullName
+                        })
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync();
+            if (parentInfo == null)
+                return null!;
+
+            return parentInfo;
+        }
+        private async Task<MedicalRegistrationNurseApprovedResponse?> GetNuserInforAsync(Guid? staffNurseId, MedicalRegistration medicalRegistration)
+        {
+            var nurseInfo = await context.Users
+                .Where(u => u.UserId == staffNurseId)
+                .Select(u => u.FullName ?? string.Empty)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+            var nurseApprovedResponse = new MedicalRegistrationNurseApprovedResponse
+            {
+                StaffNurseId = medicalRegistration.StaffNurseId,
+                StaffNurseFullName = nurseInfo,
+                DateApproved = medicalRegistration.DateApproved
+            };
+
+            return nurseApprovedResponse;
+        }
+        private async Task<List<MedicalRegistrationDetailsResponse>> GetDetailsAsync(Guid medicalRegistrationId)
+        {
+            var medicalRegistrationDetails = await context.MedicalRegistrationDetails.Where(mrd => mrd.RegistrationId == medicalRegistrationId).ToListAsync();
+            if (medicalRegistrationDetails == null)
+            {
+                return null;
+            }
+
+            var details = new List<MedicalRegistrationDetailsResponse>();
+            foreach (var detail in medicalRegistrationDetails)
+            {
+                details.Add(new MedicalRegistrationDetailsResponse()
+                {
+                    DoseNumber = detail.DoseNumber,
+                    Notes = detail.Notes,
+                    IsCompleted = detail.IsCompleted,
+                    DateCompleted = detail.DateCompleted,
+                    DoseTime = detail.DoseTime,
+                });
+            }
+
+            return details;
+        }
+        private MedicalRegistrationResponse GetResponse(MedicalRegistration medicalRegistration, List<MedicalRegistrationDetailsResponse> details, MedicalRegistrationStudentResponse studentInfo, MedicalRegistrationParentResponse parentInfo, MedicalRegistrationNurseApprovedResponse nurseApprovedResponse)
+        {
+            var response = new MedicalRegistrationResponse
+            {
+                MedicalRegistration = new MedicalRegistrationResponseDto
+                {
+                    RegistrationId = medicalRegistration.RegistrationId,
+                    MedicationName = medicalRegistration.MedicationName,
+                    TotalDosages = medicalRegistration.TotalDosages,
+                    Notes = medicalRegistration.Notes,
+                    ParentConsent = medicalRegistration.ParentalConsent ?? false,
+                    DateSubmitted = medicalRegistration.DateSubmitted
+                },
+                MedicalRegistrationDetails = details,
+                NurseApproved = nurseApprovedResponse,
+                Student = studentInfo,
+                Parent = parentInfo
+            };
+
+            return response;
         }
     }
 }

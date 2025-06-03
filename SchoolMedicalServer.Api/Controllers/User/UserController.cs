@@ -37,7 +37,7 @@ namespace SchoolMedicalServer.Api.Controllers.User
 
         [HttpPut("{userid}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateUser(Guid userid, UserDto request)
+        public async Task<IActionResult> UpdateUser(Guid userid, UserInformation request)
         {
             var isUpdated = await userService.UpdateUserAsync(userid, request);
             if (!isUpdated)

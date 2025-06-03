@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolMedicalServer.Infrastructure;
 
@@ -11,9 +12,11 @@ using SchoolMedicalServer.Infrastructure;
 namespace SchoolMedicalServer.Infrastructure.Migrations
 {
     [DbContext(typeof(SchoolMedicalManagementContext))]
-    partial class SchoolMedicalManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20250603041716_UpdateMedicalRegistrationDetailsV4")]
+    partial class UpdateMedicalRegistrationDetailsV4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -371,12 +374,6 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.Property<Guid?>("StaffNurseId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("StaffNurseID");
-
-                    b.Property<bool>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false)
-                        .HasColumnName("Status");
 
                     b.Property<Guid?>("StudentId")
                         .HasColumnType("uniqueidentifier")

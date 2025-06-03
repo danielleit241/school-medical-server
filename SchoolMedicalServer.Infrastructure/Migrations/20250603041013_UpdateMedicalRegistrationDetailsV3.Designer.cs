@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolMedicalServer.Infrastructure;
 
@@ -11,9 +12,11 @@ using SchoolMedicalServer.Infrastructure;
 namespace SchoolMedicalServer.Infrastructure.Migrations
 {
     [DbContext(typeof(SchoolMedicalManagementContext))]
-    partial class SchoolMedicalManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20250603041013_UpdateMedicalRegistrationDetailsV3")]
+    partial class UpdateMedicalRegistrationDetailsV3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -350,10 +353,6 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("RegistrationID");
 
-                    b.Property<DateOnly?>("DateApproved")
-                        .HasColumnType("date")
-                        .HasColumnName("DateApproved");
-
                     b.Property<DateOnly?>("DateSubmitted")
                         .HasColumnType("date");
 
@@ -367,16 +366,6 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
 
                     b.Property<bool?>("ParentalConsent")
                         .HasColumnType("bit");
-
-                    b.Property<Guid?>("StaffNurseId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("StaffNurseID");
-
-                    b.Property<bool>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false)
-                        .HasColumnName("Status");
 
                     b.Property<Guid?>("StudentId")
                         .HasColumnType("uniqueidentifier")
@@ -406,9 +395,9 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("MedicalRegistrationDetailsID");
 
-                    b.Property<DateTime?>("DateCompleted")
+                    b.Property<DateTime?>("DateApproved")
                         .HasColumnType("datetime")
-                        .HasColumnName("DateCompleted");
+                        .HasColumnName("DateApproved");
 
                     b.Property<string>("DoseNumber")
                         .IsRequired()

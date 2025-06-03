@@ -14,21 +14,6 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> RegisterMedicalRegistration([FromBody] MedicalRegistrationRequest request)
         {
-            if (request.StudentId == Guid.Empty || request.UserId == Guid.Empty)
-            {
-                return BadRequest("Invalid medical registration request. Please provide valid student ID, user ID.");
-            }
-
-            if (!request.ParentConsent)
-            {
-                return BadRequest("Parent consent is required for medical registration.");
-            }
-
-            if (request.Notes == null || request.MedicationName == null || request.Dosage == null)
-            {
-                return BadRequest("Invalid medical registration request. Please provide all required fields.");
-            }
-
             var isCreated = await service.CreateMedicalRegistrationAsync(request);
             if (!isCreated)
             {
