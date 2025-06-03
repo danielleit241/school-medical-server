@@ -22,17 +22,17 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             return true;
         }
-        public async Task<bool> CreateMedicalEventAsync(MedicalEventRequest request)
+        public async Task<MedicalEvent> CreateMedicalEventAsync(MedicalEventRequest request)
         {
             var student = await context.Students.FirstOrDefaultAsync(s => s.StudentCode == request.MedicalEvent.StudentCode);
             if (student == null)
             {
-                return false;
+                return null;
             }
             var staffNurse = await context.Users.FindAsync(request.MedicalEvent.StaffNurseId);
             if (staffNurse == null)
             {
-                return false;
+                return null;
             }
 
             foreach (var item in request.MedicalRequests!)
@@ -73,7 +73,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             context.MedicalRequests.AddRange(medicalRequests);
 
             await context.SaveChangesAsync();
-            return true;
+            return medicalEvent;
         }
 
         public async Task<PaginationResponse<MedicalEventResponse>?> GetAllStudentMedicalEventsAsync(PaginationRequest? paginationRequest)
@@ -94,39 +94,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             foreach (var medicalEvent in events)
             {
-                var medicalRequests = await context.MedicalRequests
-                    .Where(r => r.MedicalEventId == medicalEvent.EventId)
-                    .Join(context.MedicalInventories,
-                          r => r.ItemId,
-                          i => i.ItemId,
-                          (r, i) => new MedicalRequestDtoResponse
-                          {
-                              RequestId = r.RequestId,
-                              ItemId = r.ItemId,
-                              ItemName = i.ItemName,
-                              RequestQuantity = r.RequestQuantity
-                          })
-                    .AsNoTracking()
-                    .ToListAsync();
+                var medicalRequests = await GetMedicalRequestsByEventIdAsync(medicalEvent.EventId);
 
-                var medicalEventDto = new MedicalEventDtoResponse
-                {
-                    EventId = medicalEvent.EventId,
-                    StudentId = medicalEvent.StudentId,
-                    StaffNurseId = medicalEvent.StaffNurseId,
-                    EventDate = medicalEvent.EventDate,
-                    EventType = medicalEvent.EventType,
-                    EventDescription = medicalEvent.EventDescription,
-                    Location = medicalEvent.Location,
-                    SeverityLevel = medicalEvent.SeverityLevel,
-                    Notes = medicalEvent.Notes
-                };
+                var medicalEventDto = MaptoDto(medicalEvent);
 
-                var response = new MedicalEventResponse
-                {
-                    MedicalEvent = medicalEventDto,
-                    MedicalRequests = medicalRequests
-                };
+                var response = GetResponse(medicalEvent, medicalRequests);
 
                 result.Add(response);
             }
@@ -139,7 +111,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             );
         }
 
-        public async Task<MedicalEventResponse?> GetMedicalEventDetailAsync(PaginationRequest? paginationRequest, Guid medicalEventId)
+        public async Task<MedicalEventResponse?> GetMedicalEventDetailAsync(Guid medicalEventId)
         {
             var medicalEvent = await context.MedicalEvents
                 .Where(e => e.EventId == medicalEventId)
@@ -150,43 +122,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return null!;
             }
 
-            var medicalRequests = await context.MedicalRequests
-                .Where(r => r.MedicalEventId == medicalEvent.EventId)
-                .Join(context.MedicalInventories,
-                      r => r.ItemId,
-                      i => i.ItemId,
-                      (r, i) => new MedicalRequestDtoResponse
-                      {
-                          RequestId = r.RequestId,
-                          ItemId = r.ItemId,
-                          ItemName = i.ItemName,
-                          RequestQuantity = r.RequestQuantity
-                      })
-                .AsNoTracking()
-                .ToListAsync();
+            var medicalRequests = await GetMedicalRequestsByEventIdAsync(medicalEvent.EventId);
 
-            var medicalEventDto = new MedicalEventDtoResponse
-            {
-                EventId = medicalEvent.EventId,
-                StudentId = medicalEvent.StudentId,
-                StaffNurseId = medicalEvent.StaffNurseId,
-                EventDate = medicalEvent.EventDate,
-                EventType = medicalEvent.EventType,
-                EventDescription = medicalEvent.EventDescription,
-                Location = medicalEvent.Location,
-                SeverityLevel = medicalEvent.SeverityLevel,
-                Notes = medicalEvent.Notes
-            };
+            var medicalEventDto = MaptoDto(medicalEvent);
 
-            var response = new MedicalEventResponse
-            {
-                MedicalEvent = medicalEventDto,
-                MedicalRequests = medicalRequests
-            };
+            var response = GetResponse(medicalEvent, medicalRequests);
 
             return response;
         }
-
 
 
         public async Task<PaginationResponse<MedicalEventResponse>?> GetMedicalEventsByStudentIdAsync(PaginationRequest? paginationRequest, Guid studentId)
@@ -211,39 +154,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             foreach (var medicalEvent in events)
             {
-                var medicalRequests = await context.MedicalRequests
-                    .Where(r => r.MedicalEventId == medicalEvent.EventId)
-                    .Join(context.MedicalInventories,
-                          r => r.ItemId,
-                          i => i.ItemId,
-                          (r, i) => new MedicalRequestDtoResponse
-                          {
-                              RequestId = r.RequestId,
-                              ItemId = r.ItemId,
-                              ItemName = i.ItemName,
-                              RequestQuantity = r.RequestQuantity
-                          })
-                    .AsNoTracking()
-                    .ToListAsync();
+                var medicalRequests = await GetMedicalRequestsByEventIdAsync(medicalEvent.EventId);
 
-                var medicalEventDto = new MedicalEventDtoResponse
-                {
-                    EventId = medicalEvent.EventId,
-                    StudentId = medicalEvent.StudentId,
-                    StaffNurseId = medicalEvent.StaffNurseId,
-                    EventDate = medicalEvent.EventDate,
-                    EventType = medicalEvent.EventType,
-                    EventDescription = medicalEvent.EventDescription,
-                    Location = medicalEvent.Location,
-                    SeverityLevel = medicalEvent.SeverityLevel,
-                    Notes = medicalEvent.Notes
-                };
+                var medicalEventDto = MaptoDto(medicalEvent);
 
-                var response = new MedicalEventResponse
-                {
-                    MedicalEvent = medicalEventDto,
-                    MedicalRequests = medicalRequests
-                };
+                var response = GetResponse(medicalEvent, medicalRequests);
 
                 result.Add(response);
             }
@@ -254,6 +169,49 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 totalCount,
                 result
             );
+        }
+
+        private MedicalEventResponse GetResponse(MedicalEvent medicalEvent, List<MedicalRequestDtoResponse> medicalRequests)
+        {
+            return new MedicalEventResponse
+            {
+                MedicalEvent = MaptoDto(medicalEvent),
+                MedicalRequests = medicalRequests
+            };
+        }
+
+        private MedicalEventDtoResponse MaptoDto(MedicalEvent medicalEvent)
+        {
+            return new MedicalEventDtoResponse
+            {
+                EventId = medicalEvent.EventId,
+                StudentId = medicalEvent.StudentId,
+                StaffNurseId = medicalEvent.StaffNurseId,
+                EventDate = medicalEvent.EventDate,
+                EventType = medicalEvent.EventType,
+                EventDescription = medicalEvent.EventDescription,
+                Location = medicalEvent.Location,
+                SeverityLevel = medicalEvent.SeverityLevel,
+                Notes = medicalEvent.Notes
+            };
+        }
+
+        private async Task<List<MedicalRequestDtoResponse>> GetMedicalRequestsByEventIdAsync(Guid eventId)
+        {
+            return await context.MedicalRequests
+                .Where(r => r.MedicalEventId == eventId)
+                .Join(context.MedicalInventories,
+                      r => r.ItemId,
+                      i => i.ItemId,
+                      (r, i) => new MedicalRequestDtoResponse
+                      {
+                          RequestId = r.RequestId,
+                          ItemId = r.ItemId,
+                          ItemName = i.ItemName,
+                          RequestQuantity = r.RequestQuantity
+                      })
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }

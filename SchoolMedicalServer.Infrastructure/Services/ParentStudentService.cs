@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Dtos.Student;
+using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
@@ -8,25 +9,18 @@ namespace SchoolMedicalServer.Infrastructure.Services
     {
         private readonly SchoolMedicalManagementContext context = context;
 
-        public async Task<IEnumerable<StudentInformationResponse>> GetParentStudentsAsync(Guid parentId)
+        public async Task<IEnumerable<StudentInformationResponse>?> GetParentStudentsAsync(Guid parentId)
         {
             var students = await context.Students
                 .Include(s => s.User)
                 .Where(s => s.UserId == parentId)
                 .ToListAsync();
 
-            var response = students.Select(s => new StudentInformationResponse
+            List<StudentInformationResponse> response = new();
+            foreach (var student in students)
             {
-                StudentId = s.StudentId,
-                StudentCode = s.StudentCode,
-                FullName = s.FullName,
-                DayOfBirth = s.DayOfBirth ?? default,
-                Gender = s.Gender,
-                Grade = s.Grade,
-                Address = s.Address,
-                ParentPhoneNumber = s.ParentPhoneNumber,
-                ParentEmailAddress = s.ParentEmailAddress
-            });
+                response.Add(GetStudentInformationResponse(student));
+            }
 
             return response;
         }
@@ -39,7 +33,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             if (student == null) return null;
 
-            var response = new StudentInformationResponse
+            var response = GetStudentInformationResponse(student);
+            return response;
+        }
+
+        private StudentInformationResponse GetStudentInformationResponse(Student student)
+        {
+            return new StudentInformationResponse
             {
                 StudentId = student.StudentId,
                 StudentCode = student.StudentCode,
@@ -51,7 +51,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 ParentPhoneNumber = student.ParentPhoneNumber,
                 ParentEmailAddress = student.ParentEmailAddress
             };
-            return response;
         }
     }
 }

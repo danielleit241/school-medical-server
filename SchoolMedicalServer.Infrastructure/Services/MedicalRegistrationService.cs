@@ -9,20 +9,20 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class MedicalRegistrationService(SchoolMedicalManagementContext context) : IMedicalRegistrationService
     {
-        public async Task<bool> ApproveMedicalRegistrationAsync(Guid medicalRegistrationId, MedicalRegistrationNurseApprovedRequest request)
+        public async Task<MedicalRegistration> ApproveMedicalRegistrationAsync(Guid medicalRegistrationId, MedicalRegistrationNurseApprovedRequest request)
         {
             var medicalRegistration = await context.MedicalRegistrations.FirstOrDefaultAsync(m => m.RegistrationId == medicalRegistrationId);
             if (medicalRegistration == null)
             {
-                return false;
+                return null;
             }
             if (medicalRegistration.Status == true)
             {
-                return false;
+                return null;
             }
             if (request.StaffNurseId == null)
             {
-                return false;
+                return null;
             }
 
             medicalRegistration.StaffNurseId = request.StaffNurseId;
@@ -31,25 +31,25 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             context.MedicalRegistrations.Update(medicalRegistration);
             await context.SaveChangesAsync();
-            return true;
+            return medicalRegistration;
         }
 
-        public async Task<bool> CompletedMedicalRegistrationDetailsAsync(Guid medicalRegistrationId, MedicalRegistrationNurseCompletedDetailsRequest request)
+        public async Task<MedicalRegistrationDetails> CompletedMedicalRegistrationDetailsAsync(Guid medicalRegistrationId, MedicalRegistrationNurseCompletedDetailsRequest request)
         {
             var medicalRegistration = await context.MedicalRegistrations.FirstOrDefaultAsync(m => m.RegistrationId == medicalRegistrationId && m.StaffNurseId == request.StaffNurseId);
             if (medicalRegistration == null)
             {
-                return false;
+                return null;
             }
 
             if (request.StaffNurseId == null)
             {
-                return false;
+                return null;
             }
 
             var medicalRegistrationDetails = await context.MedicalRegistrationDetails.FirstOrDefaultAsync(mrd => mrd.RegistrationId == medicalRegistrationId && mrd.DoseNumber == request.DoseNumber);
             if (medicalRegistrationDetails == null)
-                return false;
+                return null;
 
             medicalRegistrationDetails.StaffNurseId = request.StaffNurseId;
             medicalRegistrationDetails.DateCompleted = DateTime.UtcNow;
@@ -58,10 +58,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
             context.MedicalRegistrationDetails.Update(medicalRegistrationDetails);
             await context.SaveChangesAsync();
 
-            return true;
+            return medicalRegistrationDetails;
         }
 
-        public async Task<bool> CreateMedicalRegistrationAsync(MedicalRegistrationRequest request)
+        public async Task<MedicalRegistration> CreateMedicalRegistrationAsync(MedicalRegistrationRequest request)
         {
             var medicalRegistration = new MedicalRegistration
             {
@@ -91,7 +91,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             context.MedicalRegistrations.Add(medicalRegistration);
             await context.SaveChangesAsync();
-            return true;
+            return medicalRegistration;
         }
 
         public async Task<MedicalRegistrationResponse?> GetMedicalRegistrationAsync(Guid medicalRegistrationId)

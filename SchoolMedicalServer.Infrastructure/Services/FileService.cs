@@ -6,7 +6,7 @@ using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class UploadService(SchoolMedicalManagementContext context) : IUploadService
+    public class FileService(SchoolMedicalManagementContext context) : IFileService
     {
         public async Task UploadMedicalInventoriesExcelFile(IFormFile file)
         {
