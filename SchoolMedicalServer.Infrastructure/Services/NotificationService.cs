@@ -120,14 +120,92 @@ namespace SchoolMedicalServer.Infrastructure.Services
             };
         }
 
-        public Task<NotificationResponse> GetAppoimentNotificationAsync(Guid notificationId)
+        public async Task<NotificationResponse> GetAppoimentNotificationAsync(Guid notificationId)
         {
-            throw new NotImplementedException();
+            var notification = await context.Notifications
+               .Where(n => n.NotificationId == notificationId)
+               .FirstOrDefaultAsync();
+
+            if (notification == null)
+            {
+                return null!;
+            }
+
+            var sender = context.Users
+                .Where(u => u.UserId == notification.SenderId)
+                .Select(u => new SenderInformationResponseDto
+                {
+                    UserId = u.UserId,
+                    UserName = u.FullName
+                })
+                .FirstOrDefault();
+
+            var receiver = context.Users
+                .Where(u => u.UserId == notification.ReceiverId)
+                .Select(u => new ReceiverInformationResponseDto
+                {
+                    UserId = u.UserId,
+                    UserName = u.FullName
+                })
+                .FirstOrDefault();
+
+            var notiInfo = GetNotiInfor(notification);
+            return GetResponse(notiInfo, sender!, receiver!);
         }
 
-        public Task<PaginationResponse<NotificationResponse>> GetAppoimentNotificationsByUserAsync(PaginationRequest pagination, Guid userId)
+
+
+        public async Task<PaginationResponse<NotificationResponse>> GetAppoimentNotificationsByUserAsync(PaginationRequest pagination, Guid userId)
         {
-            throw new NotImplementedException();
+            var totalCount = await context.Notifications
+                .Where(n => n.ReceiverId == userId && n.Type == NotificationTypes.AppointmentReminder)
+                .CountAsync();
+
+            if(totalCount == 0)
+            {
+                return null!;
+            }
+
+            var notifications = await context.Notifications
+                .Where(n => n.ReceiverId == userId && n.Type == NotificationTypes.AppointmentReminder)
+                .OrderByDescending(n => n.SendDate)
+                 .Skip((pagination!.PageIndex - 1) * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .ToListAsync();
+
+            var result = new List<NotificationResponse>();
+
+            foreach (var notification in notifications)
+            {
+                var sender = context.Users
+                    .Where(u => u.UserId == notification.SenderId)
+                    .Select(u => new SenderInformationResponseDto
+                    {
+                        UserId = u.UserId,
+                        UserName = u.FullName
+                    })
+                    .FirstOrDefault();
+
+                var receiver = context.Users
+                    .Where(u => u.UserId == notification.ReceiverId)
+                    .Select(u => new ReceiverInformationResponseDto
+                    {
+                        UserId = u.UserId,
+                        UserName = u.FullName
+                    })
+                    .FirstOrDefault();
+
+                var notiInfo = GetNotiInfor(notification);
+                var response = GetResponse(notiInfo, sender!, receiver!);
+
+                result.Add(response);
+            }
+            return new PaginationResponse<NotificationResponse>(
+                   pagination.PageIndex,
+                   pagination.PageSize,
+                    totalCount,
+                    result
+             );
         }
     }
 }
