@@ -1,6 +1,6 @@
 ﻿namespace SchoolMedicalServer.Abstractions.Dtos
 {
-    public class MedicalInventoryDto
+    public class MedicalInventoryResponse
     {
         public Guid ItemId { get; set; }
 

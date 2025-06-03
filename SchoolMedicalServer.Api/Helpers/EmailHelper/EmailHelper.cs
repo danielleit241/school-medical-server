@@ -8,7 +8,7 @@ namespace SchoolMedicalServer.Api.Helpers.EmailHelper
 {
     public class EmailHelper(IConfiguration configuration) : IEmailHelper
     {
-        public async Task SendEmailAsync(EmailDto request)
+        public async Task SendEmailAsync(EmailFrom request)
         {
             try
             {

@@ -4,6 +4,6 @@ namespace SchoolMedicalServer.Api.Helpers.EmailHelper
 {
     public interface IEmailHelper
     {
-        Task SendEmailAsync(EmailDto request);
+        Task SendEmailAsync(EmailFrom request);
     }
 }

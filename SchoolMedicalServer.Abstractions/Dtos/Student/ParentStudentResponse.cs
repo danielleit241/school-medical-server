@@ -1,7 +1,7 @@
 ﻿namespace SchoolMedicalServer.Abstractions.Dtos.Student
 {
-    public class ParentStudentResponse(IEnumerable<StudentDto> students)
+    public class ParentStudentResponse(IEnumerable<StudentInformationResponse> students)
     {
-        public IEnumerable<StudentDto> Students { get; set; } = students;
+        public IEnumerable<StudentInformationResponse> Students { get; set; } = students;
     }
 }

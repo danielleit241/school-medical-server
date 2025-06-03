@@ -1,6 +1,6 @@
 ﻿namespace SchoolMedicalServer.Abstractions.Dtos.Account
 {
-    public class AccountDto
+    public class AccountResponse
     {
         public Guid Id { get; set; }
         public string FullName { get; set; } = default!;

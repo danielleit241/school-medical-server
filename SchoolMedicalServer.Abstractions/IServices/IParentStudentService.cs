@@ -4,7 +4,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
 {
     public interface IParentStudentService
     {
-        Task<StudentDto?> GetParentStudentAsync(Guid parentId, Guid studentId);
-        Task<IEnumerable<StudentDto>?> GetParentStudentsAsync(Guid parentId);
+        Task<StudentInformationResponse?> GetParentStudentAsync(Guid parentId, Guid studentId);
+        Task<IEnumerable<StudentInformationResponse>?> GetParentStudentsAsync(Guid parentId);
     }
 }

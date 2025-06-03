@@ -1,6 +1,6 @@
 ﻿namespace SchoolMedicalServer.Abstractions.Dtos.Helpers
 {
-    public class EmailDto
+    public class EmailFrom
     {
         public string To { get; set; } = default!;
         public string Subject { get; set; } = default!;

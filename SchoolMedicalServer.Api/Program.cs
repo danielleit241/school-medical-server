@@ -38,15 +38,21 @@ namespace SchoolMedicalServer.Api
             using (var scope = app.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<SchoolMedicalManagementContext>();
+                var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
                 context.Database.Migrate();
 
                 if (!context.Users.Any())
                 {
+                    var adminSection = config.GetSection("DefaultAdmin");
+                    var phoneNumber = adminSection["PhoneNumber"];
+                    var password = adminSection["Password"];
+
                     context.Users.Add(new User
                     {
                         UserId = Guid.NewGuid(),
-                        PhoneNumber = "adminsystem",
-                        PasswordHash = new PasswordHasher<User>().HashPassword(null!, "adminsystem"),
+                        PhoneNumber = phoneNumber!,
+                        PasswordHash = new PasswordHasher<User>().HashPassword(null!, password!),
                         RoleId = 1
                     });
                     context.SaveChanges();

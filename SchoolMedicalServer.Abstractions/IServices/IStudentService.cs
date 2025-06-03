@@ -10,7 +10,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
 {
     public interface IStudentService
     {
-        Task<PaginationResponse<StudentDto>> GetAllStudentsAsync(PaginationRequest? paginationRequest);
+        Task<PaginationResponse<StudentInformationResponse>> GetAllStudentsAsync(PaginationRequest? paginationRequest);
       
     }
 }

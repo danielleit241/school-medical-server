@@ -9,7 +9,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class AccountService(SchoolMedicalManagementContext context, IConfiguration configuration) : IAccountService
     {
-        public async Task<List<AccountDto>> BatchCreateParentsAsync()
+        public async Task<List<AccountResponse>> BatchCreateParentsAsync()
         {
             string? defaultPassword = configuration["DefaultAccountCreate:Password"];
             if (string.IsNullOrEmpty(defaultPassword))
@@ -29,7 +29,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 .Where(u => parentPhones.Contains(u.PhoneNumber))
                 .ToDictionaryAsync(u => u.PhoneNumber);
 
-            List<AccountDto> accounts = [];
+            List<AccountResponse> accounts = [];
 
             foreach (var student in students)
             {
@@ -59,7 +59,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
                 student.UserId = user.UserId;
 
-                accounts.Add(new AccountDto
+                accounts.Add(new AccountResponse
                 {
                     Id = user.UserId,
                     FullName = "Parent of " + student.FullName,
@@ -78,7 +78,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return accounts;
         }
 
-        public async Task<AccountDto?> RegisterStaffAsync(RegisterStaffRequest request)
+        public async Task<AccountResponse?> RegisterStaffAsync(RegisterStaffRequest request)
         {
             if (await context.Users.AnyAsync(u => u.PhoneNumber == request.PhoneNumber))
             {
@@ -114,7 +114,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             context.Users.Add(user);
             await context.SaveChangesAsync();
 
-            var account = new AccountDto
+            var account = new AccountResponse
             {
                 Id = user.UserId,
                 FullName = request.FullName,

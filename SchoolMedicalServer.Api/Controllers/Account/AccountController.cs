@@ -37,7 +37,7 @@ namespace SchoolMedicalServer.Api.Controllers.Account
             return Ok(account);
         }
 
-        private async Task SendEmail(AccountDto account, string templatePath)
+        private async Task SendEmail(AccountResponse account, string templatePath)
         {
             string htmlBody = await System.IO.File.ReadAllTextAsync(templatePath);
 
@@ -45,7 +45,7 @@ namespace SchoolMedicalServer.Api.Controllers.Account
                    .Replace("{PASSWORD}", account.Password)
                    .Replace("{FULLNAME}", account.FullName);
 
-            var emailDesc = new EmailDto
+            var emailDesc = new EmailFrom
             {
                 To = account.EmailAddress,
                 Subject = "Account Creation",

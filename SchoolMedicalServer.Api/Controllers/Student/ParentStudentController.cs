@@ -27,7 +27,7 @@ namespace SchoolMedicalServer.Api.Controllers.Student
 
         [HttpGet("parents/{parentId}/students/{studentId}")]
         [Authorize(Roles = "parent")]
-        public async Task<ActionResult<StudentDto>> GetStudent(Guid parentId, Guid studentId)
+        public async Task<ActionResult<StudentInformationResponse>> GetStudent(Guid parentId, Guid studentId)
         {
             if (parentId == Guid.Empty || studentId == Guid.Empty)
             {

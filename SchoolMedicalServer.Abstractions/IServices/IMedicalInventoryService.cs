@@ -5,6 +5,6 @@ namespace SchoolMedicalServer.Abstractions.IServices
 {
     public interface IMedicalInventoryService
     {
-        Task<PaginationResponse<MedicalInventoryDto>?> PaginationMedicalInventoriesAsync(PaginationRequest? pagination);
+        Task<PaginationResponse<MedicalInventoryResponse>?> PaginationMedicalInventoriesAsync(PaginationRequest? pagination);
     }
 }
