@@ -120,14 +120,70 @@ namespace SchoolMedicalServer.Infrastructure.Services
             };
         }
 
-        public Task<NotificationResponse> GetAppoimentNotificationAsync(Guid notificationId)
+        public async Task<NotificationResponse> GetAppoimentNotificationAsync(Guid notificationId)
         {
-            throw new NotImplementedException();
+            var notification = await context.Notifications
+                .FirstOrDefaultAsync(n => n.NotificationId == notificationId);
+
+            if (notification == null)
+            {
+                return null!;
+            }
+
+            var request = new NotificationRequest
+            {
+                SenderId = notification.SenderId,
+                ReceiverId = notification.ReceiverId
+            };
+            var notiInfo = GetNotiInfor(notification);
+            var sender = SenderInformation(request)!;
+            var receiver = ReceiverInformation(request)!;
+            
+            return GetResponse(notiInfo, sender, receiver);
         }
 
-        public Task<PaginationResponse<NotificationResponse>> GetAppoimentNotificationsByUserAsync(PaginationRequest pagination, Guid userId)
+
+
+        public async Task<PaginationResponse<NotificationResponse>> GetAppoimentNotificationsByUserAsync(PaginationRequest pagination, Guid userId)
         {
-            throw new NotImplementedException();
+            var totalCount = await context.Notifications
+                .Where(n => n.ReceiverId == userId && n.Type == NotificationTypes.AppointmentReminder)
+                .CountAsync();
+
+            if(totalCount == 0)
+            {
+                return null!;
+            }
+
+            var notifications = await context.Notifications
+                .Where(n => n.ReceiverId == userId && n.Type == NotificationTypes.AppointmentReminder)
+                .OrderByDescending(n => n.SendDate)
+                 .Skip((pagination!.PageIndex - 1) * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .ToListAsync();
+
+            var result = new List<NotificationResponse>();
+
+            foreach (var notification in notifications)
+            {
+               var request = new NotificationRequest
+                {
+                    SenderId = notification.SenderId,
+                    ReceiverId = notification.ReceiverId
+                };
+                var notiInfo = GetNotiInfor(notification);
+                var sender = SenderInformation(request)!;
+                var receiver = ReceiverInformation(request)!;
+
+                result.Add(GetResponse(notiInfo, sender, receiver));
+            }
+
+            return new PaginationResponse<NotificationResponse>(
+                   pagination.PageIndex,
+                   pagination.PageSize,
+                    totalCount,
+                    result
+             );
         }
     }
 }
