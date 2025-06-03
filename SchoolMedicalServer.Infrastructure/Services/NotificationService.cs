@@ -123,34 +123,23 @@ namespace SchoolMedicalServer.Infrastructure.Services
         public async Task<NotificationResponse> GetAppoimentNotificationAsync(Guid notificationId)
         {
             var notification = await context.Notifications
-               .Where(n => n.NotificationId == notificationId)
-               .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(n => n.NotificationId == notificationId);
 
             if (notification == null)
             {
                 return null!;
             }
 
-            var sender = context.Users
-                .Where(u => u.UserId == notification.SenderId)
-                .Select(u => new SenderInformationResponseDto
-                {
-                    UserId = u.UserId,
-                    UserName = u.FullName
-                })
-                .FirstOrDefault();
-
-            var receiver = context.Users
-                .Where(u => u.UserId == notification.ReceiverId)
-                .Select(u => new ReceiverInformationResponseDto
-                {
-                    UserId = u.UserId,
-                    UserName = u.FullName
-                })
-                .FirstOrDefault();
-
+            var request = new NotificationRequest
+            {
+                SenderId = notification.SenderId,
+                ReceiverId = notification.ReceiverId
+            };
             var notiInfo = GetNotiInfor(notification);
-            return GetResponse(notiInfo, sender!, receiver!);
+            var sender = SenderInformation(request)!;
+            var receiver = ReceiverInformation(request)!;
+            
+            return GetResponse(notiInfo, sender, receiver);
         }
 
 
@@ -177,29 +166,18 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             foreach (var notification in notifications)
             {
-                var sender = context.Users
-                    .Where(u => u.UserId == notification.SenderId)
-                    .Select(u => new SenderInformationResponseDto
-                    {
-                        UserId = u.UserId,
-                        UserName = u.FullName
-                    })
-                    .FirstOrDefault();
-
-                var receiver = context.Users
-                    .Where(u => u.UserId == notification.ReceiverId)
-                    .Select(u => new ReceiverInformationResponseDto
-                    {
-                        UserId = u.UserId,
-                        UserName = u.FullName
-                    })
-                    .FirstOrDefault();
-
+               var request = new NotificationRequest
+                {
+                    SenderId = notification.SenderId,
+                    ReceiverId = notification.ReceiverId
+                };
                 var notiInfo = GetNotiInfor(notification);
-                var response = GetResponse(notiInfo, sender!, receiver!);
+                var sender = SenderInformation(request)!;
+                var receiver = ReceiverInformation(request)!;
 
-                result.Add(response);
+                result.Add(GetResponse(notiInfo, sender, receiver));
             }
+
             return new PaginationResponse<NotificationResponse>(
                    pagination.PageIndex,
                    pagination.PageSize,
