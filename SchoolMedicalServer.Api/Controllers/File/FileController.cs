@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.IServices;
 
-namespace SchoolMedicalServer.Api.Controllers
+namespace SchoolMedicalServer.Api.Controllers.File
 {
     [Route("api")]
     [ApiController]
-    public class UploadController(IUploadService service) : ControllerBase
+    public class FileController(IFileService service) : ControllerBase
     {
         [HttpPost("medical-inventories/upload-excel")]
         [Authorize(Roles = "admin,manager")]

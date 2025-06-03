@@ -65,13 +65,10 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.StudentId).HasColumnName("StudentID");
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
-            // Add this line for StaffNurseId
             entity.Property(e => e.StaffNurseId)
                   .HasColumnName("StaffNurseId")
                   .IsRequired();
-            //Adding AppointmentTopic
             entity.Property(e => e.Topic).HasMaxLength(40);
-            //Adding startime, and endtime
             entity.Property(e => e.AppointmentStartTime)
                 .HasColumnType("time")
                 .HasColumnName("AppointmentStartTime");
@@ -358,21 +355,26 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.NotificationId)
                 .ValueGeneratedNever()
                 .HasColumnName("NotificationID");
-            entity.Property(e => e.EventId).HasColumnName("EventID");
-            entity.Property(e => e.HealthCheckScheduleId).HasColumnName("HealthCheckScheduleID");
             entity.Property(e => e.SendDate).HasColumnType("datetime");
-            entity.Property(e => e.StudentId).HasColumnName("StudentID");
-            entity.Property(e => e.UserId).HasColumnName("UserID");
-            entity.Property(e => e.VaccineScheduleId).HasColumnName("VaccineScheduleID");
+            entity.Property(e => e.SenderId).HasColumnName("SenderID");
+            entity.Property(e => e.ReceiverId).HasColumnName("ReceiverID");
+            entity.Property(e => e.SourceId).HasColumnName("SourceID");
 
-            entity.HasOne(d => d.Student).WithMany(p => p.Notifications)
-                .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK__Notificat__Stude__7D439ABD");
+            entity.Property(e => e.IsRead)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("IsRead");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Notifications)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__Notificat__UserI__7E37BEF6");
+            entity.Property(e => e.IsConfirmed)
+                .HasColumnType("bit")
+                .HasDefaultValue(false)
+                .HasColumnName("IsConfirmed");
+
+            entity.Property(e => e.ConfirmedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("ConfirmedAt");
         });
+
 
         modelBuilder.Entity<Role>(entity =>
         {
@@ -422,7 +424,6 @@ public partial class SchoolMedicalManagementContext : DbContext
                 .WithMany(p => p.Students)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK__Student__UserID__4F7CD00D");
-            // 1-1 Student-HealthProfile đã cấu hình ở HealthProfile
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -431,7 +432,6 @@ public partial class SchoolMedicalManagementContext : DbContext
 
             entity.ToTable("User");
 
-            // Unique constraint on PhoneNumber
             entity.HasIndex(e => e.PhoneNumber).IsUnique();
 
             entity.Property(e => e.UserId)

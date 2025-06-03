@@ -6,7 +6,6 @@
         public StudentInfo? Student { get; set; }
         public UserInfo? User { get; set; }
         public StaffNurseInfo? StaffNurse { get; set; }
-
         public string? Topic { get; set; }
         public DateOnly? AppointmentDate { get; set; }
         public TimeOnly? AppointmentStartTime { get; set; }

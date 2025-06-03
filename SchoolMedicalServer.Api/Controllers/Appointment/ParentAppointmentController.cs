@@ -14,12 +14,12 @@ namespace SchoolMedicalServer.Api.Controllers.Appointment
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> RegisterAppointment([FromBody] AppointmentRequest request)
         {
-            var isCreated = await service.RegisterAppointment(request);
-            if (!isCreated)
+            var appointment = await service.RegisterAppointment(request);
+            if (appointment == null)
             {
                 return BadRequest("Failed to register appointment. Please check the request data.");
             }
-            return StatusCode(201, "Create successfully!");
+            return StatusCode(201, appointment);
         }
 
         [HttpGet("parents/{userId}/appointments")]

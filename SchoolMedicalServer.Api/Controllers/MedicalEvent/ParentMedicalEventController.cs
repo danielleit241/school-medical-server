@@ -27,13 +27,13 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalEvent
 
         [HttpGet("parents/students/medical-events/{medicalEventId}")]
         [Authorize(Roles = "parent")]
-        public async Task<IActionResult> GetMedicalEventDetail([FromQuery] PaginationRequest? paginationRequest, Guid medicalEventId)
+        public async Task<IActionResult> GetMedicalEventDetail(Guid medicalEventId)
         {
             if (medicalEventId == Guid.Empty)
             {
                 return BadRequest("Medical event ID cannot be empty.");
             }
-            var medicalEvent = await service.GetMedicalEventDetailAsync(paginationRequest, medicalEventId);
+            var medicalEvent = await service.GetMedicalEventDetailAsync(medicalEventId);
             if (medicalEvent == null)
             {
                 return NotFound(new { Message = "Medical event not found." });

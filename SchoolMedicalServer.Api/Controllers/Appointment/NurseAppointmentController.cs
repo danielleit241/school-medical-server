@@ -70,12 +70,12 @@ namespace SchoolMedicalServer.Api.Controllers.Appointment
             {
                 return BadRequest("Appointment ID cannot be empty.");
             }
-            var isUpdated = await service.ApproveAppointment(appointmentId, request);
-            if (!isUpdated)
+            var appointment = await service.ApproveAppointment(appointmentId, request);
+            if (appointment == null)
             {
                 return BadRequest("Failed to update appointment. Please check the request data.");
             }
-            return StatusCode(204, "Update successfully");
+            return StatusCode(204, appointment);
         }
     }
 }

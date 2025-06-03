@@ -14,12 +14,12 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> RegisterMedicalRegistration([FromBody] MedicalRegistrationRequest request)
         {
-            var isCreated = await service.CreateMedicalRegistrationAsync(request);
-            if (!isCreated)
+            var medicalRegistration = await service.CreateMedicalRegistrationAsync(request);
+            if (medicalRegistration == null)
             {
                 return BadRequest("Failed to create medical registration.");
             }
-            return StatusCode(201, "Create succesfully!");
+            return StatusCode(201, medicalRegistration);
         }
 
         [HttpGet("parents/medical-registrations/{medicalRegistrationId}")]

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolMedicalServer.Infrastructure;
 
@@ -11,9 +12,11 @@ using SchoolMedicalServer.Infrastructure;
 namespace SchoolMedicalServer.Infrastructure.Migrations
 {
     [DbContext(typeof(SchoolMedicalManagementContext))]
-    partial class SchoolMedicalManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20250603130623_UpdateNotificationWithRemoveStudentIdV2")]
+    partial class UpdateNotificationWithRemoveStudentIdV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -503,16 +506,8 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasDefaultValue(false)
                         .HasColumnName("IsRead");
 
-                    b.Property<Guid?>("ReceiverId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ReceiverID");
-
                     b.Property<DateTime>("SendDate")
                         .HasColumnType("datetime");
-
-                    b.Property<Guid?>("SenderId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("SenderID");
 
                     b.Property<Guid>("SourceId")
                         .HasColumnType("uniqueidentifier")
@@ -525,7 +520,8 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("UserID");
 
                     b.HasKey("NotificationId")
                         .HasName("PK__Notifica__20CF2E32256F768A");
@@ -1034,9 +1030,12 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
 
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.Notification", b =>
                 {
-                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.User", null)
+                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.User", "User")
                         .WithMany("Notifications")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("FK__Notificat__UserI__7E37BEF6");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.Student", b =>

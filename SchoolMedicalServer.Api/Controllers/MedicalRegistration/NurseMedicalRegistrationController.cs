@@ -46,12 +46,12 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
             {
                 return BadRequest("Medical registration ID cannot be empty.");
             }
-            var isApproved = await service.ApproveMedicalRegistrationAsync(medicalRegistrationId, request);
-            if (!isApproved)
+            var medicalRegistration = await service.ApproveMedicalRegistrationAsync(medicalRegistrationId, request);
+            if (medicalRegistration == null)
             {
                 return BadRequest("Failed to approve medical registration.");
             }
-            return StatusCode(200, "Update successfully");
+            return StatusCode(200, medicalRegistration);
         }
 
         [HttpPut("nurses/medical-registrations/{medicalRegistrationId}/completed")]
@@ -62,12 +62,12 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
             {
                 return BadRequest("Medical registration ID cannot be empty.");
             }
-            var isApproved = await service.CompletedMedicalRegistrationDetailsAsync(medicalRegistrationId, request);
-            if (!isApproved)
+            var medicalRegistrationDetails = await service.CompletedMedicalRegistrationDetailsAsync(medicalRegistrationId, request);
+            if (medicalRegistrationDetails == null)
             {
                 return BadRequest("Failed to completed medical registration details.");
             }
-            return StatusCode(204, "Update successfully");
+            return StatusCode(204, medicalRegistrationDetails);
         }
     }
 

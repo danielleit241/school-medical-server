@@ -24,13 +24,13 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalEvent
 
         [HttpGet("nurses/students/medical-events/{medicalEventId}")]
         [Authorize(Roles = "nurse")]
-        public async Task<IActionResult> GetMedicalEventDetail([FromQuery] PaginationRequest? paginationRequest, Guid medicalEventId)
+        public async Task<IActionResult> GetMedicalEventDetail(Guid medicalEventId)
         {
             if (medicalEventId == Guid.Empty)
             {
                 return BadRequest(new { Message = "Medical event ID cannot be empty." });
             }
-            var medicalEvent = await service.GetMedicalEventDetailAsync(paginationRequest, medicalEventId);
+            var medicalEvent = await service.GetMedicalEventDetailAsync(medicalEventId);
             if (medicalEvent == null)
             {
                 return NotFound(new { Message = "Medical event not found." });
@@ -51,8 +51,8 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalEvent
                 }
             }
 
-            var isCreate = await service.CreateMedicalEventAsync(request);
-            if (!isCreate)
+            var medicalEvent = await service.CreateMedicalEventAsync(request);
+            if (medicalEvent == null)
             {
                 return BadRequest("Failed to create medical event.");
             }
