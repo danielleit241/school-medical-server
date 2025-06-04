@@ -12,7 +12,7 @@ namespace SchoolMedicalServer.Api.Controllers
     {
         [HttpPost("notifications/medical-registrations/approved/to-parent")]
         [Authorize(Roles = "nurse")]
-        public async Task<IActionResult> SendMedicalRegistrationNotificationToParent([FromBody] NotificationRequest request, [FromQuery] Guid medicalRegistrationId)
+        public async Task<IActionResult> SendMedicalRegistrationNotificationToParent([FromBody] NotificationRequest request)
         {
             var notification = await service.SendMedicalRegistrationNotificationToParentAsync(request);
             if (notification == null)
@@ -24,7 +24,7 @@ namespace SchoolMedicalServer.Api.Controllers
 
         [HttpPost("notifications/medical-registrations/completed/to-parent")]
         [Authorize(Roles = "nurse")]
-        public async Task<IActionResult> SendMedicalRegistrationDetailsNotificationToParent([FromBody] NotificationRequest request, [FromQuery] Guid medicalRegistrationId)
+        public async Task<IActionResult> SendMedicalRegistrationDetailsNotificationToParent([FromBody] NotificationRequest request)
         {
             var notification = await service.SendMedicalRegistrationDetailsNotificationToParentAsync(request);
             if (notification == null)
