@@ -6,6 +6,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
     public interface IAuthService
     {
         Task<User?> ChangePasswordAsync(ChangePasswordRequest request);
+        Task<bool> CheckLoginAsync(UserLoginRequest request);
         Task<string> GetOtpAsync(SendOtpRequest request);
         Task<TokensResponse?> LoginAsync(UserLoginRequest request);
         Task<TokensResponse?> RefreshTokenAsync(RefreshTokenRequest request);

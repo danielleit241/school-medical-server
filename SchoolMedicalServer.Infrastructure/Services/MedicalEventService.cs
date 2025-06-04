@@ -98,6 +98,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
                 var medicalEventDto = MaptoDto(medicalEvent);
 
+                var studentInfo = await GetStudentInfoAsync(medicalEvent.StudentId);
+
                 var response = GetResponse(medicalEvent, medicalRequests);
 
                 result.Add(response);
@@ -125,6 +127,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var medicalRequests = await GetMedicalRequestsByEventIdAsync(medicalEvent.EventId);
 
             var medicalEventDto = MaptoDto(medicalEvent);
+
+            var studentInfo = await GetStudentInfoAsync(medicalEvent.StudentId);
 
             var response = GetResponse(medicalEvent, medicalRequests);
 
@@ -158,6 +162,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
                 var medicalEventDto = MaptoDto(medicalEvent);
 
+                var studentInfo = await GetStudentInfoAsync(medicalEvent.StudentId);
+
                 var response = GetResponse(medicalEvent, medicalRequests);
 
                 result.Add(response);
@@ -185,7 +191,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return new MedicalEventDtoResponse
             {
                 EventId = medicalEvent.EventId,
-                StudentId = medicalEvent.StudentId,
                 StaffNurseId = medicalEvent.StaffNurseId,
                 EventDate = medicalEvent.EventDate,
                 EventType = medicalEvent.EventType,
@@ -212,6 +217,20 @@ namespace SchoolMedicalServer.Infrastructure.Services
                       })
                 .AsNoTracking()
                 .ToListAsync();
+        }
+
+        private async Task<StudentInforResponse> GetStudentInfoAsync(Guid? studentId)
+        {
+            var student = await context.Students
+                .Where(s => s.StudentId == studentId)
+                .Select(s => new StudentInforResponse
+                {
+                    StudentId = s.StudentId,
+                    StudentCode = s.StudentCode,
+                    FullName = s.FullName
+                })
+                .FirstOrDefaultAsync();
+            return student ?? new StudentInforResponse();
         }
     }
 }

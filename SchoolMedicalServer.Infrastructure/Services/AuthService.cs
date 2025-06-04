@@ -171,5 +171,22 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             return true;
         }
+
+        public async Task<bool> CheckLoginAsync(UserLoginRequest request)
+        {
+            var user = await context.Users.Include("Role").Where(u => u.Status == true)
+                                        .FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
+            if (user == null)
+            {
+                return false;
+            }
+
+            if (new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.Password) == PasswordVerificationResult.Failed)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

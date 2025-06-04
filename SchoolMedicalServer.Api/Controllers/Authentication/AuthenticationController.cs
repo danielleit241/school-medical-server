@@ -11,6 +11,17 @@ namespace SchoolMedicalServer.Api.Controllers.Authentication
     [ApiController]
     public class AuthenticationController(IAuthService authService, IEmailHelper helper, IWebHostEnvironment _env) : ControllerBase
     {
+        [HttpPost("check-login")]
+        public async Task<IActionResult> CheckLogin([FromBody] UserLoginRequest request)
+        {
+            if (request is null || string.IsNullOrEmpty(request.PhoneNumber) || string.IsNullOrEmpty(request.Password))
+                return BadRequest("Invalid login request");
+            var isExist = await authService.CheckLoginAsync(request);
+            if (!isExist)
+                return NotFound("User not found");
+            return Ok(isExist);
+        }
+
 
         [HttpPost("login")]
         public async Task<IActionResult?> Login([FromBody] UserLoginRequest request)
