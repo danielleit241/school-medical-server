@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace SchoolMedicalServer.Abstractions.Entities;
 
@@ -25,9 +26,12 @@ public partial class MedicalEvent
 
     public string? Notes { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<MedicalRequest> MedicalRequests { get; set; } = new List<MedicalRequest>();
 
+    [JsonIgnore]
     public virtual Student? Student { get; set; }
 
+    [JsonIgnore]
     public virtual User? User { get; set; }
 }

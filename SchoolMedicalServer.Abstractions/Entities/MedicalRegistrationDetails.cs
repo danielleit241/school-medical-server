@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace SchoolMedicalServer.Abstractions.Entities
 {
@@ -13,6 +14,7 @@ namespace SchoolMedicalServer.Abstractions.Entities
         public bool IsCompleted { get; set; }
         public DateTime? DateCompleted { get; set; }
 
+        [JsonIgnore]
         public virtual MedicalRegistration? MedicalRegistration { get; set; }
     }
 }

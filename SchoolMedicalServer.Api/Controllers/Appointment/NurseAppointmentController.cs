@@ -75,7 +75,7 @@ namespace SchoolMedicalServer.Api.Controllers.Appointment
             {
                 return BadRequest("Failed to update appointment. Please check the request data.");
             }
-            return StatusCode(204, appointment);
+            return Ok(appointment);
         }
     }
 }

@@ -43,8 +43,6 @@ public partial class User
     [JsonIgnore]
     public virtual ICollection<MedicalRegistration> MedicalRegistrations { get; set; } = new List<MedicalRegistration>();
     [JsonIgnore]
-    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
-    [JsonIgnore]
     public virtual Role? Role { get; set; }
     [JsonIgnore]
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();

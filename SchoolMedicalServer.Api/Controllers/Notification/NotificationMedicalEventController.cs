@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.IServices;
 
-namespace SchoolMedicalServer.Api.Controllers
+namespace SchoolMedicalServer.Api.Controllers.Notification
 {
     [Route("api")]
     [ApiController]
@@ -25,12 +24,5 @@ namespace SchoolMedicalServer.Api.Controllers
             return Ok();
         }
 
-        [HttpGet("notification/users/{userId}/medical-events")]
-        [Authorize(Roles = "parent")]
-        public async Task<IActionResult> GetMedicalEventNotificationsByUser(Guid userId)
-        {
-            // Logic to retrieve all medical event notifications for a specific user
-            return Ok();
-        }
     }
 }

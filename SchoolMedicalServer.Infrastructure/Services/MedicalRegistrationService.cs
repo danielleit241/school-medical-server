@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Office.CustomUI;
 using Microsoft.EntityFrameworkCore;
+using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -9,20 +10,20 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class MedicalRegistrationService(SchoolMedicalManagementContext context) : IMedicalRegistrationService
     {
-        public async Task<MedicalRegistration> ApproveMedicalRegistrationAsync(Guid medicalRegistrationId, MedicalRegistrationNurseApprovedRequest request)
+        public async Task<NotificationRequest> ApproveMedicalRegistrationAsync(Guid medicalRegistrationId, MedicalRegistrationNurseApprovedRequest request)
         {
             var medicalRegistration = await context.MedicalRegistrations.FirstOrDefaultAsync(m => m.RegistrationId == medicalRegistrationId);
             if (medicalRegistration == null)
             {
-                return null;
+                return null!;
             }
             if (medicalRegistration.Status == true)
             {
-                return null;
+                return null!;
             }
             if (request.StaffNurseId == null)
             {
-                return null;
+                return null!;
             }
 
             medicalRegistration.StaffNurseId = request.StaffNurseId;
@@ -31,25 +32,31 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             context.MedicalRegistrations.Update(medicalRegistration);
             await context.SaveChangesAsync();
-            return medicalRegistration;
+
+            return new NotificationRequest
+            {
+                NotificationTypeId = medicalRegistration.RegistrationId,
+                SenderId = medicalRegistration.StaffNurseId,
+                ReceiverId = medicalRegistration.UserId,
+            };
         }
 
-        public async Task<MedicalRegistrationDetails> CompletedMedicalRegistrationDetailsAsync(Guid medicalRegistrationId, MedicalRegistrationNurseCompletedDetailsRequest request)
+        public async Task<NotificationRequest> CompletedMedicalRegistrationDetailsAsync(Guid medicalRegistrationId, MedicalRegistrationNurseCompletedDetailsRequest request)
         {
             var medicalRegistration = await context.MedicalRegistrations.FirstOrDefaultAsync(m => m.RegistrationId == medicalRegistrationId && m.StaffNurseId == request.StaffNurseId);
             if (medicalRegistration == null)
             {
-                return null;
+                return null!;
             }
 
             if (request.StaffNurseId == null)
             {
-                return null;
+                return null!;
             }
 
             var medicalRegistrationDetails = await context.MedicalRegistrationDetails.FirstOrDefaultAsync(mrd => mrd.RegistrationId == medicalRegistrationId && mrd.DoseNumber == request.DoseNumber);
             if (medicalRegistrationDetails == null)
-                return null;
+                return null!;
 
             medicalRegistrationDetails.StaffNurseId = request.StaffNurseId;
             medicalRegistrationDetails.DateCompleted = DateTime.UtcNow;
@@ -58,10 +65,15 @@ namespace SchoolMedicalServer.Infrastructure.Services
             context.MedicalRegistrationDetails.Update(medicalRegistrationDetails);
             await context.SaveChangesAsync();
 
-            return medicalRegistrationDetails;
+            return new NotificationRequest
+            {
+                NotificationTypeId = medicalRegistrationDetails.MedicalRegistrationDetailsId,
+                SenderId = medicalRegistration.StaffNurseId,
+                ReceiverId = medicalRegistration.UserId,
+            };
         }
 
-        public async Task<MedicalRegistration> CreateMedicalRegistrationAsync(MedicalRegistrationRequest request)
+        public async Task<NotificationRequest> CreateMedicalRegistrationAsync(MedicalRegistrationRequest request)
         {
             var medicalRegistration = new MedicalRegistration
             {
@@ -91,7 +103,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             context.MedicalRegistrations.Add(medicalRegistration);
             await context.SaveChangesAsync();
-            return medicalRegistration;
+
+            return new NotificationRequest
+            {
+                NotificationTypeId = medicalRegistration.RegistrationId,
+                SenderId = medicalRegistration.UserId,
+                ReceiverId = medicalRegistration.StudentId,
+            };
         }
 
         public async Task<MedicalRegistrationResponse?> GetMedicalRegistrationAsync(Guid medicalRegistrationId)

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.Dtos.MedicalEvent;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -22,17 +23,17 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             return true;
         }
-        public async Task<MedicalEvent> CreateMedicalEventAsync(MedicalEventRequest request)
+        public async Task<NotificationRequest> CreateMedicalEventAsync(MedicalEventRequest request)
         {
             var student = await context.Students.FirstOrDefaultAsync(s => s.StudentCode == request.MedicalEvent.StudentCode);
             if (student == null)
             {
-                return null;
+                return null!;
             }
             var staffNurse = await context.Users.FindAsync(request.MedicalEvent.StaffNurseId);
             if (staffNurse == null)
             {
-                return null;
+                return null!;
             }
 
             foreach (var item in request.MedicalRequests!)
@@ -67,13 +68,19 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Purpose = r.Purpose,
                 MedicalEventId = medicalEvent.EventId,
                 RequestDate = DateOnly.FromDateTime(DateTime.Now)
-            }).ToList() ?? new List<MedicalRequest>();
+            }).ToList() ?? [];
 
             context.MedicalEvents.Add(medicalEvent);
             context.MedicalRequests.AddRange(medicalRequests);
 
             await context.SaveChangesAsync();
-            return medicalEvent;
+
+            return new NotificationRequest
+            {
+                NotificationTypeId = medicalEvent.EventId,
+                SenderId = medicalEvent.StaffNurseId,
+                ReceiverId = await context.Students.Where(u => u.UserId == medicalEvent.StudentId).Select(u => u.UserId).FirstOrDefaultAsync(),
+            };
         }
 
         public async Task<PaginationResponse<MedicalEventResponse>?> GetAllStudentMedicalEventsAsync(PaginationRequest? paginationRequest)
@@ -135,7 +142,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return response;
         }
 
-
         public async Task<PaginationResponse<MedicalEventResponse>?> GetMedicalEventsByStudentIdAsync(PaginationRequest? paginationRequest, Guid studentId)
         {
             var totalCount = await context.MedicalEvents
@@ -187,9 +193,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
             };
         }
 
-        private MedicalEventDtoResponse MaptoDto(MedicalEvent medicalEvent)
+        private MedicalEventResponseDto MaptoDto(MedicalEvent medicalEvent)
         {
-            return new MedicalEventDtoResponse
+            return new MedicalEventResponseDto
             {
                 EventId = medicalEvent.EventId,
                 StaffNurseId = medicalEvent.StaffNurseId,
@@ -231,7 +237,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     FullName = s.FullName
                 })
                 .FirstOrDefaultAsync();
-            return student;
+            return student!;
         }
     }
 }

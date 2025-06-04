@@ -4,7 +4,7 @@ using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.IServices;
 
-namespace SchoolMedicalServer.Api.Controllers
+namespace SchoolMedicalServer.Api.Controllers.Notification
 {
     [Route("api")]
     [ApiController]
@@ -14,7 +14,7 @@ namespace SchoolMedicalServer.Api.Controllers
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> SendMedicalRegistrationNotificationToParent([FromBody] NotificationRequest request)
         {
-            var notification = await service.SendMedicalRegistrationNotificationToParentAsync(request);
+            var notification = await service.SendMedicalRegistrationApprovedNotificationToParentAsync(request);
             if (notification == null)
             {
                 return BadRequest("Failed to send medical registration notification to parent.");
@@ -26,7 +26,7 @@ namespace SchoolMedicalServer.Api.Controllers
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> SendMedicalRegistrationDetailsNotificationToParent([FromBody] NotificationRequest request)
         {
-            var notification = await service.SendMedicalRegistrationDetailsNotificationToParentAsync(request);
+            var notification = await service.SendMedicalRegistrationCompletedNotificationToParentAsync(request);
             if (notification == null)
             {
                 return BadRequest("Failed to send medical registration details notification to parent.");
@@ -46,12 +46,12 @@ namespace SchoolMedicalServer.Api.Controllers
             return Ok(notification);
         }
 
-        [HttpGet("notifications/users/{userId}/medical-registrations")]
-        [Authorize(Roles = "parent")]
-        public async Task<IActionResult> GetMedicalRegistrationNotifications([FromQuery] PaginationRequest pagination, Guid userId)
-        {
-            var notifications = await service.GetMedicalRegistrationNotificationsAsync(pagination, userId);
-            return Ok(notifications);
-        }
+        //[HttpGet("notifications/users/{userId}/medical-registrations")]
+        //[Authorize(Roles = "parent")]
+        //public async Task<IActionResult> GetMedicalRegistrationNotifications([FromQuery] PaginationRequest pagination, Guid userId)
+        //{
+        //    var notifications = await service.GetMedicalRegistrationNotificationsAsync(pagination, userId);
+        //    return Ok(notifications);
+        //}
     }
 }

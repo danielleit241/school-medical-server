@@ -1,4 +1,6 @@
-﻿namespace SchoolMedicalServer.Abstractions.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace SchoolMedicalServer.Abstractions.Entities;
 
 public partial class Appointment
 {
@@ -24,7 +26,8 @@ public partial class Appointment
 
     public bool? CompletionStatus { get; set; }
 
+    [JsonIgnore]
     public virtual Student? Student { get; set; }
-
+    [JsonIgnore]
     public virtual User? User { get; set; }
 }
