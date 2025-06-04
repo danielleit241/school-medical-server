@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.Dtos.Appointment;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -60,50 +61,48 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return response;
         }
 
-        public async Task<Appointment?> RegisterAppointment(AppointmentRequest request)
+        public async Task<NotificationRequest> RegisterAppointment(AppointmentRequest request)
         {
             if (request == null)
             {
-                return null;
+                return null!;
             }
 
             var userId = await context.Students.Where(u => u.UserId == request.UserId).Select(s => s.UserId).FirstOrDefaultAsync();
             if (userId == null)
             {
-                return null;
+                return null!;
             }
 
             var isStaffHasAppointment = await context.Appointments
                 .AnyAsync(a => a.StaffNurseId == request.StaffNurseId && a.AppointmentDate == request.AppointmentDate &&
                                a.AppointmentStartTime < request.AppointmentEndTime && a.AppointmentEndTime > request.AppointmentStartTime);
             if (isStaffHasAppointment)
-                return null;
+                return null!;
 
-            try
+            var appointment = new Appointment
             {
-                var appointment = new Appointment
-                {
-                    AppointmentId = Guid.NewGuid(),
-                    StudentId = request.StudentId,
-                    UserId = request.UserId,
-                    StaffNurseId = request.StaffNurseId,
-                    Topic = request.Topic,
-                    AppointmentDate = request.AppointmentDate,
-                    AppointmentStartTime = request.AppointmentStartTime,
-                    AppointmentEndTime = request.AppointmentEndTime,
-                    AppointmentReason = request.AppointmentReason,
-                    ConfirmationStatus = false,
-                    CompletionStatus = false
-                };
-                context.Appointments.Add(appointment);
-                await context.SaveChangesAsync();
-                return appointment;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+                AppointmentId = Guid.NewGuid(),
+                StudentId = request.StudentId,
+                UserId = request.UserId,
+                StaffNurseId = request.StaffNurseId,
+                Topic = request.Topic,
+                AppointmentDate = request.AppointmentDate,
+                AppointmentStartTime = request.AppointmentStartTime,
+                AppointmentEndTime = request.AppointmentEndTime,
+                AppointmentReason = request.AppointmentReason,
+                ConfirmationStatus = false,
+                CompletionStatus = false
+            };
+            context.Appointments.Add(appointment);
+            await context.SaveChangesAsync();
 
+            return new NotificationRequest
+            {
+                NotificationTypeId = appointment.AppointmentId,
+                SenderId = appointment.UserId,
+                ReceiverId = appointment.StaffNurseId
+            };
         }
 
         public async Task<AppointmentResponse> GetStaffNurseAppointment(Guid staffNurseId, Guid appointmentId)
@@ -251,16 +250,16 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return response;
         }
 
-        public async Task<Appointment?> ApproveAppointment(Guid appointmentId, AppoinmentNurseApprovedRequest request)
+        public async Task<NotificationRequest> ApproveAppointment(Guid appointmentId, AppoinmentNurseApprovedRequest request)
         {
             var appointment = await context.Appointments.FirstOrDefaultAsync(a => a.AppointmentId == appointmentId);
             if (appointment == null || appointment.StaffNurseId != request.StaffNurseId)
             {
-                return null;
+                return null!;
             }
             if (appointment == null)
             {
-                return null;
+                return null!;
             }
             if (request.ConfirmationStatus.HasValue)
             {
@@ -270,16 +269,17 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 appointment.CompletionStatus = request.CompletionStatus.Value;
             }
-            try
+
+            context.Appointments.Update(appointment);
+            await context.SaveChangesAsync();
+
+            return new NotificationRequest
             {
-                context.Appointments.Update(appointment);
-                await context.SaveChangesAsync();
-                return appointment;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+                NotificationTypeId = appointment.AppointmentId,
+                SenderId = appointment.StaffNurseId,
+                ReceiverId = appointment.UserId
+            };
         }
+
     }
 }

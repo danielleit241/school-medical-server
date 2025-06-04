@@ -51,7 +51,7 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
             {
                 return BadRequest("Failed to approve medical registration.");
             }
-            return StatusCode(200, medicalRegistration);
+            return Ok(medicalRegistration);
         }
 
         [HttpPut("nurses/medical-registrations/{medicalRegistrationId}/completed")]
@@ -67,7 +67,7 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
             {
                 return BadRequest("Failed to completed medical registration details.");
             }
-            return StatusCode(204, medicalRegistrationDetails);
+            return Ok(medicalRegistrationDetails);
         }
     }
 

@@ -2,12 +2,12 @@
 {
     public class MedicalEventResponse
     {
-        public MedicalEventDtoResponse? MedicalEvent { get; set; }
+        public MedicalEventResponseDto? MedicalEvent { get; set; }
         public StudentInforResponse? StudentInfo { get; set; }
         public List<MedicalRequestDtoResponse>? MedicalRequests { get; set; } = [];
     }
 
-    public class MedicalEventDtoResponse
+    public class MedicalEventResponseDto
     {
         public Guid EventId { get; set; }
         public Guid? StaffNurseId { get; set; }

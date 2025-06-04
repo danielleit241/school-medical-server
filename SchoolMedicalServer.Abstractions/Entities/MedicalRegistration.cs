@@ -1,4 +1,6 @@
-﻿namespace SchoolMedicalServer.Abstractions.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace SchoolMedicalServer.Abstractions.Entities;
 
 public partial class MedicalRegistration
 {
@@ -19,13 +21,16 @@ public partial class MedicalRegistration
     public bool? ParentalConsent { get; set; }
 
     public Guid? StaffNurseId { get; set; }
+
     public DateOnly? DateApproved { get; set; }
+
     public bool Status { get; set; }
 
+    [JsonIgnore]
     public virtual Student? Student { get; set; }
-
+    [JsonIgnore]
     public virtual User? User { get; set; }
-
+    [JsonIgnore]
     public virtual ICollection<MedicalRegistrationDetails> Details { get; set; } = new List<MedicalRegistrationDetails>();
 
 }

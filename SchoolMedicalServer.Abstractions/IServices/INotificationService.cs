@@ -1,20 +1,20 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Entities;
 
 namespace SchoolMedicalServer.Abstractions.IServices
 {
     public interface INotificationService
     {
+        Task<PaginationResponse<NotificationResponse>> GetUserNotificationsAsync(PaginationRequest? request, Guid userId);
+
         Task<NotificationResponse> GetAppoimentNotificationAsync(Guid notificationId);
-        Task<PaginationResponse<NotificationResponse>> GetAppoimentNotificationsByUserAsync(PaginationRequest pagination, Guid userId);
+        //Task<PaginationResponse<NotificationResponse>> GetAppoimentNotificationsByUserAsync(PaginationRequest pagination, Guid userId);
+        Task<NotificationResponse> SendAppoimentNotificationToNurseAsync(NotificationRequest request);
+        Task<NotificationResponse> SendAppoimentNotificationToParentAsync(NotificationRequest request);
 
-        Task<NotificationResponse> SendAppoimentToNurseNotificationAsync(NotificationRequest request);
-        Task<NotificationResponse> SendAppoimentToParentNotificationAsync(NotificationRequest request);
-
-        Task<NotificationResponse> SendMedicalRegistrationNotificationToParentAsync(NotificationRequest request);
-        Task<NotificationResponse> SendMedicalRegistrationDetailsNotificationToParentAsync(NotificationRequest request);    
+        Task<NotificationResponse> SendMedicalRegistrationApprovedNotificationToParentAsync(NotificationRequest request);
+        Task<NotificationResponse> SendMedicalRegistrationCompletedNotificationToParentAsync(NotificationRequest request);
         Task<NotificationResponse> GetMedicalRegistrationNotificationAsync(Guid notificationId);
-        Task<PaginationResponse<NotificationResponse>> GetMedicalRegistrationNotificationsAsync(PaginationRequest pagination, Guid userId);
+        //Task<PaginationResponse<NotificationResponse>> GetMedicalRegistrationNotificationsAsync(PaginationRequest pagination, Guid userId);
     }
 }

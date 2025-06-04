@@ -23,7 +23,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 paginationRequest.PageSize = 10;
             }
             var role = await context.Roles.FirstOrDefaultAsync(r => r.RoleName == roleName);
-            if (role == null) return null;
+            if (role == null) return null!;
 
             var totalCount = await context.Users.CountAsync();
             var users = await context.Users.Include(u => u.Role)

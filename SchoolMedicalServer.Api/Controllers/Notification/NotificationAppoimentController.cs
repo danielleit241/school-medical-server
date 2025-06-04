@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.IServices;
 
-namespace SchoolMedicalServer.Api.Controllers
+namespace SchoolMedicalServer.Api.Controllers.Notification
 {
     [Route("api")]
     [ApiController]
@@ -15,7 +14,7 @@ namespace SchoolMedicalServer.Api.Controllers
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> SendAppoimentToNurseNotification([FromBody] NotificationRequest request)
         {
-            var notification = await service.SendAppoimentToNurseNotificationAsync(request);
+            var notification = await service.SendAppoimentNotificationToNurseAsync(request);
             if (notification == null)
             {
                 return BadRequest("Failed to send appointment notification to nurse.");
@@ -27,7 +26,7 @@ namespace SchoolMedicalServer.Api.Controllers
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> SendAppoimentToParentNotification([FromBody] NotificationRequest request)
         {
-            var notification = await service.SendAppoimentToParentNotificationAsync(request);
+            var notification = await service.SendAppoimentNotificationToParentAsync(request);
             if (notification == null)
             {
                 return BadRequest("Failed to send appointment notification to parent.");
@@ -47,19 +46,16 @@ namespace SchoolMedicalServer.Api.Controllers
             return Ok(notification);
         }
 
-        [HttpGet("notification/users/{userId}/appoiments")]
-        [Authorize(Roles = "parent, nurse")]
-        public async Task<IActionResult> GetAppoimentNotificationsByUser([FromQuery] PaginationRequest pagination, Guid userId)
-        {
-            var notifications = await service.GetAppoimentNotificationsByUserAsync(pagination, userId);
-            if (notifications == null)
-            {
-                return NotFound("No notifications found for the specified user.");
-            }
-            return Ok();
-        }
-
-
-      
+        //[HttpGet("notification/users/{userId}/appoiments")]
+        //[Authorize(Roles = "parent, nurse")]
+        //public async Task<IActionResult> GetAppoimentNotificationsByUser([FromQuery] PaginationRequest pagination, Guid userId)
+        //{
+        //    var notifications = await service.GetAppoimentNotificationsByUserAsync(pagination, userId);
+        //    if (notifications == null)
+        //    {
+        //        return NotFound("No notifications found for the specified user.");
+        //    }
+        //    return Ok(notifications);
+        //}
     }
 }

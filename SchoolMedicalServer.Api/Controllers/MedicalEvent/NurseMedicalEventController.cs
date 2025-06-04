@@ -56,7 +56,7 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalEvent
             {
                 return BadRequest("Failed to create medical event.");
             }
-            return StatusCode(201, new { Message = "Medical event created successfully." });
+            return StatusCode(201, medicalEvent);
         }
     }
 }
