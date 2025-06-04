@@ -100,7 +100,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
                 var studentInfo = await GetStudentInfoAsync(medicalEvent.StudentId);
 
-                var response = GetResponse(medicalEvent, medicalRequests);
+                var response = GetResponse(medicalEvent, medicalRequests, studentInfo);
 
                 result.Add(response);
             }
@@ -130,7 +130,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             var studentInfo = await GetStudentInfoAsync(medicalEvent.StudentId);
 
-            var response = GetResponse(medicalEvent, medicalRequests);
+            var response = GetResponse(medicalEvent, medicalRequests, studentInfo);
 
             return response;
         }
@@ -164,7 +164,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
                 var studentInfo = await GetStudentInfoAsync(medicalEvent.StudentId);
 
-                var response = GetResponse(medicalEvent, medicalRequests);
+                var response = GetResponse(medicalEvent, medicalRequests, studentInfo);
 
                 result.Add(response);
             }
@@ -177,12 +177,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
             );
         }
 
-        private MedicalEventResponse GetResponse(MedicalEvent medicalEvent, List<MedicalRequestDtoResponse> medicalRequests)
+        private MedicalEventResponse GetResponse(MedicalEvent medicalEvent, List<MedicalRequestDtoResponse> medicalRequests, StudentInforResponse studentInfor)
         {
             return new MedicalEventResponse
             {
                 MedicalEvent = MaptoDto(medicalEvent),
-                MedicalRequests = medicalRequests
+                MedicalRequests = medicalRequests,
+                StudentInfo = studentInfor
             };
         }
 
@@ -226,11 +227,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 .Select(s => new StudentInforResponse
                 {
                     StudentId = s.StudentId,
-                    StudentCode = s.StudentCode,
+                    StudentCode = s.StudentCode!,
                     FullName = s.FullName
                 })
                 .FirstOrDefaultAsync();
-            return student ?? new StudentInforResponse();
+            return student;
         }
     }
 }

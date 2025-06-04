@@ -10,7 +10,7 @@ namespace SchoolMedicalServer.Api.Controllers.Student
     public class StudentController(IStudentService service) : ControllerBase
     {
         [HttpGet("students")]
-        [Authorize(Roles = "admin, manager")]
+        [Authorize(Roles = "admin, manager, nurse")]
         public async Task<IActionResult> GetAllStudents([FromQuery] PaginationRequest? paginationRequest)
         {
             var students = await service.GetAllStudentsAsync(paginationRequest);

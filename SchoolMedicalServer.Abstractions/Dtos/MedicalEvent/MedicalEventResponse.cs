@@ -22,8 +22,8 @@
     public class StudentInforResponse
     {
         public Guid? StudentId { get; set; }
-        public string StudentCode { get; set; } = string.Empty;
-        public string FullName { get; set; } = string.Empty;
+        public string? StudentCode { get; set; }
+        public string? FullName { get; set; }
     }
 
     public class MedicalRequestDtoResponse
