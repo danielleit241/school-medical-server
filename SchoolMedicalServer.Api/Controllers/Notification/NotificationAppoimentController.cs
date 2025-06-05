@@ -21,8 +21,7 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return BadRequest("Failed to send appointment notification to nurse.");
             }
-            var unreadCount = await service.GetUserUnReadNotificationsAsync(notification.ReceiverInformationDto.UserId);
-            await hubContext.Clients.Users(notification.ReceiverInformationDto.UserId.ToString()!).SendAsync("NotificationSignal", unreadCount);
+            await NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
             return Ok(notification);
         }
 
@@ -35,33 +34,14 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return BadRequest("Failed to send appointment notification to parent.");
             }
-            var unreadCount = await service.GetUserUnReadNotificationsAsync(notification.ReceiverInformationDto.UserId);
-            await hubContext.Clients.Users(notification.ReceiverInformationDto.UserId.ToString()!).SendAsync("NotificationSignal", unreadCount);
+            await NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
             return Ok(notification);
         }
 
-        [HttpGet("notification/{notificationId}/appointments")]
-        [Authorize(Roles = "parent, nurse")]
-        public async Task<IActionResult> GetAppoimentNotification(Guid notificationId)
+        private async Task NotifyUserUnreadCountAsync(Guid? userId)
         {
-            var notification = await service.GetAppoimentNotificationAsync(notificationId);
-            if (notification == null)
-            {
-                return NotFound("Notification not found.");
-            }
-            return Ok(notification);
+            var unreadCount = await service.GetUserUnReadNotificationsAsync(userId);
+            await hubContext.Clients.Users(userId.ToString()!).SendAsync("NotificationSignal", unreadCount);
         }
-
-        //[HttpGet("notification/users/{userId}/appoiments")]
-        //[Authorize(Roles = "parent, nurse")]
-        //public async Task<IActionResult> GetAppoimentNotificationsByUser([FromQuery] PaginationRequest pagination, Guid userId)
-        //{
-        //    var notifications = await service.GetAppoimentNotificationsByUserAsync(pagination, userId);
-        //    if (notifications == null)
-        //    {
-        //        return NotFound("No notifications found for the specified user.");
-        //    }
-        //    return Ok(notifications);
-        //}
     }
 }

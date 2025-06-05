@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.IServices;
+using SchoolMedicalServer.Api.Hubs;
 
 namespace SchoolMedicalServer.Api.Controllers.Notification
 {
     [Route("api")]
     [ApiController]
-    public class NotificationMedicalEventController(INotificationService service, IHubContext hubContext) : ControllerBase
+    public class NotificationMedicalEventController(INotificationService service, IHubContext<NotificationHub> hubContext) : ControllerBase
     {
         [HttpPost("notifications/medical-events/to-parent")]
         [Authorize(Roles = "nurse")]
@@ -19,22 +20,14 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return NotFound("Notification not found.");
             }
-            var unreadCount = await service.GetUserUnReadNotificationsAsync(notification.ReceiverInformationDto.UserId);
-            await hubContext.Clients.Users(notification.ReceiverInformationDto.UserId.ToString()!).SendAsync("NotificationSignal", unreadCount);
+            await NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
+
             return Ok(notification);
         }
-
-        [HttpGet("notification/{notificationId}/medical-events")]
-        [Authorize(Roles = "parent")]
-        public async Task<IActionResult> GetMedicalEventNotification([FromBody] NotificationRequest request)
+        private async Task NotifyUserUnreadCountAsync(Guid? userId)
         {
-            var notification = await service.GetMedicalEventNotificationAsync(request.NotificationTypeId);
-            if (notification == null)
-            {
-                return NotFound("Notification not found.");
-            }
-            return Ok();
+            var unreadCount = await service.GetUserUnReadNotificationsAsync(userId);
+            await hubContext.Clients.Users(userId.ToString()!).SendAsync("NotificationSignal", unreadCount);
         }
-
     }
 }
