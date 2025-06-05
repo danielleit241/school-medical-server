@@ -27,10 +27,10 @@ public partial class Notification
 
 public enum NotificationTypes
 {
-    AppointmentReminder = 1,
-    HealthCheckReminder = 2,
-    MedicalEventUpdate = 3,
+    Appointment = 1,
+    HealthCheckUp = 2,
+    MedicalEvent = 3,
     MedicalRegistration = 4,
-    VaccinationSchedule = 5,
+    Vaccination = 5,
     GeneralNotification = 6
 }

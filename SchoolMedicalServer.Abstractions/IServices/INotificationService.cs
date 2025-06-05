@@ -16,5 +16,11 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task<NotificationResponse> SendMedicalRegistrationCompletedNotificationToParentAsync(NotificationRequest request);
         Task<NotificationResponse> GetMedicalRegistrationNotificationAsync(Guid notificationId);
         //Task<PaginationResponse<NotificationResponse>> GetMedicalRegistrationNotificationsAsync(PaginationRequest pagination, Guid userId);
+
+
+        Task<NotificationResponse> SendMedicalEventNotificationToParentAsync(NotificationRequest request);
+        Task<NotificationResponse> GetMedicalEventNotificationAsync(Guid notificationTypeId);
+        Task<bool> ReadAllNotificationsAsync(Guid userId);
+        Task<int> GetUserUnReadNotificationsAsync(Guid? userId);
     }
 }

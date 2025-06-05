@@ -1,16 +1,18 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.IServices;
+using SchoolMedicalServer.Api.Hubs;
 
 namespace SchoolMedicalServer.Api.Controllers.Notification
 {
     [Route("api")]
     [ApiController]
-    public class NotificationAppoimentController(INotificationService service) : ControllerBase
+    public class NotificationAppoimentController(INotificationService service, IHubContext<NotificationHub> hubContext) : ControllerBase
     {
-        [HttpPost("notification/appoiments/to-nurse")]
+        [HttpPost("notification/appointments/to-nurse")]
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> SendAppoimentToNurseNotification([FromBody] NotificationRequest request)
         {
@@ -19,6 +21,8 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return BadRequest("Failed to send appointment notification to nurse.");
             }
+            var unreadCount = await service.GetUserUnReadNotificationsAsync(notification.ReceiverInformationDto.UserId);
+            await hubContext.Clients.Users(notification.ReceiverInformationDto.UserId.ToString()!).SendAsync("NotificationSignal", unreadCount);
             return Ok(notification);
         }
 
@@ -31,10 +35,12 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return BadRequest("Failed to send appointment notification to parent.");
             }
+            var unreadCount = await service.GetUserUnReadNotificationsAsync(notification.ReceiverInformationDto.UserId);
+            await hubContext.Clients.Users(notification.ReceiverInformationDto.UserId.ToString()!).SendAsync("NotificationSignal", unreadCount);
             return Ok(notification);
         }
 
-        [HttpGet("notification/{notificationId}/appoiments")]
+        [HttpGet("notification/{notificationId}/appointments")]
         [Authorize(Roles = "parent, nurse")]
         public async Task<IActionResult> GetAppoimentNotification(Guid notificationId)
         {

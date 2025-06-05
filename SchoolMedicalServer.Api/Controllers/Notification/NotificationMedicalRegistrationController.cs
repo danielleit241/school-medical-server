@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using SchoolMedicalServer.Abstractions.Dtos;
-using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Api.Controllers.Notification
 {
     [Route("api")]
     [ApiController]
-    public class NotificationMedicalRegistrationController(INotificationService service) : ControllerBase
+    public class NotificationMedicalRegistrationController(INotificationService service, IHubContext hubContext) : ControllerBase
     {
         [HttpPost("notifications/medical-registrations/approved/to-parent")]
         [Authorize(Roles = "nurse")]
@@ -19,6 +19,8 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return BadRequest("Failed to send medical registration notification to parent.");
             }
+            var unreadCount = await service.GetUserUnReadNotificationsAsync(notification.ReceiverInformationDto.UserId);
+            await hubContext.Clients.Users(notification.ReceiverInformationDto.UserId.ToString()!).SendAsync("NotificationSignal", unreadCount);
             return Ok(notification);
         }
 
@@ -31,6 +33,8 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return BadRequest("Failed to send medical registration details notification to parent.");
             }
+            var unreadCount = await service.GetUserUnReadNotificationsAsync(notification.ReceiverInformationDto.UserId);
+            await hubContext.Clients.Users(notification.ReceiverInformationDto.UserId.ToString()!).SendAsync("NotificationSignal", unreadCount);
             return Ok(notification);
         }
 

@@ -6,6 +6,7 @@ using SchoolMedicalServer.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Api.Helpers.EmailHelper;
 using Microsoft.OpenApi.Models;
+using SchoolMedicalServer.Api.Provider;
 
 namespace SchoolMedicalServer.Api.Boostraping
 {
@@ -54,6 +55,19 @@ namespace SchoolMedicalServer.Api.Boostraping
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
                 };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notificationHub"))
+                        {
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
             services.AddDbContext<SchoolMedicalManagementContext>(options =>
@@ -67,9 +81,10 @@ namespace SchoolMedicalServer.Api.Boostraping
             {
                 options.AddPolicy("AllowAllClients", builder =>
                 {
-                    builder.AllowAnyOrigin()
+                    builder.SetIsOriginAllowed(_ => true)
                            .AllowAnyMethod()
-                           .AllowAnyHeader();
+                           .AllowAnyHeader()
+                           .AllowCredentials();
                 });
             });
 
@@ -92,6 +107,8 @@ namespace SchoolMedicalServer.Api.Boostraping
 
             services.AddScoped<IMedicalInventoryService, MedicalInventoryService>();
             services.AddScoped<INotificationService, NotificationService>();
+
+            services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
 
             return services;
         }

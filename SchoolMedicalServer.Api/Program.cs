@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Api.Boostraping;
+using SchoolMedicalServer.Api.Hubs;
 using SchoolMedicalServer.Infrastructure;
-using SchoolMedicalServer.Infrastructure.Services;
 
 namespace SchoolMedicalServer.Api
 {
@@ -19,6 +18,8 @@ namespace SchoolMedicalServer.Api
             builder.Services.AddControllers();
 
             builder.Services.AddApplicationServices(builder.Configuration);
+
+            builder.Services.AddSignalR();
 
             var app = builder.Build();
 
@@ -60,6 +61,7 @@ namespace SchoolMedicalServer.Api
             }
 
             app.MapControllers();
+            app.MapHub<NotificationHub>("/notificationHub");
 
             app.Run();
         }
