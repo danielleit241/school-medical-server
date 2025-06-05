@@ -70,7 +70,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Content = $"You have a new appointment scheduled with Parent of {appointment.Student?.FullName} on {appointment.AppointmentDate?.ToString("d")} from {appointment.AppointmentStartTime?.ToString()} to {appointment.AppointmentEndTime?.ToString()}.",
                 SendDate = DateTime.UtcNow,
                 IsRead = false,
-                Type = NotificationTypes.AppointmentReminder,
+                Type = NotificationTypes.Appointment,
                 SourceId = appointment.AppointmentId
             };
             context.Notifications.Add(notification);
@@ -101,7 +101,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Content = $"Your appointment with {sender!.UserName} is confirmed for {appointment.AppointmentDate?.ToString("d")} from {appointment.AppointmentStartTime?.ToString()} to {appointment.AppointmentEndTime?.ToString()}.",
                 SendDate = DateTime.UtcNow,
                 IsRead = false,
-                Type = NotificationTypes.AppointmentReminder,
+                Type = NotificationTypes.Appointment,
                 SourceId = appointment.AppointmentId,
             };
             context.Notifications.Add(notification);
@@ -115,7 +115,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         public async Task<NotificationResponse> GetAppoimentNotificationAsync(Guid notificationId)
         {
             var notification = await context.Notifications
-                .FirstOrDefaultAsync(n => n.NotificationId == notificationId && n.Type == NotificationTypes.AppointmentReminder);
+                .FirstOrDefaultAsync(n => n.NotificationId == notificationId && n.Type == NotificationTypes.Appointment);
 
             if (notification == null)
             {
@@ -360,5 +360,78 @@ namespace SchoolMedicalServer.Infrastructure.Services
             };
         }
 
+        public async Task<NotificationResponse> SendMedicalEventNotificationToParentAsync(NotificationRequest request)
+        {
+            var medicalEvent = await context.MedicalEvents
+                .Include(me => me.Student)
+                .FirstOrDefaultAsync(me => me.EventId == request.NotificationTypeId);
+            if (medicalEvent == null)
+            {
+                return null!;
+            }
+            var receiver = ReceiverInformation(request);
+            var sender = SenderInformation(request);
+            var notification = new Notification
+            {
+                NotificationId = Guid.NewGuid(),
+                ReceiverId = receiver!.UserId,
+                SenderId = sender!.UserId,
+                Title = "Medical Event Notification",
+                Content = $"A medical event has been recorded for {medicalEvent.Student?.FullName} on {medicalEvent.EventDate?.ToString("d")}.",
+                SendDate = DateTime.UtcNow,
+                IsRead = false,
+                Type = NotificationTypes.MedicalEvent,
+                SourceId = medicalEvent.EventId
+            };
+            context.Notifications.Add(notification);
+            await context.SaveChangesAsync();
+
+            var notiInfo = NotificationInformation(notification);
+            return GetResponse(notiInfo, sender, receiver);
+        }
+
+        public async Task<NotificationResponse> GetMedicalEventNotificationAsync(Guid notificationTypeId)
+        {
+            var notification = await context.Notifications
+                 .FirstOrDefaultAsync(n => n.NotificationId == notificationTypeId && n.Type == NotificationTypes.MedicalEvent);
+            if (notification == null)
+            {
+                return null!;
+            }
+            var request = new NotificationRequest
+            {
+                SenderId = notification.SenderId,
+                ReceiverId = notification.ReceiverId
+            };
+            var notiInfo = NotificationInformation(notification);
+            var sender = SenderInformation(request)!;
+            var receiver = ReceiverInformation(request)!;
+            return GetResponse(notiInfo, sender, receiver);
+        }
+
+        public async Task<bool> ReadAllNotificationsAsync(Guid userId)
+        {
+            var notifications = await context.Notifications
+                .Where(n => n.ReceiverId == userId && !n.IsRead)
+                .ToListAsync();
+            if (notifications.Count == 0)
+            {
+                return false;
+            }
+            foreach (var notification in notifications)
+            {
+                notification.IsRead = true;
+            }
+            await context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<int> GetUserUnReadNotificationsAsync(Guid? userId)
+        {
+            var unreadNotis = await context.Notifications
+                .Where(n => n.ReceiverId == userId && !n.IsRead)
+                .CountAsync();
+            return unreadNotis;
+        }
     }
 }
