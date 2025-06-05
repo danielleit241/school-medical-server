@@ -112,69 +112,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return GetResponse(notiInfo, sender, receiver);
         }
 
-        public async Task<NotificationResponse> GetAppoimentNotificationAsync(Guid notificationId)
-        {
-            var notification = await context.Notifications
-                .FirstOrDefaultAsync(n => n.NotificationId == notificationId && n.Type == NotificationTypes.Appointment);
-
-            if (notification == null)
-            {
-                return null!;
-            }
-
-            var request = new NotificationRequest
-            {
-                SenderId = notification.SenderId,
-                ReceiverId = notification.ReceiverId
-            };
-            var notiInfo = NotificationInformation(notification);
-            var sender = SenderInformation(request)!;
-            var receiver = ReceiverInformation(request)!;
-
-            return GetResponse(notiInfo, sender, receiver);
-        }
-
-        //public async Task<PaginationResponse<NotificationResponse>> GetAppoimentNotificationsByUserAsync(PaginationRequest pagination, Guid userId)
-        //{
-        //    var totalCount = await context.Notifications
-        //        .Where(n => n.ReceiverId == userId && n.Type == NotificationTypes.AppointmentReminder)
-        //        .CountAsync();
-
-        //    if (totalCount == 0)
-        //    {
-        //        return null!;
-        //    }
-
-        //    var notifications = await context.Notifications
-        //        .Where(n => n.ReceiverId == userId && n.Type == NotificationTypes.AppointmentReminder)
-        //        .OrderByDescending(n => n.SendDate)
-        //         .Skip((pagination!.PageIndex - 1) * pagination.PageSize)
-        //        .Take(pagination.PageSize)
-        //        .ToListAsync();
-
-        //    var result = new List<NotificationResponse>();
-
-        //    foreach (var notification in notifications)
-        //    {
-        //        var request = new NotificationRequest
-        //        {
-        //            SenderId = notification.SenderId,
-        //            ReceiverId = notification.ReceiverId
-        //        };
-        //        var notiInfo = NotificationInformation(notification);
-        //        var sender = SenderInformation(request)!;
-        //        var receiver = ReceiverInformation(request)!;
-
-        //        result.Add(GetResponse(notiInfo, sender, receiver));
-        //    }
-
-        //    return new PaginationResponse<NotificationResponse>(
-        //           pagination.PageIndex,
-        //           pagination.PageSize,
-        //            totalCount,
-        //            result
-        //     );
-        //}
 
         public async Task<NotificationResponse> SendMedicalRegistrationApprovedNotificationToParentAsync(NotificationRequest request)
         {
@@ -248,69 +185,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return GetResponse(notiInfo, sender, receiver);
         }
 
-        public async Task<NotificationResponse> GetMedicalRegistrationNotificationAsync(Guid notificationId)
-        {
-            var notification = await context.Notifications
-                .FirstOrDefaultAsync(n => n.NotificationId == notificationId);
-
-            if (notification == null)
-            {
-                return null!;
-            }
-
-            var request = new NotificationRequest
-            {
-                SenderId = notification.SenderId,
-                ReceiverId = notification.ReceiverId
-            };
-            var notiInfo = NotificationInformation(notification);
-            var sender = SenderInformation(request)!;
-            var receiver = ReceiverInformation(request)!;
-
-            return GetResponse(notiInfo, sender, receiver);
-
-        }
-
-        //public async Task<PaginationResponse<NotificationResponse>> GetMedicalRegistrationNotificationsAsync(PaginationRequest pagination, Guid userId)
-        //{
-        //    var totalCount = await context.Notifications
-        //          .Where(n => n.ReceiverId == userId && n.Type == NotificationTypes.MedicalRegistration)
-        //          .CountAsync();
-
-        //    if (totalCount == 0)
-        //    {
-        //        return null!;
-        //    }
-
-        //    var notifications = await context.Notifications
-        //        .Where(n => n.ReceiverId == userId && n.Type == NotificationTypes.MedicalRegistration)
-        //        .OrderByDescending(n => n.SendDate)
-        //        .Skip((pagination!.PageIndex - 1) * pagination.PageSize)
-        //        .Take(pagination.PageSize)
-        //        .ToListAsync();
-
-        //    var result = new List<NotificationResponse>();
-        //    foreach (var notification in notifications)
-        //    {
-        //        var request = new NotificationRequest
-        //        {
-        //            SenderId = notification.SenderId,
-        //            ReceiverId = notification.ReceiverId
-        //        };
-        //        var notiInfo = NotificationInformation(notification);
-        //        var sender = SenderInformation(request)!;
-        //        var receiver = ReceiverInformation(request)!;
-
-        //        result.Add(GetResponse(notiInfo, sender, receiver));
-        //    }
-
-        //    return new PaginationResponse<NotificationResponse>(
-        //        pagination.PageIndex,
-        //        pagination.PageSize,
-        //        totalCount,
-        //        result
-        //    );
-        //}
         private NotificationResponseDto NotificationInformation(Notification notification)
         {
             return new NotificationResponseDto
@@ -390,25 +264,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return GetResponse(notiInfo, sender, receiver);
         }
 
-        public async Task<NotificationResponse> GetMedicalEventNotificationAsync(Guid notificationTypeId)
-        {
-            var notification = await context.Notifications
-                 .FirstOrDefaultAsync(n => n.NotificationId == notificationTypeId && n.Type == NotificationTypes.MedicalEvent);
-            if (notification == null)
-            {
-                return null!;
-            }
-            var request = new NotificationRequest
-            {
-                SenderId = notification.SenderId,
-                ReceiverId = notification.ReceiverId
-            };
-            var notiInfo = NotificationInformation(notification);
-            var sender = SenderInformation(request)!;
-            var receiver = ReceiverInformation(request)!;
-            return GetResponse(notiInfo, sender, receiver);
-        }
-
         public async Task<bool> ReadAllNotificationsAsync(Guid userId)
         {
             var notifications = await context.Notifications
@@ -433,5 +288,26 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 .CountAsync();
             return unreadNotis;
         }
+
+        public async Task<NotificationResponse> GetUserNotificationDetailsAsync(Guid notificationId)
+        {
+            var noti = await context.Notifications
+                .Where(n => n.NotificationId == notificationId)
+                .FirstOrDefaultAsync();
+            if (noti == null)
+            {
+                return null!;
+            }
+            var request = new NotificationRequest
+            {
+                SenderId = noti.SenderId,
+                ReceiverId = noti.ReceiverId
+            };
+            var notiInfo = NotificationInformation(noti);
+            var sender = SenderInformation(request)!;
+            var receiver = ReceiverInformation(request)!;
+            return GetResponse(notiInfo, sender, receiver);
+        }
+
     }
 }

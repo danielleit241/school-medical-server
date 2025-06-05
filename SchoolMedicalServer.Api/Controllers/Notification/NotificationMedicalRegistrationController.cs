@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.IServices;
+using SchoolMedicalServer.Api.Hubs;
 
 namespace SchoolMedicalServer.Api.Controllers.Notification
 {
     [Route("api")]
     [ApiController]
-    public class NotificationMedicalRegistrationController(INotificationService service, IHubContext hubContext) : ControllerBase
+    public class NotificationMedicalRegistrationController(INotificationService service, IHubContext<NotificationHub> hubContext) : ControllerBase
     {
         [HttpPost("notifications/medical-registrations/approved/to-parent")]
         [Authorize(Roles = "nurse")]
@@ -19,8 +20,7 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return BadRequest("Failed to send medical registration notification to parent.");
             }
-            var unreadCount = await service.GetUserUnReadNotificationsAsync(notification.ReceiverInformationDto.UserId);
-            await hubContext.Clients.Users(notification.ReceiverInformationDto.UserId.ToString()!).SendAsync("NotificationSignal", unreadCount);
+            await NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
             return Ok(notification);
         }
 
@@ -33,29 +33,14 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return BadRequest("Failed to send medical registration details notification to parent.");
             }
-            var unreadCount = await service.GetUserUnReadNotificationsAsync(notification.ReceiverInformationDto.UserId);
-            await hubContext.Clients.Users(notification.ReceiverInformationDto.UserId.ToString()!).SendAsync("NotificationSignal", unreadCount);
+            await NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
             return Ok(notification);
         }
 
-        [HttpGet("notifications/{notificationId}/medical-registrations")]
-        [Authorize(Roles = "parent")]
-        public async Task<IActionResult> GetMedicalRegistrationNotification(Guid notificationId)
+        private async Task NotifyUserUnreadCountAsync(Guid? userId)
         {
-            var notification = await service.GetMedicalRegistrationNotificationAsync(notificationId);
-            if (notification == null)
-            {
-                return NotFound("Notification not found.");
-            }
-            return Ok(notification);
+            var unreadCount = await service.GetUserUnReadNotificationsAsync(userId);
+            await hubContext.Clients.Users(userId.ToString()!).SendAsync("NotificationSignal", unreadCount);
         }
-
-        //[HttpGet("notifications/users/{userId}/medical-registrations")]
-        //[Authorize(Roles = "parent")]
-        //public async Task<IActionResult> GetMedicalRegistrationNotifications([FromQuery] PaginationRequest pagination, Guid userId)
-        //{
-        //    var notifications = await service.GetMedicalRegistrationNotificationsAsync(pagination, userId);
-        //    return Ok(notifications);
-        //}
     }
 }

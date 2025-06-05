@@ -10,7 +10,7 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
 {
     [Route("api")]
     [ApiController]
-    public class NotificationController(INotificationService service) : ControllerBase
+    public class NotificationController(INotificationService service, IHubContext<NotificationHub> hubContext) : ControllerBase
     {
         [HttpGet]
         [Route("users/{userId}/notifications")]
@@ -24,6 +24,20 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             }
             return Ok(notis);
         }
+
+        [HttpGet]
+        [Route("notifications/{notificationId}")]
+        [Authorize]
+        public async Task<IActionResult> GetNotificationDetails(Guid notificationId)
+        {
+            var noti = await service.GetUserNotificationDetailsAsync(notificationId);
+            if (noti == null)
+            {
+                return NotFound(new { Message = "No notifications found." });
+            }
+            return Ok(noti);
+        }
+
 
         [HttpGet]
         [Route("users/{userId}/notifications/unread")]
@@ -44,7 +58,14 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return NotFound(new { Message = "No notifications found to mark as read." });
             }
+            await NotifyUserUnreadCountAsync(userId);
             return Ok(new { Message = "Readed" });
+        }
+
+        private async Task NotifyUserUnreadCountAsync(Guid? userId)
+        {
+            var unreadCount = await service.GetUserUnReadNotificationsAsync(userId);
+            await hubContext.Clients.Users(userId.ToString()!).SendAsync("NotificationSignal", unreadCount);
         }
     }
 }
