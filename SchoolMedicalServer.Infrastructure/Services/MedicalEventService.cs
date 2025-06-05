@@ -75,11 +75,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             await context.SaveChangesAsync();
 
+            var receiverId = await context.Students.Where(u => u.StudentId == medicalEvent.StudentId).Select(u => u.UserId).FirstOrDefaultAsync();
+
             return new NotificationRequest
             {
                 NotificationTypeId = medicalEvent.EventId,
                 SenderId = medicalEvent.StaffNurseId,
-                ReceiverId = await context.Students.Where(u => u.UserId == medicalEvent.StudentId).Select(u => u.UserId).FirstOrDefaultAsync(),
+                ReceiverId = receiverId,
             };
         }
 
