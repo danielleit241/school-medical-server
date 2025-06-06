@@ -11,7 +11,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         public async Task<PaginationResponse<NotificationResponse>> GetUserNotificationsAsync(PaginationRequest? pagination, Guid userId)
         {
             var totalCount = await context.Notifications
-                .Where(n => n.ReceiverId == userId)
+                .Where(n => n.UserId == userId)
                 .CountAsync();
 
             if (totalCount == 0)
@@ -20,7 +20,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
 
             var notifications = await context.Notifications
-                .Where(n => n.ReceiverId == userId)
+                .Where(n => n.UserId == userId)
                 .OrderByDescending(n => n.SendDate)
                  .Skip((pagination!.PageIndex - 1) * pagination.PageSize)
                 .Take(pagination.PageSize)
@@ -33,7 +33,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 var request = new NotificationRequest
                 {
                     SenderId = notification.SenderId,
-                    ReceiverId = notification.ReceiverId
+                    ReceiverId = notification.UserId
                 };
                 var notiInfo = NotificationInformation(notification);
                 var sender = SenderInformation(request)!;
@@ -64,7 +64,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var notification = new Notification
             {
                 NotificationId = Guid.NewGuid(),
-                ReceiverId = receiver!.UserId,
+                UserId = receiver!.UserId,
                 SenderId = sender!.UserId,
                 Title = "New Appointment Notification",
                 Content = $"You have a new appointment scheduled with Parent of {appointment.Student?.FullName} on {appointment.AppointmentDate?.ToString("d")} from {appointment.AppointmentStartTime?.ToString()} to {appointment.AppointmentEndTime?.ToString()}.",
@@ -96,7 +96,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 NotificationId = Guid.NewGuid(),
                 SenderId = sender!.UserId,
-                ReceiverId = receiver!.UserId,
+                UserId = receiver!.UserId,
                 Title = "Appointment Confirmation",
                 Content = $"Your appointment with {sender!.UserName} is confirmed for {appointment.AppointmentDate?.ToString("d")} from {appointment.AppointmentStartTime?.ToString()} to {appointment.AppointmentEndTime?.ToString()}.",
                 SendDate = DateTime.UtcNow,
@@ -130,7 +130,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var notification = new Notification
             {
                 NotificationId = Guid.NewGuid(),
-                ReceiverId = receiver!.UserId,
+                UserId = receiver!.UserId,
                 SenderId = sender!.UserId,
                 Title = "Medical Registration Approved",
                 Content = $"Your child's medication registration ({medicalRegistration.MedicationName}) has been approved by the nurse.",
@@ -169,7 +169,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var notification = new Notification
             {
                 NotificationId = Guid.NewGuid(),
-                ReceiverId = receiver!.UserId,
+                UserId = receiver!.UserId,
                 SenderId = sender!.UserId,
                 Title = "Medication Dose Completed",
                 Content = $"A dose{doseNumber} of medication ({medicationName}) for {studentName}{doseTime} has been completed by the nurse.",
@@ -248,7 +248,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var notification = new Notification
             {
                 NotificationId = Guid.NewGuid(),
-                ReceiverId = receiver!.UserId,
+                UserId = receiver!.UserId,
                 SenderId = sender!.UserId,
                 Title = "Medical Event Notification",
                 Content = $"A medical event has been recorded for {medicalEvent.Student?.FullName} on {medicalEvent.EventDate?.ToString("d")}.",
@@ -267,7 +267,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         public async Task<bool> ReadAllNotificationsAsync(Guid userId)
         {
             var notifications = await context.Notifications
-                .Where(n => n.ReceiverId == userId && !n.IsRead)
+                .Where(n => n.UserId == userId && !n.IsRead)
                 .ToListAsync();
             if (notifications.Count == 0)
             {
@@ -284,7 +284,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         public async Task<int> GetUserUnReadNotificationsAsync(Guid? userId)
         {
             var unreadNotis = await context.Notifications
-                .Where(n => n.ReceiverId == userId && !n.IsRead)
+                .Where(n => n.UserId == userId && !n.IsRead)
                 .CountAsync();
             return unreadNotis;
         }
@@ -301,13 +301,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var request = new NotificationRequest
             {
                 SenderId = noti.SenderId,
-                ReceiverId = noti.ReceiverId
+                ReceiverId = noti.UserId
             };
             var notiInfo = NotificationInformation(noti);
             var sender = SenderInformation(request)!;
             var receiver = ReceiverInformation(request)!;
             return GetResponse(notiInfo, sender, receiver);
         }
-
     }
 }
