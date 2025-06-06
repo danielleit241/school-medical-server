@@ -97,8 +97,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 NotificationId = Guid.NewGuid(),
                 SenderId = sender!.UserId,
                 UserId = receiver!.UserId,
-                Title = "Appointment Confirmation",
-                Content = $"Your appointment with {sender!.UserName} is confirmed for {appointment.AppointmentDate?.ToString("d")} from {appointment.AppointmentStartTime?.ToString()} to {appointment.AppointmentEndTime?.ToString()}.",
+                Title = appointment.CompletionStatus == true ? "Appointment Confirmation" : "Appointment Completion",
+                Content = appointment.CompletionStatus == true
+                            ? $"Your appointment with {sender!.UserName} is completed for {appointment.AppointmentDate?.ToString("d")} from {appointment.AppointmentStartTime?.ToString()} to {appointment.AppointmentEndTime?.ToString()}."
+                            : $"Your appointment with {sender!.UserName} is confirmed for {appointment.AppointmentDate?.ToString("d")} from {appointment.AppointmentStartTime?.ToString()} to {appointment.AppointmentEndTime?.ToString()}.",
                 SendDate = DateTime.UtcNow,
                 IsRead = false,
                 Type = NotificationTypes.Appointment,
