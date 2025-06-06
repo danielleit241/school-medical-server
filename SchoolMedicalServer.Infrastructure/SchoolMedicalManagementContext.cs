@@ -355,9 +355,12 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.NotificationId)
                 .ValueGeneratedNever()
                 .HasColumnName("NotificationID");
+
+            entity.Property(e => e.UserId)
+                .HasColumnName("UserID");
+
             entity.Property(e => e.SendDate).HasColumnType("datetime");
             entity.Property(e => e.SenderId).HasColumnName("SenderID");
-            entity.Property(e => e.ReceiverId).HasColumnName("ReceiverID");
             entity.Property(e => e.SourceId).HasColumnName("SourceID");
 
             entity.Property(e => e.IsRead)
@@ -373,6 +376,11 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.ConfirmedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("ConfirmedAt");
+
+            entity.HasOne(d => d.User)
+                .WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_Notification_User");
         });
 
 

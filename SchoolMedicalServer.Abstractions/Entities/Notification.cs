@@ -4,7 +4,7 @@ public partial class Notification
 {
     public Guid NotificationId { get; set; }
 
-    public Guid? ReceiverId { get; set; }
+    public Guid? UserId { get; set; }
 
     public Guid? SenderId { get; set; }
 
@@ -23,6 +23,8 @@ public partial class Notification
     public bool IsConfirmed { get; set; } = false;
 
     public DateTime? ConfirmedAt { get; set; }
+
+    public virtual User? User { get; set; }
 }
 
 public enum NotificationTypes
