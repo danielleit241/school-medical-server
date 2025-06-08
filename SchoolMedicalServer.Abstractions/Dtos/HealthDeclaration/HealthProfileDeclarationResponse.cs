@@ -22,6 +22,7 @@
         public string? FoodAllergies { get; set; }
 
         public string? Notes { get; set; }
+        public bool IsDeclaration { get; set; }
     }
 
     public class VaccinationDeclarationDtoResponse

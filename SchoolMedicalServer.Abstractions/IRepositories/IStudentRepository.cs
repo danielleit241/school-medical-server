@@ -19,5 +19,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<Student?> GetStudentByIdAsync(Guid? studentId);
         Task<Guid?> GetParentUserIdAsync(Guid? studentId);
         Task<Student?> FindByStudentCodeAsync(string studentCode);
+        Task<string> GenerateStudentCodeAsync();
     }
 }

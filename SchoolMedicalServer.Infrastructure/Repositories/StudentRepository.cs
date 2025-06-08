@@ -78,6 +78,27 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         {
             return await _context.Students.FirstOrDefaultAsync(s => s.StudentCode == studentCode);
         }
+        public async Task<string> GenerateStudentCodeAsync()
+        {
+            int currentYear = DateTime.Now.Year % 100;
+            string prefix = $"SV{currentYear:D2}";
+
+            var lastStudent = await _context.Students
+                .Where(s => s.StudentCode!.StartsWith(prefix))
+                .OrderByDescending(s => s.StudentCode)
+                .FirstOrDefaultAsync();
+
+            int nextNumber = 1;
+            if (lastStudent != null)
+            {
+                string lastCode = lastStudent.StudentCode!;
+                string numberPart = lastCode.Substring(4);
+                nextNumber = int.Parse(numberPart) + 1;
+            }
+
+            return $"{prefix}{nextNumber:D5}";
+        }
+
     }
 }
 

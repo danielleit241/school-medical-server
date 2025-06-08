@@ -70,7 +70,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 ChronicDiseases = healthProfileDeclaration.ChronicDiseases,
                 DrugAllergies = healthProfileDeclaration.DrugAllergies,
                 FoodAllergies = healthProfileDeclaration.FoodAllergies,
-                Notes = healthProfileDeclaration.Notes
+                Notes = healthProfileDeclaration.Notes,
+                IsDeclaration = healthProfileDeclaration.DeclarationDate == null ? false : true,
             };
 
             var vaccineDeclarations = healthProfileDeclaration.VaccinationDeclarations
