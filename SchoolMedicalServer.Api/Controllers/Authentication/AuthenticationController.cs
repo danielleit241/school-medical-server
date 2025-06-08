@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos.Authentication;
 using SchoolMedicalServer.Abstractions.Dtos.Helpers;
 using SchoolMedicalServer.Abstractions.IServices;
-using SchoolMedicalServer.Api.Helpers.EmailHelper;
+using SchoolMedicalServer.Api.Helpers;
 
 namespace SchoolMedicalServer.Api.Controllers.Authentication
 {

@@ -1,12 +1,16 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Entities;
+using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class FileService(SchoolMedicalManagementContext context) : IFileService
+    public class FileService(
+        IStudentRepository studentRepository,
+        IMedicalInventoryRepository medicalInventoryRepository,
+        IHealthProfileRepository healthProfileRepository,
+        IBaseRepository baseRepository) : IFileService
     {
         public async Task UploadMedicalInventoriesExcelFile(IFormFile file)
         {
@@ -72,9 +76,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
                             Status = status
                         };
 
-                        context.MedicalInventories.Add(medicalInventory);
+                        await medicalInventoryRepository.AddAsync(medicalInventory);
                     }
-                    await context.SaveChangesAsync();
+                    await baseRepository.SaveChangesAsync();
                 }
             }
             catch (Exception ex)
@@ -147,10 +151,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
                             CreatedDate = DateTime.UtcNow,
                         };
 
-                        context.HealthProfiles.Add(studentHealthProfile);
-                        context.Students.Add(student);
+                        await healthProfileRepository.AddAsync(studentHealthProfile);
+                        await studentRepository.AddAsync(student);
                     }
-                    await context.SaveChangesAsync();
+                    await baseRepository.SaveChangesAsync();
                 }
             }
             catch (Exception ex)
@@ -163,7 +167,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         {
             try
             {
-                var students = await context.Students.ToListAsync();
+                var students = await studentRepository.GetAllAsync();
 
                 using var workbook = new XLWorkbook();
                 var worksheet = workbook.Worksheets.Add("Students");
@@ -207,7 +211,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         {
             try
             {
-                var inventories = await context.MedicalInventories.ToListAsync();
+                var inventories = await medicalInventoryRepository.GetAllAsync();
 
                 using var workbook = new XLWorkbook();
                 var worksheet = workbook.Worksheets.Add("MedicalInventories");

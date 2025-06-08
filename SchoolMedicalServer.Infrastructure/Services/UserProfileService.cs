@@ -1,13 +1,16 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos.User;
+using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class UserProfileService(SchoolMedicalManagementContext context) : IUserProfileService
+    public class UserProfileService(
+        IBaseRepository baseRepository,
+        IUserRepository userRepository) : IUserProfileService
     {
         public async Task<UserProfileResponse?> GetUserProfileByIdAsync(Guid userId)
         {
-            var user = await context.Users.FindAsync(userId);
+            var user = await userRepository.GetByIdAsync(userId);
             if (user == null) return null;
 
             var response = new UserProfileResponse
@@ -25,7 +28,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<UserProfileResponse?> UpdateUserProfileAsync(Guid userId, UserProfileRequest dto)
         {
-            var user = await context.Users.FindAsync(userId);
+            var user = await userRepository.GetByIdAsync(userId);
             if (user == null) return null;
 
             user.FullName = dto.FullName;
@@ -34,8 +37,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             user.AvatarUrl = dto.AvatarUrl;
             user.Address = dto.Address;
 
-            context.Users.Update(user);
-            await context.SaveChangesAsync();
+            userRepository.Update(user);
+            await baseRepository.SaveChangesAsync();
 
             var response = new UserProfileResponse
             {

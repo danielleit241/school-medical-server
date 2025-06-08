@@ -1,16 +1,18 @@
-using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Dtos.HealthDeclaration;
 using SchoolMedicalServer.Abstractions.Entities;
+using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class HealthProfileDeclarationService(SchoolMedicalManagementContext context) : IHealthProfileDeclarationService
+    public class HealthProfileDeclarationService(
+        IBaseRepository baseRepository,
+        IHealthProfileRepository healthProfileRepository) : IHealthProfileDeclarationService
     {
         public async Task<bool> CreateHealthDeclarationAsync(HealthProfileDeclarationRequest request)
         {
 
-            var healthProfile = await context.HealthProfiles.FirstOrDefaultAsync(f => f.StudentId == request.HealthDeclaration.StudentId);
+            var healthProfile = await healthProfileRepository.GetByStudentIdAsync(request.HealthDeclaration.StudentId);
             if (healthProfile == null)
             {
                 return false;
@@ -39,18 +41,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         DoseNumber = vaccination.DoseNumber,
                         VaccinatedDate = vaccination.VaccinatedDate,
                     };
-                    context.VaccinationDeclarations.Add(vaccinationDeclaration);
+                    await healthProfileRepository.AddVaccinationDeclarationAsync(vaccinationDeclaration);
                 }
             }
-            try
-            {
-                await context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+
+            await baseRepository.SaveChangesAsync();
+            return true;
+
         }
 
         public async Task<HealthProfileDeclarationResponse?> GetHealthDeclarationAsync(Guid studentId)
@@ -59,10 +56,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return null;
             }
-            var healthProfileDeclaration = await context.HealthProfiles
-                .Where(h => h.StudentId == studentId)
-                .Include(h => h.VaccinationDeclarations)
-                .FirstOrDefaultAsync();
+            var healthProfileDeclaration = await healthProfileRepository.GetByStudentIdWithVaccinationsAsync(studentId);
             if (healthProfileDeclaration == null)
             {
                 return null;

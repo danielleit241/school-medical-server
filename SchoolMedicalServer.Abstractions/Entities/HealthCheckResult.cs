@@ -20,5 +20,5 @@ public partial class HealthCheckResult
     public Guid HealthProfileId { get; set; }
 
     public virtual HealthCheckSchedule? Schedule { get; set; }
-    public virtual HealthProfile HealthProfile { get; set; }
+    public virtual HealthProfile? HealthProfile { get; set; }
 }

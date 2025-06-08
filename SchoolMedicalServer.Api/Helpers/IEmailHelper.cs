@@ -1,6 +1,6 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos.Helpers;
 
-namespace SchoolMedicalServer.Api.Helpers.EmailHelper
+namespace SchoolMedicalServer.Api.Helpers
 {
     public interface IEmailHelper
     {

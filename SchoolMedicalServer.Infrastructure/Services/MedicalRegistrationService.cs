@@ -1,18 +1,22 @@
-﻿using DocumentFormat.OpenXml.Office.CustomUI;
-using Microsoft.EntityFrameworkCore;
-using SchoolMedicalServer.Abstractions.Dtos;
+﻿using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
+using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class MedicalRegistrationService(SchoolMedicalManagementContext context) : IMedicalRegistrationService
+    public class MedicalRegistrationService(
+        IBaseRepository baseRepository,
+        IMedicalRegistrationRepository medicalRegistrationRepository,
+        IMedicalRegistrationDetailsRepository medicalRegistrationDetailsRepository,
+        IStudentRepository studentRepository,
+        IUserRepository userRepository) : IMedicalRegistrationService
     {
         public async Task<NotificationRequest> ApproveMedicalRegistrationAsync(Guid medicalRegistrationId, MedicalRegistrationNurseApprovedRequest request)
         {
-            var medicalRegistration = await context.MedicalRegistrations.FirstOrDefaultAsync(m => m.RegistrationId == medicalRegistrationId);
+            var medicalRegistration = await medicalRegistrationRepository.GetByIdAsync(medicalRegistrationId);
             if (medicalRegistration == null)
             {
                 return null!;
@@ -30,8 +34,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             medicalRegistration.DateApproved = request.DateApproved ?? DateOnly.FromDateTime(DateTime.Now);
             medicalRegistration.Status = true;
 
-            context.MedicalRegistrations.Update(medicalRegistration);
-            await context.SaveChangesAsync();
+            medicalRegistrationRepository.Update(medicalRegistration);
+            await baseRepository.SaveChangesAsync();
 
             return new NotificationRequest
             {
@@ -43,18 +47,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<NotificationRequest> CompletedMedicalRegistrationDetailsAsync(Guid medicalRegistrationId, MedicalRegistrationNurseCompletedDetailsRequest request)
         {
-            var medicalRegistration = await context.MedicalRegistrations.FirstOrDefaultAsync(m => m.RegistrationId == medicalRegistrationId && m.StaffNurseId == request.StaffNurseId);
-            if (medicalRegistration == null)
-            {
+            var medicalRegistration = await medicalRegistrationRepository.GetByIdAsync(medicalRegistrationId);
+            if (medicalRegistration == null || request.StaffNurseId == null || medicalRegistration.StaffNurseId != request.StaffNurseId)
                 return null!;
-            }
 
-            if (request.StaffNurseId == null)
-            {
-                return null!;
-            }
-
-            var medicalRegistrationDetails = await context.MedicalRegistrationDetails.FirstOrDefaultAsync(mrd => mrd.RegistrationId == medicalRegistrationId && mrd.DoseNumber == request.DoseNumber);
+            var medicalRegistrationDetails = await medicalRegistrationDetailsRepository.GetDetailsByRegistrationAndDoseAsync(medicalRegistrationId, request.DoseNumber!);
             if (medicalRegistrationDetails == null)
                 return null!;
 
@@ -62,8 +59,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             medicalRegistrationDetails.DateCompleted = DateTime.UtcNow;
             medicalRegistrationDetails.IsCompleted = true;
 
-            context.MedicalRegistrationDetails.Update(medicalRegistrationDetails);
-            await context.SaveChangesAsync();
+            medicalRegistrationDetailsRepository.UpdateDetails(medicalRegistrationDetails);
+            await baseRepository.SaveChangesAsync();
 
             return new NotificationRequest
             {
@@ -101,8 +98,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 medicalRegistration.Details.Add(registrationDetail);
             }
 
-            context.MedicalRegistrations.Add(medicalRegistration);
-            await context.SaveChangesAsync();
+            await medicalRegistrationRepository.AddAsync(medicalRegistration);
+            await baseRepository.SaveChangesAsync();
 
             return new NotificationRequest
             {
@@ -114,7 +111,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<MedicalRegistrationResponse?> GetMedicalRegistrationAsync(Guid medicalRegistrationId)
         {
-            var medicalRegistration = await context.MedicalRegistrations.AsNoTracking().FirstOrDefaultAsync(m => m.RegistrationId == medicalRegistrationId);
+            var medicalRegistration = await medicalRegistrationRepository.GetByIdAsync(medicalRegistrationId);
 
             if (medicalRegistration == null)
             {
@@ -129,25 +126,23 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             var nurseApprovedResponse = await GetNuserInforAsync(medicalRegistration.StaffNurseId, medicalRegistration);
 
-            if (details == null || studentInfo == null || parentInfo == null || nurseApprovedResponse == null) return null;
+            if (details == null || studentInfo == null || parentInfo == null) return null;
 
-            var response = GetResponse(medicalRegistration, details, studentInfo, parentInfo, nurseApprovedResponse);
+            var response = GetResponse(medicalRegistration, details, studentInfo, parentInfo, nurseApprovedResponse!);
             return response;
         }
 
         public async Task<PaginationResponse<MedicalRegistrationResponse?>> GetMedicalRegistrationsAsync(PaginationRequest? paginationRequest)
         {
-            var totalCount = await context.MedicalRegistrations.CountAsync();
+            var totalCount = await medicalRegistrationRepository.CountAsync();
             if (totalCount == 0)
             {
                 return null!;
             }
 
-            var registrations = await context.MedicalRegistrations
-                .OrderByDescending(m => m.DateSubmitted)
-                .Skip((paginationRequest!.PageIndex - 1) * paginationRequest.PageSize)
-                .Take(paginationRequest.PageSize)
-                .ToListAsync();
+            int skip = (paginationRequest!.PageIndex - 1) * paginationRequest.PageSize;
+
+            var registrations = await medicalRegistrationRepository.GetPagedAsync(skip, paginationRequest.PageSize);
 
             var result = new List<MedicalRegistrationResponse?>();
 
@@ -161,7 +156,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
                 MedicalRegistrationNurseApprovedResponse? nurseApprovedResponse = await GetNuserInforAsync(medicalRegistration.StaffNurseId, medicalRegistration);
 
-                if (details == null || studentInfo == null || parentInfo == null || nurseApprovedResponse == null) return null;
+                if (details == null || studentInfo == null || parentInfo == null || nurseApprovedResponse == null) return null!;
 
                 var response = GetResponse(medicalRegistration, details, studentInfo, parentInfo, nurseApprovedResponse);
 
@@ -178,19 +173,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<PaginationResponse<MedicalRegistrationResponse?>> GetUserMedicalRegistrationsAsync(PaginationRequest? paginationRequest, Guid userId)
         {
-            var totalCount = await context.MedicalRegistrations.Where(m => m.UserId == userId).CountAsync();
+            var totalCount = await medicalRegistrationRepository.CountByUserAsync(userId);
 
             if (totalCount == 0)
             {
                 return null!;
             }
-
-            var registrations = await context.MedicalRegistrations
-                .Where(m => m.UserId == userId)
-                .OrderByDescending(m => m.DateSubmitted)
-                .Skip((paginationRequest!.PageIndex - 1) * paginationRequest.PageSize)
-                .Take(paginationRequest.PageSize)
-                .ToListAsync();
+            int skip = (paginationRequest!.PageIndex - 1) * paginationRequest.PageSize;
+            var registrations = await medicalRegistrationRepository.GetByUserPagedAsync(userId, skip, paginationRequest.PageSize);
 
             var result = new List<MedicalRegistrationResponse?>();
 
@@ -204,9 +194,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
                 var nurseApprovedResponse = await GetNuserInforAsync(medicalRegistration.StaffNurseId, medicalRegistration);
 
-                if (details == null || studentInfo == null || parentInfo == null) return null;
+                if (details == null || studentInfo == null || parentInfo == null) return null!;
 
-                var response = GetResponse(medicalRegistration, details, studentInfo, parentInfo, nurseApprovedResponse);
+                var response = GetResponse(medicalRegistration, details, studentInfo, parentInfo, nurseApprovedResponse!);
 
                 result.Add(response);
             }
@@ -221,15 +211,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         private async Task<MedicalRegistrationStudentResponse?> GetStudentInforAsync(Guid? studentId)
         {
-            var studentInfo = await context.Students
-                    .Where(s => s.StudentId == studentId)
-                    .Select(s => new MedicalRegistrationStudentResponse
-                    {
-                        StudentId = s.StudentId,
-                        StudentFullName = s.FullName
-                    })
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync();
+            var studentInfo = await studentRepository.GetStudentInfoAsync(studentId);
             if (studentInfo == null)
                 return null;
 
@@ -237,15 +219,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
         }
         private async Task<MedicalRegistrationParentResponse?> GetParentInforAsync(Guid? UserId)
         {
-            var parentInfo = await context.Users
-                        .Where(u => u.UserId == UserId)
-                        .Select(u => new MedicalRegistrationParentResponse
-                        {
-                            UserId = u.UserId,
-                            UserFullName = u.FullName
-                        })
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync();
+            var user = await userRepository.GetByIdAsync(UserId);
+            if (user == null)
+                return null;
+            var parentInfo = new MedicalRegistrationParentResponse
+            {
+                UserId = user.UserId,
+                UserFullName = user.FullName
+            };
             if (parentInfo == null)
                 return null!;
 
@@ -253,11 +234,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
         }
         private async Task<MedicalRegistrationNurseApprovedResponse?> GetNuserInforAsync(Guid? staffNurseId, MedicalRegistration medicalRegistration)
         {
-            var nurseInfo = await context.Users
-                .Where(u => u.UserId == staffNurseId)
-                .Select(u => u.FullName ?? string.Empty)
-                .AsNoTracking()
-                .FirstOrDefaultAsync();
+            var user = await userRepository.GetByIdAsync(staffNurseId);
+            if (user == null || staffNurseId == null)
+            {
+                return null!;
+            }
+
+            var nurseInfo = user.FullName;
 
             var nurseApprovedResponse = new MedicalRegistrationNurseApprovedResponse
             {
@@ -270,10 +253,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
         }
         private async Task<List<MedicalRegistrationDetailsResponse>> GetDetailsAsync(Guid medicalRegistrationId)
         {
-            var medicalRegistrationDetails = await context.MedicalRegistrationDetails.Where(mrd => mrd.RegistrationId == medicalRegistrationId).ToListAsync();
+            var medicalRegistrationDetails = await medicalRegistrationDetailsRepository.GetDetailsByRegistrationIdAsync(medicalRegistrationId);
             if (medicalRegistrationDetails == null)
             {
-                return null;
+                return null!;
             }
 
             var details = new List<MedicalRegistrationDetailsResponse>();

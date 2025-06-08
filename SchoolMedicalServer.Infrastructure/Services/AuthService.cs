@@ -2,21 +2,23 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SchoolMedicalServer.Abstractions.Dtos.Authentication;
 using SchoolMedicalServer.Abstractions.Entities;
+using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class AuthService(SchoolMedicalManagementContext context, IConfiguration configuration) : IAuthService
+    public class AuthService(
+        IBaseRepository baseRepository,
+        IUserRepository userRepository,
+        IConfiguration configuration) : IAuthService
     {
         public async Task<TokensResponse?> LoginAsync(UserLoginRequest request)
         {
-            var user = await context.Users.Include("Role").Where(u => u.Status == true)
-                                        .FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
+            var user = await userRepository.GetByPhoneNumberAsync(request.PhoneNumber);
             if (user == null)
             {
                 return null;
@@ -58,14 +60,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var refreshToken = GenerateRefreshToken();
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-            context.Users.Update(user);
-            await context.SaveChangesAsync();
+            userRepository.Update(user);
+            await baseRepository.SaveChangesAsync();
             return refreshToken;
         }
 
         private async Task<User?> ValidateRefreshTokenAsync(Guid userId, string refreshToken)
         {
-            var user = await context.Users.Include("Role").FirstOrDefaultAsync(u => userId == u.UserId);
+            var user = await userRepository.GetByIdAsync(userId);
             if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime < DateTime.UtcNow)
             {
                 return null;
@@ -110,7 +112,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<User?> ChangePasswordAsync(ChangePasswordRequest request)
         {
-            var user = await context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
+            var user = await userRepository.GetByPhoneNumberAsync(request.PhoneNumber);
             if (user is null)
             {
                 return null!;
@@ -120,14 +122,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return null;
             }
             user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.NewPassword);
-            context.Users.Update(user);
-            await context.SaveChangesAsync();
+            userRepository.Update(user);
+            await baseRepository.SaveChangesAsync();
             return user;
         }
 
         public async Task<string> GetOtpAsync(SendOtpRequest request)
         {
-            var user = await context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber && u.EmailAddress == request.EmailAddress);
+            var user = await userRepository.GetByPhoneAndEmailAsync(request.PhoneNumber, request.EmailAddress);
             if (user == null)
             {
                 return null!;
@@ -136,8 +138,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var otp = GenerateOtp();
             user.Otp = otp;
             user.OtpExpiryTime = DateTime.UtcNow.AddMinutes(1);
-            context.Users.Update(user);
-            await context.SaveChangesAsync();
+            userRepository.Update(user);
+            await baseRepository.SaveChangesAsync();
             return user.Otp;
         }
 
@@ -149,7 +151,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<bool> ResetPasswordAsync(ResetPasswordRequest request)
         {
-            var user = await context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber && u.Otp == request.Otp);
+            var user = await userRepository.GetByPhoneAndOtpAsync(request.PhoneNumber, request.Otp);
             if (user == null)
             {
                 return false;
@@ -157,14 +159,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
             user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.NewPassword);
             user.Otp = null;
             user.OtpExpiryTime = null;
-            context.Users.Update(user);
-            await context.SaveChangesAsync();
+            userRepository.Update(user);
+            await baseRepository.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> VerifyOtpAsync(string otp)
         {
-            var user = await context.Users.FirstOrDefaultAsync(u => u.Otp == otp && u.OtpExpiryTime > DateTime.UtcNow);
+            var user = await userRepository.GetByOtpAsync(otp);
             if (user == null)
             {
                 return false;
@@ -174,8 +176,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<bool> CheckLoginAsync(UserLoginRequest request)
         {
-            var user = await context.Users.Include("Role").Where(u => u.Status == true)
-                                        .FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
+            var user = await userRepository.GetByPhoneNumberAsync(request.PhoneNumber);
             if (user == null)
             {
                 return false;
