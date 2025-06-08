@@ -156,9 +156,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
                 MedicalRegistrationNurseApprovedResponse? nurseApprovedResponse = await GetNuserInforAsync(medicalRegistration.StaffNurseId, medicalRegistration);
 
-                if (details == null || studentInfo == null || parentInfo == null || nurseApprovedResponse == null) return null!;
+                if (details == null || studentInfo == null || parentInfo == null) return null!;
 
-                var response = GetResponse(medicalRegistration, details, studentInfo, parentInfo, nurseApprovedResponse);
+                var response = GetResponse(medicalRegistration, details, studentInfo, parentInfo, nurseApprovedResponse!);
 
                 result.Add(response);
             }
