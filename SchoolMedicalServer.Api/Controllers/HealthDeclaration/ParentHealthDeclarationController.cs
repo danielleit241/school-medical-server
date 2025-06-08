@@ -26,6 +26,8 @@ namespace SchoolMedicalServer.Api.Controllers.HealthDeclaration
             return Ok(response);
         }
 
+
+
         [HttpPost("students/health-declarations")]
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> RegisterHealthProfileDeclaration(HealthProfileDeclarationRequest request)
