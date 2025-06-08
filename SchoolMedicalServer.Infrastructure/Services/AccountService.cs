@@ -1,13 +1,17 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SchoolMedicalServer.Abstractions.Dtos.Account;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IServices;
+using SchoolMedicalServer.Abstractions.IRepositories;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class AccountService(SchoolMedicalManagementContext context, IConfiguration configuration) : IAccountService
+    public class AccountService(
+        IBaseRepository baseRepository,
+        IUserRepository userRepository,
+        IStudentRepository studentRepository,
+        IConfiguration configuration) : IAccountService
     {
         public async Task<List<AccountResponse>> BatchCreateParentsAsync()
         {
@@ -15,19 +19,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
             if (string.IsNullOrEmpty(defaultPassword))
                 return [];
 
-            var students = await context.Students
-                .Where(s => s.ParentPhoneNumber != null)
-                .ToListAsync();
+            var students = await studentRepository.GetStudentsWithParentPhoneAsync();
 
-            var parentPhones = students
-                .Select(s => s.ParentPhoneNumber)
-                .Where(p => !string.IsNullOrEmpty(p))
-                .Distinct()
-                .ToList();
+            var parentPhones = await studentRepository.GetParentsPhoneNumber();
 
-            var existingUsers = await context.Users
-                .Where(u => parentPhones.Contains(u.PhoneNumber))
-                .ToDictionaryAsync(u => u.PhoneNumber);
+            var existingUsers = await userRepository.GetUsersByPhoneNumbersAsync(parentPhones);
 
             List<AccountResponse> accounts = [];
 
@@ -39,11 +35,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 if (existingUsers.TryGetValue(student.ParentPhoneNumber, out var existingUser))
                 {
                     student.UserId = existingUser.UserId;
-                    context.Students.Update(student);
+                    studentRepository.UpdateStudent(student);
                     continue;
                 }
-                var role = await context.Roles.FirstOrDefaultAsync(r => r.RoleName == configuration["DefaultAccountCreate:RoleName"]);
 
+                var role = await userRepository.GetRoleByNameAsync(configuration["DefaultAccountCreate:RoleName"]!);
                 if (role == null)
                     return null!;
 
@@ -68,53 +64,50 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     Password = defaultPassword
                 });
 
-                context.Users.Add(user);
-                context.Students.Update(student);
+                await userRepository.AddUserAsync(user);
+                studentRepository.UpdateStudent(student);
 
                 existingUsers[user.PhoneNumber] = user;
             }
 
-            await context.SaveChangesAsync();
+            await baseRepository.SaveChangesAsync();
             return accounts;
         }
 
         public async Task<AccountResponse?> RegisterStaffAsync(RegisterStaffRequest request)
         {
-            if (await context.Users.AnyAsync(u => u.PhoneNumber == request.PhoneNumber))
+            if (await userRepository.UserExistsByPhoneNumberAsync(request.PhoneNumber))
             {
                 return null;
             }
 
-            var user = new User();
-            if (user.UserId == Guid.Empty)
-            {
-                user.UserId = Guid.NewGuid();
-            }
             if (string.IsNullOrEmpty(request.RoleName) || string.IsNullOrEmpty(request.FullName) || string.IsNullOrEmpty(request.Email))
             {
                 return null;
             }
 
-            var role = await context.Roles.FirstOrDefaultAsync(r => r.RoleName == request.RoleName);
+            var role = await userRepository.GetRoleByNameAsync(request.RoleName);
 
             if (role == null)
             {
                 return null;
             }
 
-            user.PhoneNumber = request.PhoneNumber;
-            user.FullName = request.FullName;
-            user.EmailAddress = request.Email;
-            user.Status = true;
-            user.RoleId = role.RoleId;
+            var user = new User
+            {
+                UserId = Guid.NewGuid(),
+                PhoneNumber = request.PhoneNumber,
+                FullName = request.FullName,
+                EmailAddress = request.Email,
+                Status = true,
+                RoleId = role.RoleId,
+                PasswordHash = new PasswordHasher<User>().HashPassword(null!, request.Password)
+            };
 
-            var hashedPassword = new PasswordHasher<User>().HashPassword(user, request.Password);
-            user.PasswordHash = hashedPassword;
+            await userRepository.AddUserAsync(user);
+            await baseRepository.SaveChangesAsync();
 
-            context.Users.Add(user);
-            await context.SaveChangesAsync();
-
-            var account = new AccountResponse
+            return new AccountResponse
             {
                 Id = user.UserId,
                 FullName = request.FullName,
@@ -122,8 +115,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 PhoneNumber = user.PhoneNumber,
                 Password = request.Password
             };
-
-            return account;
         }
     }
 }

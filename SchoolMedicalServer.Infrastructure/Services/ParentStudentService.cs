@@ -1,20 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SchoolMedicalServer.Abstractions.Dtos.Student;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Student;
 using SchoolMedicalServer.Abstractions.Entities;
+using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class ParentStudentService(SchoolMedicalManagementContext context) : IParentStudentService
+    public class ParentStudentService(IStudentRepository studentRepository) : IParentStudentService
     {
-        private readonly SchoolMedicalManagementContext context = context;
 
         public async Task<IEnumerable<StudentInformationResponse>?> GetParentStudentsAsync(Guid parentId)
         {
-            var students = await context.Students
-                .Include(s => s.User)
-                .Where(s => s.UserId == parentId)
-                .ToListAsync();
+            var students = await studentRepository.GetByParentIdAsync(parentId);
 
             List<StudentInformationResponse> response = new();
             foreach (var student in students)
@@ -27,9 +23,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<StudentInformationResponse?> GetParentStudentAsync(Guid parentId, Guid studentId)
         {
-            var student = await context.Students.Include(s => s.User)
-                .Where(s => s.UserId == parentId && s.StudentId == studentId)
-                .FirstOrDefaultAsync();
+            var student = await studentRepository.GetByParentIdAndStudentIdAsync(parentId, studentId);
 
             if (student == null) return null;
 

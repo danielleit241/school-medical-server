@@ -1,14 +1,16 @@
-﻿using Azure;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.User;
+using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class UserService(SchoolMedicalManagementContext context) : IUserService
+    public class UserService(
+        IBaseRepository baseRepository,
+        IUserRepository userRepository) : IUserService
     {
-        public async Task<PaginationResponse<UserInformation>> GetUsersByRoleNamePaginationAsync(PaginationRequest paginationRequest, string roleName)
+        public async Task<PaginationResponse<UserInformation?>> GetUsersByRoleNamePaginationAsync(PaginationRequest? paginationRequest, string roleName)
         {
             if (paginationRequest == null)
             {
@@ -22,16 +24,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 paginationRequest.PageSize = 10;
             }
-            var role = await context.Roles.FirstOrDefaultAsync(r => r.RoleName == roleName);
+            var role = await userRepository.GetRoleByNameAsync(roleName);
             if (role == null) return null!;
 
-            var totalCount = await context.Users.CountAsync();
-            var users = await context.Users.Include(u => u.Role)
-                .Where(u => u.RoleId == role.RoleId)
-                .OrderBy(u => u.FullName)
-                .Skip((paginationRequest.PageIndex - 1) * paginationRequest.PageSize)
-                .Take(paginationRequest.PageSize)
-                .ToListAsync();
+            var totalCount = await userRepository.CountByRoleIdAsync(role.RoleId);
+            int skip = (paginationRequest.PageIndex - 1) * paginationRequest.PageSize;
+            var users = await userRepository.GetUsersByRoleIdPagedAsync(role.RoleId, skip, paginationRequest.PageSize);
             if (users == null) return null!;
 
             var userDtos = new List<UserInformation>();
@@ -56,12 +54,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     paginationRequest.PageSize,
                     totalCount,
                     userDtos
-            );
+            )!;
         }
 
         public async Task<UserInformation?> GetUserAsync(Guid userId)
         {
-            var user = await context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+            var user = await userRepository.GetByIdAsync(userId);
             if (user == null) return null;
             var response = new UserInformation
             {
@@ -80,27 +78,21 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<bool> UpdateStatusUserAsync(Guid userid, bool status)
         {
-            var user = await context.Users.FirstOrDefaultAsync(x => x.UserId == userid);
+            var user = await userRepository.GetByIdAsync(userid);
             if (user == null)
             {
                 return false;
             }
             user.Status = status;
-            context.Users.Update(user);
-            try
-            {
-                await context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            userRepository.Update(user);
+
+            await baseRepository.SaveChangesAsync();
+            return true;
         }
 
         public async Task<bool> UpdateUserAsync(Guid userid, UserInformation request)
         {
-            var user = await context.Users.Include(u => u.Role).FirstOrDefaultAsync(x => x.UserId == userid);
+            var user = await userRepository.GetByIdAsync(request.UserId);
             if (user == null)
             {
                 return false;
@@ -110,7 +102,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return false;
             }
 
-            var newRole = await context.Roles.FirstOrDefaultAsync(x => x.RoleName == request.RoleName);
+            var newRole = await userRepository.GetRoleByNameAsync(request!.RoleName!);
 
             if (newRole == null)
             {
@@ -125,16 +117,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
             user.RoleId = newRole.RoleId;
             user.Address = request.Address;
 
-            context.Users.Update(user);
-            try
-            {
-                await context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            userRepository.Update(user);
+
+            await baseRepository.SaveChangesAsync();
+            return true;
         }
     }
 }

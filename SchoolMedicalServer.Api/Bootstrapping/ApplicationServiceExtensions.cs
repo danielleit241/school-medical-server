@@ -4,9 +4,10 @@ using SchoolMedicalServer.Abstractions.IServices;
 using SchoolMedicalServer.Infrastructure.Services;
 using SchoolMedicalServer.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using SchoolMedicalServer.Api.Helpers.EmailHelper;
 using Microsoft.OpenApi.Models;
-using SchoolMedicalServer.Api.Provider;
+using SchoolMedicalServer.Api.Helpers;
+using SchoolMedicalServer.Abstractions.IRepositories;
+using SchoolMedicalServer.Infrastructure.Repositories;
 
 namespace SchoolMedicalServer.Api.Boostraping
 {
@@ -88,27 +89,34 @@ namespace SchoolMedicalServer.Api.Boostraping
                 });
             });
 
+            services.AddScoped<IBaseRepository, BaseRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<IHealthProfileRepository, HealthProfileRepository>();
+            services.AddScoped<IMedicalInventoryRepository, MedicalInventoryRepository>();
+            services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+            services.AddScoped<IMedicalRegistrationRepository, MedicalRegistrationRepository>();
+            services.AddScoped<IMedicalRegistrationDetailsRepository, MedicalRegistrationDetailsRepository>();
+            services.AddScoped<IMedicalEventRepository, MedicalEventRepository>();
+            services.AddScoped<IMedicalRequestRepository, MedicalRequestRepository>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
+
             services.AddScoped<IAuthService, AuthService>();
             services.AddTransient<IAccountService, AccountService>();
-            services.AddTransient<IEmailHelper, EmailHelper>();
-
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IUserProfileService, UserProfileService>();
-
             services.AddScoped<IHealthProfileDeclarationService, HealthProfileDeclarationService>();
             services.AddScoped<IAppointmentService, AppointmentService>();
-
             services.AddScoped<IParentStudentService, ParentStudentService>();
             services.AddTransient<IFileService, FileService>();
             services.AddScoped<IStudentService, StudentService>();
-
             services.AddTransient<IMedicalRegistrationService, MedicalRegistrationService>();
             services.AddTransient<IMedicalEventService, MedicalEventService>();
-
             services.AddScoped<IMedicalInventoryService, MedicalInventoryService>();
             services.AddScoped<INotificationService, NotificationService>();
 
             services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+            services.AddTransient<IEmailHelper, EmailHelper>();
 
             return services;
         }

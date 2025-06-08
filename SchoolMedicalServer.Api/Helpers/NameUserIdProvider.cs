@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.SignalR;
 
-namespace SchoolMedicalServer.Api.Provider
+namespace SchoolMedicalServer.Api.Helpers
 {
     public class NameUserIdProvider : IUserIdProvider
     {

@@ -1,30 +1,30 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SchoolMedicalServer.Abstractions.Dtos;
+﻿using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
+using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class NotificationService(SchoolMedicalManagementContext context) : INotificationService
+    public class NotificationService(
+        IBaseRepository baseRepository,
+        INotificationRepository notificationRepository,
+        IUserRepository userRepository,
+        IAppointmentRepository appointmentRepository,
+        IMedicalRegistrationRepository medicalRegistrationRepository,
+        IMedicalRegistrationDetailsRepository medicalRegistrationDetailsRepository,
+        IMedicalEventRepository medicalEventRepository) : INotificationService
     {
         public async Task<PaginationResponse<NotificationResponse>> GetUserNotificationsAsync(PaginationRequest? pagination, Guid userId)
         {
-            var totalCount = await context.Notifications
-                .Where(n => n.UserId == userId)
-                .CountAsync();
+            var totalCount = await notificationRepository.CountByUserIdAsync(userId);
 
             if (totalCount == 0)
             {
                 return null!;
             }
 
-            var notifications = await context.Notifications
-                .Where(n => n.UserId == userId)
-                .OrderByDescending(n => n.SendDate)
-                 .Skip((pagination!.PageIndex - 1) * pagination.PageSize)
-                .Take(pagination.PageSize)
-                .ToListAsync();
+            var notifications = await notificationRepository.GetByUserIdPagedAsync(userId, pagination?.PageIndex ?? 0, pagination?.PageSize ?? 10);
 
             var result = new List<NotificationResponse>();
 
@@ -36,14 +36,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     ReceiverId = notification.UserId
                 };
                 var notiInfo = NotificationInformation(notification);
-                var sender = SenderInformation(request)!;
-                var receiver = ReceiverInformation(request)!;
+                var sender = await SenderInformation(request)!;
+                var receiver = await ReceiverInformation(request)!;
 
                 result.Add(GetResponse(notiInfo, sender, receiver));
             }
 
             return new PaginationResponse<NotificationResponse>(
-                   pagination.PageIndex,
+                   pagination!.PageIndex,
                    pagination.PageSize,
                     totalCount,
                     result
@@ -52,14 +52,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<NotificationResponse> SendAppoimentNotificationToNurseAsync(NotificationRequest request)
         {
-            var appointment = await context.Appointments.Include(s => s.Student).Where(a => a.AppointmentId == request.NotificationTypeId).FirstOrDefaultAsync();
+            var appointment = await appointmentRepository.GetByIdWithStudentAsync(request.NotificationTypeId);
             if (appointment == null)
             {
                 return null!;
             }
 
-            var receiver = ReceiverInformation(request);
-            var sender = SenderInformation(request);
+            var receiver = await ReceiverInformation(request);
+            var sender = await SenderInformation(request);
 
             var notification = new Notification
             {
@@ -73,8 +73,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Type = NotificationTypes.Appointment,
                 SourceId = appointment.AppointmentId
             };
-            context.Notifications.Add(notification);
-            await context.SaveChangesAsync();
+            await notificationRepository.AddAsync(notification);
+            await baseRepository.SaveChangesAsync();
 
             var notiInfo = NotificationInformation(notification);
             return GetResponse(notiInfo, sender, receiver);
@@ -82,22 +82,20 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<NotificationResponse> SendAppoimentNotificationToParentAsync(NotificationRequest request)
         {
-            var appointment = await context.Appointments.Where(a => a.AppointmentId == request.NotificationTypeId)
-                .Include(a => a.Student)
-                .FirstOrDefaultAsync();
+            var appointment = await appointmentRepository.GetByIdWithStudentAsync(request.NotificationTypeId);
 
             if (appointment == null)
                 return null!;
 
-            var receiver = ReceiverInformation(request);
-            var sender = SenderInformation(request);
+            var receiver = await ReceiverInformation(request);
+            var sender = await SenderInformation(request);
 
             var notification = new Notification
             {
                 NotificationId = Guid.NewGuid(),
                 SenderId = sender!.UserId,
                 UserId = receiver!.UserId,
-                Title = appointment.CompletionStatus == true ? "Appointment Confirmation" : "Appointment Completion",
+                Title = appointment.CompletionStatus == false ? "Appointment Confirmation" : "Appointment Completion",
                 Content = appointment.CompletionStatus == true
                             ? $"Your appointment with {sender!.UserName} is completed for {appointment.AppointmentDate?.ToString("d")} from {appointment.AppointmentStartTime?.ToString()} to {appointment.AppointmentEndTime?.ToString()}."
                             : $"Your appointment with {sender!.UserName} is confirmed for {appointment.AppointmentDate?.ToString("d")} from {appointment.AppointmentStartTime?.ToString()} to {appointment.AppointmentEndTime?.ToString()}.",
@@ -106,8 +104,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Type = NotificationTypes.Appointment,
                 SourceId = appointment.AppointmentId,
             };
-            context.Notifications.Add(notification);
-            await context.SaveChangesAsync();
+            await notificationRepository.AddAsync(notification);
+            await baseRepository.SaveChangesAsync();
 
 
             var notiInfo = NotificationInformation(notification);
@@ -117,17 +115,15 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<NotificationResponse> SendMedicalRegistrationApprovedNotificationToParentAsync(NotificationRequest request)
         {
-            var medicalRegistration = await context.MedicalRegistrations
-                .Include(mr => mr.Student)
-                .FirstOrDefaultAsync(mr => mr.RegistrationId == request.NotificationTypeId && mr.Status == true);
+            var medicalRegistration = await medicalRegistrationRepository.GetApprovedByIdWithStudentAsync(request.NotificationTypeId);
 
             if (medicalRegistration == null)
             {
                 return null!;
             }
 
-            var receiver = ReceiverInformation(request);
-            var sender = SenderInformation(request);
+            var receiver = await ReceiverInformation(request);
+            var sender = await SenderInformation(request);
 
             var notification = new Notification
             {
@@ -141,8 +137,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Type = NotificationTypes.MedicalRegistration,
                 SourceId = medicalRegistration.RegistrationId
             };
-            context.Notifications.Add(notification);
-            await context.SaveChangesAsync();
+            await notificationRepository.AddAsync(notification);
+            await baseRepository.SaveChangesAsync();
 
             var notiInfo = NotificationInformation(notification);
             return GetResponse(notiInfo, sender, receiver);
@@ -150,18 +146,15 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<NotificationResponse> SendMedicalRegistrationCompletedNotificationToParentAsync(NotificationRequest request)
         {
-            var medicalRegistrationDetail = await context.MedicalRegistrationDetails
-                   .Include(mrd => mrd.MedicalRegistration)
-                   .ThenInclude(mr => mr.Student)
-                   .FirstOrDefaultAsync(mrd => mrd.MedicalRegistrationDetailsId == request.NotificationTypeId);
+            var medicalRegistrationDetail = await medicalRegistrationDetailsRepository.GetByIdWithRegistrationAndStudentAsync(request.NotificationTypeId);
 
             if (medicalRegistrationDetail == null)
             {
                 return null!;
             }
 
-            var receiver = ReceiverInformation(request);
-            var sender = SenderInformation(request);
+            var receiver = await ReceiverInformation(request);
+            var sender = await SenderInformation(request);
 
             var medicationName = medicalRegistrationDetail.MedicalRegistration?.MedicationName ?? "The medication";
             var doseNumber = !string.IsNullOrEmpty(medicalRegistrationDetail.DoseNumber) ? $" (Dose {medicalRegistrationDetail.DoseNumber})" : "";
@@ -180,8 +173,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Type = NotificationTypes.MedicalRegistration,
                 SourceId = medicalRegistrationDetail.MedicalRegistrationDetailsId
             };
-            context.Notifications.Add(notification);
-            await context.SaveChangesAsync();
+            await notificationRepository.AddAsync(notification);
+            await baseRepository.SaveChangesAsync();
 
             var notiInfo = NotificationInformation(notification);
             return GetResponse(notiInfo, sender, receiver);
@@ -200,29 +193,25 @@ namespace SchoolMedicalServer.Infrastructure.Services
             };
         }
 
-        private SenderInformationResponseDto? SenderInformation(NotificationRequest request)
+        private async Task<SenderInformationResponseDto> SenderInformation(NotificationRequest request)
         {
-            var sender = context.Users
-                .Where(u => u.UserId == request.SenderId)
-                .Select(u => new SenderInformationResponseDto
-                {
-                    UserId = u.UserId,
-                    UserName = u.FullName
-                })
-                .FirstOrDefault();
+            var user = await userRepository.GetByIdAsync(request.SenderId);
+            var sender = new SenderInformationResponseDto
+            {
+                UserId = user?.UserId,
+                UserName = user?.FullName
+            };
             return sender;
         }
 
-        private ReceiverInformationResponseDto? ReceiverInformation(NotificationRequest request)
+        private async Task<ReceiverInformationResponseDto> ReceiverInformation(NotificationRequest request)
         {
-            var receiver = context.Users
-                .Where(u => u.UserId == request.ReceiverId)
-                .Select(u => new ReceiverInformationResponseDto
-                {
-                    UserId = u.UserId,
-                    UserName = u.FullName
-                })
-                .FirstOrDefault();
+            var user = await userRepository.GetByIdAsync(request.ReceiverId);
+            var receiver = new ReceiverInformationResponseDto
+            {
+                UserId = user?.UserId,
+                UserName = user?.FullName
+            };
             return receiver;
         }
 
@@ -231,22 +220,20 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return new NotificationResponse
             {
                 NotificationResponseDto = noti,
-                SenderInformationDto = sender,
-                ReceiverInformationDto = receiver
+                SenderInformationDto = sender!,
+                ReceiverInformationDto = receiver!
             };
         }
 
         public async Task<NotificationResponse> SendMedicalEventNotificationToParentAsync(NotificationRequest request)
         {
-            var medicalEvent = await context.MedicalEvents
-                .Include(me => me.Student)
-                .FirstOrDefaultAsync(me => me.EventId == request.NotificationTypeId);
+            var medicalEvent = await medicalEventRepository.GetByIdWithStudentAsync(request.NotificationTypeId);
             if (medicalEvent == null)
             {
                 return null!;
             }
-            var receiver = ReceiverInformation(request);
-            var sender = SenderInformation(request);
+            var receiver = await ReceiverInformation(request);
+            var sender = await SenderInformation(request);
             var notification = new Notification
             {
                 NotificationId = Guid.NewGuid(),
@@ -259,8 +246,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Type = NotificationTypes.MedicalEvent,
                 SourceId = medicalEvent.EventId
             };
-            context.Notifications.Add(notification);
-            await context.SaveChangesAsync();
+            await notificationRepository.AddAsync(notification);
+            await baseRepository.SaveChangesAsync();
 
             var notiInfo = NotificationInformation(notification);
             return GetResponse(notiInfo, sender, receiver);
@@ -268,9 +255,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<bool> ReadAllNotificationsAsync(Guid userId)
         {
-            var notifications = await context.Notifications
-                .Where(n => n.UserId == userId && !n.IsRead)
-                .ToListAsync();
+            var notifications = await notificationRepository.GetUnreadByUserIdAsync(userId);
             if (notifications.Count == 0)
             {
                 return false;
@@ -279,23 +264,19 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 notification.IsRead = true;
             }
-            await context.SaveChangesAsync();
+            await baseRepository.SaveChangesAsync();
             return true;
         }
 
         public async Task<int> GetUserUnReadNotificationsAsync(Guid? userId)
         {
-            var unreadNotis = await context.Notifications
-                .Where(n => n.UserId == userId && !n.IsRead)
-                .CountAsync();
+            var unreadNotis = await notificationRepository.CountUnreadByUserIdAsync(userId ?? Guid.Empty);
             return unreadNotis;
         }
 
         public async Task<NotificationResponse> GetUserNotificationDetailsAsync(Guid notificationId)
         {
-            var noti = await context.Notifications
-                .Where(n => n.NotificationId == notificationId)
-                .FirstOrDefaultAsync();
+            var noti = await notificationRepository.GetByIdAsync(notificationId);
             if (noti == null)
             {
                 return null!;
@@ -306,8 +287,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 ReceiverId = noti.UserId
             };
             var notiInfo = NotificationInformation(noti);
-            var sender = SenderInformation(request)!;
-            var receiver = ReceiverInformation(request)!;
+            var sender = await SenderInformation(request);
+            var receiver = await ReceiverInformation(request);
             return GetResponse(notiInfo, sender, receiver);
         }
     }

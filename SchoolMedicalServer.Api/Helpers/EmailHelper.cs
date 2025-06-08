@@ -4,7 +4,7 @@ using MimeKit;
 using MimeKit.Text;
 using SchoolMedicalServer.Abstractions.Dtos.Helpers;
 
-namespace SchoolMedicalServer.Api.Helpers.EmailHelper
+namespace SchoolMedicalServer.Api.Helpers
 {
     public class EmailHelper(IConfiguration configuration) : IEmailHelper
     {

@@ -16,5 +16,5 @@ public partial class VaccinationResult
     public Guid HealthProfileId { get; set; }
 
     public virtual VaccinationSchedule? Schedule { get; set; }
-    public virtual HealthProfile HealthProfile { get; set; }
+    public virtual HealthProfile? HealthProfile { get; set; }
 }

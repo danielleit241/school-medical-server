@@ -1,7 +1,6 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.Dtos.Appointment;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Entities;
 
 namespace SchoolMedicalServer.Abstractions.IServices
 {
