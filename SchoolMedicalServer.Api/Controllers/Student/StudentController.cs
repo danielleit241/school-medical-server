@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
+using SchoolMedicalServer.Abstractions.Dtos.Student;
 using SchoolMedicalServer.Abstractions.IServices;
+using SchoolMedicalServer.Infrastructure.Services;
 
 namespace SchoolMedicalServer.Api.Controllers.Student
 {
@@ -19,6 +21,30 @@ namespace SchoolMedicalServer.Api.Controllers.Student
                 return NotFound("No students found.");
             }
             return Ok(students);
+        }
+
+
+        [HttpPut("students/{studentId}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateStudentInformationAsync(Guid studentId, [FromBody] StudentInformationRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (studentId != request.StudentId)
+            {
+                return BadRequest("Student ID mismatch between route and body.");
+            }
+
+            var student = await service.UpdateStudentInformationAsync(studentId, request);
+            if (student != null)
+            {
+                return Ok("Update successful");
+            }
+
+            return BadRequest("Update not successful");
         }
     }
 }

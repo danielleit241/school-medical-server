@@ -62,7 +62,7 @@ namespace SchoolMedicalServer.Api
 
             app.MapControllers();
             app.MapHub<NotificationHub>("/notificationHub");
-
+         
             app.Run();
         }
     }
