@@ -1,0 +1,117 @@
+﻿using SchoolMedicalServer.Abstractions.Dtos;
+using SchoolMedicalServer.Abstractions.Dtos.Pagination;
+using SchoolMedicalServer.Abstractions.Dtos.VaccinationDetails;
+using SchoolMedicalServer.Abstractions.Entities;
+using SchoolMedicalServer.Abstractions.IRepositories;
+using SchoolMedicalServer.Abstractions.IServices;
+
+namespace SchoolMedicalServer.Infrastructure.Services
+{
+    public class VaccinationScheduleService(IVaccinationScheduleRepository vaccinationScheduleRepository, IBaseRepository baseRepository, IVaccinationRoundRepository vaccinationRoundRepository, IVacctionDetailsRepository vacctionDetailsRepository) : IVaccinationScheduleService
+    {
+        public async Task<bool> CreateScheduleAsync(VaccinationScheduleRequest request)
+        {
+            if (request == null)
+            {
+                return false;
+            }
+
+            var vaccinationSchedule = new VaccinationSchedule
+            {
+                ScheduleId = Guid.NewGuid(),
+                VaccineId = request.VaccineId,
+                Title = request.Title,
+                Description = request.Description,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                Rounds = [.. request.VaccinationRounds.Select(round => new VaccinationRound
+                {
+                    RoundId = Guid.NewGuid(),
+                    RoundName = round.RoundName,
+                    TargetGrade = round.TargetGrade,
+                    Description = round.Description,
+                    StartDate = round.StartDate,
+                    EndDate = round.EndDate
+                })]
+            };
+
+            await vaccinationScheduleRepository.CreateVaccinationSchedule(vaccinationSchedule);
+            await baseRepository.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<PaginationResponse<VaccinationScheduleResponse?>?> GetPaginationVaccinationSchedule(PaginationRequest? pagination)
+        {
+            var totalCount = await vaccinationScheduleRepository.CountAsync();
+            var skip = (pagination!.PageIndex - 1) * (pagination!.PageSize);
+            var schedules = await vaccinationScheduleRepository.GetPagedVaccinationSchedule(skip, pagination.PageSize);
+            if (schedules == null || !schedules.Any())
+            {
+                return null;
+            }
+            List<VaccinationScheduleResponse> vaccinationScheduleResponses = [];
+            foreach (var schedule in schedules)
+            {
+                var vaccinationRounds = await vaccinationRoundRepository.GetVaccinationRoundsByScheduleIdAsync(schedule.ScheduleId);
+                var vaccinationDetails = await vacctionDetailsRepository.GetByIdAsync(schedule.VaccineId);
+                vaccinationScheduleResponses.Add(GetResponse(schedule, vaccinationRounds, vaccinationDetails));
+            }
+            return new PaginationResponse<VaccinationScheduleResponse?>(
+                pagination!.PageIndex,
+                pagination.PageSize,
+                totalCount,
+                vaccinationScheduleResponses
+            );
+        }
+
+        public async Task<VaccinationScheduleResponse?> GetVaccinationSchedule(Guid id)
+        {
+            var schedule = await vaccinationScheduleRepository.GetVaccinationScheduleByIdAsync(id);
+            if (schedule == null)
+            {
+                return null;
+            }
+            var vaccinationRounds = await vaccinationRoundRepository.GetVaccinationRoundsByScheduleIdAsync(schedule.ScheduleId);
+            var vaccinationDetails = await vacctionDetailsRepository.GetByIdAsync(schedule.VaccineId);
+            return GetResponse(schedule, vaccinationRounds, vaccinationDetails);
+        }
+
+        public VaccinationScheduleResponse GetResponse(VaccinationSchedule schedule, IEnumerable<VaccinationRound> rounds, VaccinationDetail? vaccinationDetails)
+        {
+            return new VaccinationScheduleResponse
+            {
+                VaccinationScheduleResponseDto = new VaccinationScheduleResponseDto
+                {
+                    ScheduleId = schedule.ScheduleId,
+                    Title = schedule.Title,
+                    Description = schedule.Description,
+                    CreatedAt = schedule.CreatedAt,
+                    UpdatedAt = schedule.UpdatedAt
+                },
+                VaccinationRounds = [.. rounds.Select(round => new VaccinationRoundResponseDto
+                    {
+                        RoundId = round.RoundId,
+                        RoundName = round.RoundName,
+                        TargetGrade = round.TargetGrade,
+                        Description = round.Description,
+                        StartDate = round.StartDate,
+                        EndDate = round.EndDate,
+                        Status = round.Status
+                    })],
+                VaccinationDetailsResponse = new VaccinationDetailsResponse
+                {
+                    VaccineId = vaccinationDetails!.VaccineId,
+                    VaccineCode = vaccinationDetails.VaccineCode,
+                    VaccineName = vaccinationDetails.VaccineName,
+                    VaccineType = vaccinationDetails.VaccineType,
+                    AgeRecommendation = vaccinationDetails.AgeRecommendation,
+                    BatchNumber = vaccinationDetails.BatchNumber,
+                    ContraindicationNotes = vaccinationDetails.ContraindicationNotes,
+                    Description = vaccinationDetails.Description,
+                    ExpirationDate = vaccinationDetails.ExpirationDate,
+                    Manufacturer = vaccinationDetails.Manufacturer,
+                }
+            };
+        }
+    }
+}

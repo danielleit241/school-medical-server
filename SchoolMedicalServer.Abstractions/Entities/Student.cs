@@ -20,6 +20,5 @@ public partial class Student
     public virtual ICollection<MedicalEvent> MedicalEvents { get; set; } = [];
     public virtual ICollection<MedicalRegistration> MedicalRegistrations { get; set; } = [];
     public virtual User? User { get; set; }
-    public virtual ICollection<VaccinationSchedule> VaccinationSchedules { get; set; } = [];
     public virtual ICollection<HealthCheckSchedule> HealthCheckSchedules { get; set; } = [];
 }

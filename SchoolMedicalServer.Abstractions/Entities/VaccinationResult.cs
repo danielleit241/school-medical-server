@@ -1,17 +1,20 @@
-﻿namespace SchoolMedicalServer.Abstractions.Entities;
-
-public partial class VaccinationResult
+﻿namespace SchoolMedicalServer.Abstractions.Entities
 {
-    public Guid VaccinationResultId { get; set; }
-    public Guid ScheduleId { get; set; }
-    public Guid RoundId { get; set; }
-    public Guid HealthProfileId { get; set; }
-    public DateOnly? VaccinationDate { get; set; }
-    public string? Status { get; set; }
-    public string? Notes { get; set; }
-    public Guid? RecorderId { get; set; }
+    public class VaccinationResult
+    {
+        public Guid VaccinationResultId { get; set; }
+        public Guid RoundId { get; set; }
+        public Guid HealthProfileId { get; set; }
 
-    public virtual VaccinationSchedule? Schedule { get; set; }
-    public virtual HealthProfile? HealthProfile { get; set; }
-    public virtual VaccinationObservation? VaccinationObservation { get; set; }
+        public bool ParentConfirmed { get; set; }
+        public bool HealthQualified { get; set; }
+        public bool Vaccinated { get; set; }
+        public DateOnly? VaccinatedDate { get; set; }
+        public Guid RecorderId { get; set; }
+        public string? Notes { get; set; }
+
+        public virtual VaccinationRound? Round { get; set; }
+        public virtual HealthProfile? HealthProfile { get; set; }
+        public virtual VaccinationObservation? VaccinationObservation { get; set; }
+    }
 }

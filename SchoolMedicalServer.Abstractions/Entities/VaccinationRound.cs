@@ -4,7 +4,6 @@
     {
         public Guid RoundId { get; set; }
         public Guid ScheduleId { get; set; }
-
         public string? RoundName { get; set; }
         public string? TargetGrade { get; set; }
         public string? Description { get; set; }
@@ -12,7 +11,7 @@
         public DateOnly? EndDate { get; set; }
         public bool Status { get; set; }
 
-        // Navigation property
         public virtual VaccinationSchedule? Schedule { get; set; }
+        public virtual ICollection<VaccinationResult> VaccinationResults { get; set; } = [];
     }
 }

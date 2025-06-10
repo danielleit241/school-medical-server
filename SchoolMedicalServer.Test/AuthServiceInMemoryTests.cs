@@ -28,6 +28,7 @@ namespace SchoolMedicalServer.Tests.Services
     var config = new ConfigurationBuilder()
         .AddInMemoryCollection(new Dictionary<string, string?>
         {
+
             ["Jwt:Key"] = "123456789012345678901234567890123456789012345678901234567890abcd",
             ["Jwt:Issuer"] = "TestIssuer",
             ["Jwt:Audience"] = "TestAudience",
@@ -36,6 +37,7 @@ namespace SchoolMedicalServer.Tests.Services
         .Build();
     return config;
 }
+
 
         private async Task SeedUserAsync(
             SchoolMedicalManagementContext context,
@@ -49,7 +51,7 @@ namespace SchoolMedicalServer.Tests.Services
             {
                 UserId = Guid.NewGuid(),
                 PhoneNumber = phone,
-                PasswordHash = new PasswordHasher<User>().HashPassword(null, password),
+                PasswordHash = new PasswordHasher<User>().HashPassword(null!, password),
                 RoleId = role.RoleId,
                 Role = role,
                 Status = status
