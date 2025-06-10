@@ -10,7 +10,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
     public class MedicalInventoryService(IBaseRepository baseRepository,
         IMedicalInventoryRepository medicalInventoryRepository) : IMedicalInventoryService
     {
-        public async Task<MedicalInventoryResponse?> CreateMedicalInventoryAsync(MedicalInventoryResponse request)
+        public async Task<MedicalInventoryResponse?> CreateMedicalInventoryAsync(MedicalInventoryRequest request)
         {
             if (string.IsNullOrEmpty(request.ItemName) || string.IsNullOrEmpty(request.Category) || string.IsNullOrEmpty(request.UnitOfMeasure))
             {
@@ -137,7 +137,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             );
         }
 
-        public async Task<MedicalInventoryResponse?> UpdateMedicalInventoryAsync(Guid itemId, MedicalInventoryResponse request)
+        public async Task<MedicalInventoryResponse?> UpdateMedicalInventoryAsync(Guid itemId, MedicalInventoryRequest request)
         {
             var item = await medicalInventoryRepository.GetByIdAsync(itemId);
             if (item == null) return null;

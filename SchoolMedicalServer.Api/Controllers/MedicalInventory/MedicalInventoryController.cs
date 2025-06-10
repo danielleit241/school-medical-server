@@ -38,7 +38,7 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalInventory
 
         [HttpPost("medical-inventories")]
         [Authorize(Roles = "admin, nurse, manager")]
-        public async Task<IActionResult> CreateMedicalInventory([FromBody] MedicalInventoryResponse request)
+        public async Task<IActionResult> CreateMedicalInventory([FromBody] MedicalInventoryRequest request)
         {
             var result = await service.CreateMedicalInventoryAsync(request);
             if (result == null)
@@ -51,7 +51,7 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalInventory
 
         [HttpPut("medical-inventories/{itemId}")]
         [Authorize(Roles = "admin, nurse, manager")]
-        public async Task<IActionResult> UpdateMedicalInventoryAsync(Guid itemId, [FromBody] MedicalInventoryResponse request)
+        public async Task<IActionResult> UpdateMedicalInventoryAsync(Guid itemId, [FromBody] MedicalInventoryRequest request)
         {
             if (!ModelState.IsValid)
             {

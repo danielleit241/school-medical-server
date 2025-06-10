@@ -6,6 +6,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
     {
         Task<UserProfileResponse?> GetUserProfileByIdAsync(Guid userId);
         Task<UserProfileResponse?> UpdateUserProfileAsync(Guid userId, UserProfileRequest dto);
-        Task<string?> UpdateUserProfileImageAsync(Guid userId, UserProfileRequest dto);
+        Task<string?> UpdateUserProfileImageAsync(Guid userId, string avatarUrl);
+
     }
 }

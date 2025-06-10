@@ -53,13 +53,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return response;
         }
 
-        public async Task<string?> UpdateUserProfileImageAsync(Guid userId, UserProfileRequest dto)
+        public async Task<string?> UpdateUserProfileImageAsync(Guid userId, string avatarUrl)
         {
             var user = await userRepository.GetByIdAsync(userId);
             if (user == null) return null;
 
-            user.AvatarUrl = dto.AvatarUrl;
-
+            user.AvatarUrl = avatarUrl;
             userRepository.Update(user);
             await baseRepository.SaveChangesAsync();
 

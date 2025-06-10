@@ -24,7 +24,7 @@ namespace SchoolMedicalServer.Api.Controllers.Student
         }
 
 
-        [HttpPut("{studentId}")]
+        [HttpPut("students/{studentId}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateStudentInformationAsync(Guid studentId, [FromBody] StudentInformationResponse request)
         {

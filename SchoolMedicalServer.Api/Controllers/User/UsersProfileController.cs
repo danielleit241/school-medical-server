@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.Dtos.User;
 using SchoolMedicalServer.Abstractions.IServices;
 using SchoolMedicalServer.Infrastructure.Services;
@@ -42,16 +43,18 @@ namespace SchoolMedicalServer.Api.Controllers.User
             return BadRequest("Update not successful");
         }
 
+
+
         [HttpPut("{userId}/avatar")]
         [Authorize]
-        public async Task<IActionResult> UpdateProfileImageAsync(Guid userId, [FromBody] UserProfileRequest request)
+        public async Task<IActionResult> UpdateProfileImageAsync(Guid userId, [FromBody] UpdateAvatarUrlRequest request)
         {
-            if (!ModelState.IsValid)
+            if (string.IsNullOrEmpty(request.AvatarUrl))
             {
-                return BadRequest(ModelState);
+                return BadRequest("avatarUrl is required");
             }
 
-            var updatedUrl = await userProfileService.UpdateUserProfileImageAsync(userId, request);
+            var updatedUrl = await userProfileService.UpdateUserProfileImageAsync(userId, request.AvatarUrl);
             if (updatedUrl != null)
             {
                 return Ok(updatedUrl);
