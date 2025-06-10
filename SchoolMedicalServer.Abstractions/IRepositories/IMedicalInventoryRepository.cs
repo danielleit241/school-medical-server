@@ -11,5 +11,7 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<MedicalInventory?> GetByIdAsync(Guid itemId);
         Task<bool> IsEnoughQuantityAsync(Guid itemId, int requestQuantity, int? minimumStockLevel = null);
         void Update(MedicalInventory inventory);
+        void Delete(MedicalInventory inventory); 
+
     }
 }

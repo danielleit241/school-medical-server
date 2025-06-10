@@ -1,4 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.Notification;
+using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
@@ -51,7 +51,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     result
              );
         }
-
         public async Task<NotificationResponse> SendAppoimentNotificationToNurseAsync(NotificationRequest request)
         {
             var appointment = await appointmentRepository.GetByIdWithStudentAsync(request.NotificationTypeId);
@@ -81,7 +80,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var notiInfo = NotificationInformation(notification);
             return GetResponse(notiInfo, sender, receiver);
         }
-
         public async Task<NotificationResponse> SendAppoimentNotificationToParentAsync(NotificationRequest request)
         {
             var appointment = await appointmentRepository.GetByIdWithStudentAsync(request.NotificationTypeId);
@@ -205,7 +203,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var notiInfo = NotificationInformation(notification);
             return GetResponse(notiInfo, sender, receiver);
         }
-
         private NotificationResponseDto NotificationInformation(Notification notification)
         {
             return new NotificationResponseDto
@@ -218,7 +215,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 SendDate = notification.SendDate
             };
         }
-
         private async Task<SenderInformationResponseDto> SenderInformation(NotificationRequest request)
         {
             var user = await userRepository.GetByIdAsync(request.SenderId);
@@ -229,7 +225,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             };
             return sender;
         }
-
         private async Task<ReceiverInformationResponseDto> ReceiverInformation(NotificationRequest request)
         {
             var user = await userRepository.GetByIdAsync(request.ReceiverId);
@@ -240,7 +235,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             };
             return receiver;
         }
-
         private NotificationResponse GetResponse(NotificationResponseDto noti, SenderInformationResponseDto sender, ReceiverInformationResponseDto receiver)
         {
             return new NotificationResponse
@@ -250,7 +244,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 ReceiverInformationDto = receiver!
             };
         }
-
         public async Task<NotificationResponse> SendMedicalEventNotificationToParentAsync(NotificationRequest request)
         {
             var medicalEvent = await medicalEventRepository.GetByIdWithStudentAsync(request.NotificationTypeId);
@@ -278,7 +271,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var notiInfo = NotificationInformation(notification);
             return GetResponse(notiInfo, sender, receiver);
         }
-
         public async Task<bool> ReadAllNotificationsAsync(Guid userId)
         {
             var notifications = await notificationRepository.GetUnreadByUserIdAsync(userId);
@@ -289,6 +281,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             foreach (var notification in notifications)
             {
                 notification.IsRead = true;
+                notification.ReadDate = DateTime.UtcNow;
             }
             await baseRepository.SaveChangesAsync();
             return true;

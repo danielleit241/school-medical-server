@@ -11,6 +11,8 @@ namespace SchoolMedicalServer.Abstractions.IServices
     public interface IStudentService
     {
         Task<PaginationResponse<StudentInformationResponse>> GetAllStudentsAsync(PaginationRequest? paginationRequest);
-      
+        Task<StudentInformationResponse?> UpdateStudentInformationAsync(Guid studentId, StudentInformationRequest request);
     }
+
 }
+
