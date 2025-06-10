@@ -25,7 +25,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return null!;
             }
 
-            var notifications = await notificationRepository.GetByUserIdPagedAsync(userId, pagination?.PageIndex ?? 0, pagination?.PageSize ?? 10);
+            var skip = (pagination!.PageIndex - 1) * pagination.PageSize;
+            var notifications = await notificationRepository.GetByUserIdPagedAsync(userId, skip, pagination?.PageSize ?? 10);
 
             var result = new List<NotificationResponse>();
 
