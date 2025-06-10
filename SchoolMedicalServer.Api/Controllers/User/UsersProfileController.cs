@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.Dtos.User;
 using SchoolMedicalServer.Abstractions.IServices;
 using SchoolMedicalServer.Infrastructure.Services;
@@ -47,7 +46,7 @@ namespace SchoolMedicalServer.Api.Controllers.User
 
         [HttpPut("{userId}/avatar")]
         [Authorize]
-        public async Task<IActionResult> UpdateProfileImageAsync(Guid userId, [FromBody] UpdateAvatarUrlRequest request)
+        public async Task<IActionResult> UpdateProfileImageAsync(Guid userId, [FromBody] UserAvatarUrlRequest request)
         {
             if (string.IsNullOrEmpty(request.AvatarUrl))
             {

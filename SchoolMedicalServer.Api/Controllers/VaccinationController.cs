@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos;
 
-namespace SchoolMedicalServer.Api
+namespace SchoolMedicalServer.Api.Controllers
 {
     [Route("api")]
     [ApiController]

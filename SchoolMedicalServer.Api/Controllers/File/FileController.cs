@@ -46,6 +46,25 @@ namespace SchoolMedicalServer.Api.Controllers.File
             }
         }
 
+        [HttpPost("vaccines/upload-excel")]
+        [Authorize(Roles = "admin,manager")]
+        public async Task<IActionResult> UploadVaccines(IFormFile file)
+        {
+            try
+            {
+                if (file == null || file.Length == 0)
+                {
+                    return BadRequest("No file uploaded.");
+                }
+                await service.UploadVaccinationDetailFile(file);
+                return Ok("Upload successfully!");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.Message);
+            }
+        }
+
         [HttpGet("students/export-excel")]
         [Authorize(Roles = "admin,manager")]
         public async Task<IActionResult> ExportStudents()

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace SchoolMedicalServer.Abstractions.Entities;
+﻿namespace SchoolMedicalServer.Abstractions.Entities;
 
 public partial class HealthCheckResult
 {
@@ -17,8 +14,9 @@ public partial class HealthCheckResult
     public string? BloodPressure { get; set; }
     public string? Notes { get; set; }
     public Guid? RecordedId { get; set; }
-    public Guid HealthProfileId { get; set; }
+    public DateTime? RecordedAt { get; set; }
 
+    public Guid HealthProfileId { get; set; }
     public virtual HealthCheckSchedule? Schedule { get; set; }
     public virtual HealthProfile? HealthProfile { get; set; }
 }

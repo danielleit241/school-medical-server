@@ -7,8 +7,8 @@ namespace SchoolMedicalServer.Abstractions.IServices
     {
         Task UploadMedicalInventoriesExcelFile(IFormFile file);
         Task UploadStudentsExcelFile(IFormFile file);
+        Task UploadVaccinationDetailFile(IFormFile file);
         Task<byte[]> ExportStudentsExcelFileAsync();
-
         Task<byte[]> ExportMedicalInventoriesExcelFileAsync();
 
     }

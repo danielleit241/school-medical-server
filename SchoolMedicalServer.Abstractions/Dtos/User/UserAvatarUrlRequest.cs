@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolMedicalServer.Abstractions.Dtos
+namespace SchoolMedicalServer.Abstractions.Dtos.User
 {
-    public class UpdateAvatarUrlRequest
+    public class UserAvatarUrlRequest
     {
         public string AvatarUrl { get; set; }
     }

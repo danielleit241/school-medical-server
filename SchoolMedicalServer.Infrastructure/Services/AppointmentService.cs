@@ -197,7 +197,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             );
         }
 
-
         private async Task<AppointmentResponse> GetResponseAsync(Appointment appointment)
         {
             var user = await userRepository.GetByIdAsync(appointment.UserId);
@@ -250,10 +249,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
             if (request.ConfirmationStatus.HasValue)
             {
                 appointment.ConfirmationStatus = request.ConfirmationStatus.Value;
+                appointment.ConfirmationAt = DateTime.UtcNow;
             }
             if (request.CompletionStatus.HasValue && appointment.ConfirmationStatus == true)
             {
                 appointment.CompletionStatus = request.CompletionStatus.Value;
+                appointment.CompletionAt = DateTime.UtcNow;
             }
 
             appointmentRepository.Update(appointment);

@@ -50,7 +50,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     PasswordHash = new PasswordHasher<User>().HashPassword(null!, defaultPassword),
                     RoleId = role.RoleId,
                     EmailAddress = student.ParentEmailAddress,
-                    Status = true
+                    Status = true,
+                    CreateAt = DateTime.UtcNow,
                 };
 
                 student.UserId = user.UserId;
@@ -101,7 +102,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 EmailAddress = request.Email,
                 Status = true,
                 RoleId = role.RoleId,
-                PasswordHash = new PasswordHasher<User>().HashPassword(null!, request.Password)
+                PasswordHash = new PasswordHasher<User>().HashPassword(null!, request.Password),
+                CreateAt = DateTime.UtcNow,
             };
 
             await userRepository.AddUserAsync(user);

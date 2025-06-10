@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.VariantTypes;
 using Microsoft.AspNetCore.Http;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
@@ -10,7 +11,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IStudentRepository studentRepository,
         IMedicalInventoryRepository medicalInventoryRepository,
         IHealthProfileRepository healthProfileRepository,
-        IBaseRepository baseRepository) : IFileService
+        IBaseRepository baseRepository,
+        IVacctionDetailsRepository vacctionDetailsRepository) : IFileService
     {
         public async Task UploadMedicalInventoriesExcelFile(IFormFile file)
         {
@@ -141,7 +143,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
                             Grade = grade,
                             Address = address ?? "",
                             ParentPhoneNumber = parentPhoneNumber,
-                            ParentEmailAddress = parentEmailAddress
+                            ParentEmailAddress = parentEmailAddress,
+                            CreateAt = DateTime.UtcNow,
+                            UpdateAt = DateTime.UtcNow
                         };
 
                         var studentHealthProfile = new HealthProfile
@@ -160,6 +164,74 @@ namespace SchoolMedicalServer.Infrastructure.Services
             catch (Exception ex)
             {
                 throw new Exception($"Error uploading students: {ex.Message}", ex);
+            }
+        }
+
+        public async Task UploadVaccinationDetailFile(IFormFile file)
+        {
+            try
+            {
+                using var stream = new MemoryStream();
+                await file.CopyToAsync(stream);
+                stream.Position = 0;
+                using (var workbook = new XLWorkbook(stream))
+                {
+                    var worksheet = workbook.Worksheet(1);
+                    bool isFirstRow = true;
+                    foreach (var row in worksheet.RowsUsed())
+                    {
+                        if (isFirstRow)
+                        {
+                            isFirstRow = false;
+                            continue;
+                        }
+                        var vaccineId = Guid.NewGuid();
+                        var vaccineCode = row.Cell(1).GetString();
+                        var vaccineName = row.Cell(2).GetString();
+                        var manufacturer = row.Cell(3).GetString();
+                        var vaccineType = row.Cell(4).GetString();
+                        var ageRecommendation = row.Cell(5).GetString();
+                        var batchNumber = row.Cell(6).GetString();
+                        DateOnly? expirationDate = null;
+                        if (row.Cell(3).DataType == XLDataType.DateTime)
+                        {
+                            var dateTime = row.Cell(7).GetDateTime();
+                            expirationDate = DateOnly.FromDateTime(dateTime);
+                        }
+                        else
+                        {
+                            if (DateTime.TryParse(row.Cell(7).GetString(), out var parsedDate))
+                            {
+                                expirationDate = DateOnly.FromDateTime(parsedDate);
+                            }
+                        }
+                        var contraindicationNotes = row.Cell(8).GetString();
+                        var description = row.Cell(9).GetString();
+
+                        var vaccineDetail = new VaccinationDetail
+                        {
+                            VaccineId = vaccineId,
+                            VaccineCode = vaccineCode,
+                            VaccineName = vaccineName,
+                            Manufacturer = manufacturer,
+                            VaccineType = vaccineType,
+                            AgeRecommendation = ageRecommendation,
+                            BatchNumber = batchNumber,
+                            ExpirationDate = expirationDate,
+                            ContraindicationNotes = contraindicationNotes ?? "",
+                            Description = description ?? "",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        };
+
+                        await vacctionDetailsRepository.AddAsync(vaccineDetail);
+                    }
+                    await baseRepository.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error uploading vaccination details: {ex.Message}", ex);
             }
         }
 

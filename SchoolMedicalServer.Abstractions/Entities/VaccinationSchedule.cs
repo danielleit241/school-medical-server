@@ -14,6 +14,6 @@ public partial class VaccinationSchedule
 
     public virtual Student? Student { get; set; }
     public virtual ICollection<VaccinationResult> VaccinationResults { get; set; } = new List<VaccinationResult>();
-    public virtual VaccineDetail Vaccine { get; set; }
+    public virtual VaccinationDetail? Vaccine { get; set; }
     public virtual ICollection<VaccinationRound> Rounds { get; set; } = new List<VaccinationRound>();
 }
