@@ -36,6 +36,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             user.DayOfBirth = dto.DateOfBirth;
             user.AvatarUrl = dto.AvatarUrl;
             user.Address = dto.Address;
+            user.UpdateAt = DateTime.UtcNow;
 
             userRepository.Update(user);
             await baseRepository.SaveChangesAsync();

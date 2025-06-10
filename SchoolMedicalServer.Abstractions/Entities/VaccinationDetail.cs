@@ -1,8 +1,8 @@
 ﻿namespace SchoolMedicalServer.Abstractions.Entities;
 
-public partial class VaccineDetail
+public partial class VaccinationDetail
 {
-    public Guid VaccineId { get; set; }
+    public Guid VaccineId { get; set; } // Đổi tên property cho đúng với entity mới
 
     public string VaccineCode { get; set; } = default!;
 
@@ -18,11 +18,12 @@ public partial class VaccineDetail
 
     public DateOnly? ExpirationDate { get; set; }
 
-    public int? DoseNumber { get; set; }
-
     public string? ContraindicationNotes { get; set; }
 
     public string? Description { get; set; }
 
-    public virtual VaccinationSchedule? VaccinationSchedule { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+
+    public virtual ICollection<VaccinationSchedule> VaccinationSchedules { get; set; } = new List<VaccinationSchedule>();
 }

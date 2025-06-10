@@ -84,6 +84,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return false;
             }
             user.Status = status;
+            user.UpdateAt = DateTime.UtcNow;
             userRepository.Update(user);
 
             await baseRepository.SaveChangesAsync();
@@ -116,6 +117,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             user.AvatarUrl = request.AvatarUrl;
             user.RoleId = newRole.RoleId;
             user.Address = request.Address;
+            user.UpdateAt = DateTime.UtcNow;
 
             userRepository.Update(user);
 
