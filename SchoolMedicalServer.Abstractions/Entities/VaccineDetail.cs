@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace SchoolMedicalServer.Abstractions.Entities;
+﻿namespace SchoolMedicalServer.Abstractions.Entities;
 
 public partial class VaccineDetail
 {
     public Guid VaccineId { get; set; }
 
+    public string VaccineCode { get; set; } = default!;
+
     public string? VaccineName { get; set; }
 
     public string? Manufacturer { get; set; }
-
-    public string? Disease { get; set; }
 
     public string? VaccineType { get; set; }
 
@@ -27,5 +24,5 @@ public partial class VaccineDetail
 
     public string? Description { get; set; }
 
-    public virtual ICollection<VaccinationSchedule> VaccinationSchedules { get; set; } = new List<VaccinationSchedule>();
+    public virtual VaccinationSchedule? VaccinationSchedule { get; set; }
 }

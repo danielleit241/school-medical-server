@@ -1,5 +1,5 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos;
-using SchoolMedicalServer.Abstractions.Dtos.Appointment;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Appointment;
+using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 
 namespace SchoolMedicalServer.Abstractions.IServices

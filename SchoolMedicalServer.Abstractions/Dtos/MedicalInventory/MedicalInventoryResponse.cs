@@ -1,4 +1,4 @@
-﻿namespace SchoolMedicalServer.Abstractions.Dtos
+﻿namespace SchoolMedicalServer.Abstractions.Dtos.MedicalInventory
 {
     public class MedicalInventoryResponse
     {
