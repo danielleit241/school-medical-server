@@ -27,7 +27,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
             return await _context.VaccinationDetails.ToListAsync();
         }
 
-        public async Task<VaccinationDetail?> GetByIdAsync(Guid id)
+        public async Task<VaccinationDetail?> GetByIdAsync(Guid? id)
         {
             return await _context.VaccinationDetails
                 .FirstOrDefaultAsync(v => v.VaccineId == id);
