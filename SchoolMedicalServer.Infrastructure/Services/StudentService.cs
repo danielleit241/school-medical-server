@@ -72,5 +72,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 ParentEmailAddress = student.ParentEmailAddress
             };
         }
+
+        public async Task<StudentInformationResponse?> GetStudentByIdAsync(Guid studentId)
+        {
+            var student = await studentRepository.GetStudentByIdAsync(studentId);
+            if (student == null) return null;
+            return ToStudentInformationResponse(student);
+        }
     }
 }

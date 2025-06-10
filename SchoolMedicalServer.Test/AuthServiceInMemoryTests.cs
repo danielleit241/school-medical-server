@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -22,18 +23,21 @@ namespace SchoolMedicalServer.Tests.Services
             return new SchoolMedicalManagementContext(options);
         }
 
-        private IConfiguration CreateFakeConfig()
+       private IConfiguration CreateFakeConfig()
+{
+    var config = new ConfigurationBuilder()
+        .AddInMemoryCollection(new Dictionary<string, string?>
         {
-            var config = new ConfigurationBuilder()
-                .AddInMemoryCollection(new[]
-                {
-            new KeyValuePair<string, string>("Jwt:Key", "123456789012345678901234567890123456789012345678901234567890abcd"),
-            new KeyValuePair<string, string>("Jwt:Issuer", "TestIssuer"),
-            new KeyValuePair<string, string>("Jwt:Audience", "TestAudience"),
-            new KeyValuePair<string, string>("DefaultAccountCreate:Password", "Default@123")
-                }!).Build();
-            return config;
-        }
+
+            ["Jwt:Key"] = "123456789012345678901234567890123456789012345678901234567890abcd",
+            ["Jwt:Issuer"] = "TestIssuer",
+            ["Jwt:Audience"] = "TestAudience",
+            ["DefaultAccountCreate:Password"] = "Default@123"
+        })
+        .Build();
+    return config;
+}
+
 
         private async Task SeedUserAsync(
             SchoolMedicalManagementContext context,
@@ -57,100 +61,60 @@ namespace SchoolMedicalServer.Tests.Services
             await context.SaveChangesAsync();
         }
 
-        [Fact]
-        public async Task LoginAsync_Success_When_Correct_Account_And_Password()
+        [Theory]
+        [MemberData(nameof(LoginTestData))]
+        public async Task LoginAsync_DataDrivenTests(
+            string seedPhone,
+            string seedPassword,
+            string loginPhone,
+            string loginPassword,
+            bool expectSuccess,
+            bool expectToken)
         {
             // Arrange
             var dbName = Guid.NewGuid().ToString();
             var context = CreateContext(dbName);
-            await SeedUserAsync(context, "0123456789", "TestPassword!1");
+
+            if (!string.IsNullOrEmpty(seedPhone) && !string.IsNullOrEmpty(seedPassword))
+            {
+                await SeedUserAsync(context, seedPhone, seedPassword);
+            }
+
             var userRepo = new UserRepository(context);
             var baseRepo = new BaseRepository(context);
             var authService = new AuthService(baseRepo, userRepo, CreateFakeConfig());
 
             var request = new UserLoginRequest
             {
-                PhoneNumber = "0123456789",
-                Password = "TestPassword!1"
+                PhoneNumber = loginPhone,
+                Password = loginPassword
             };
 
             // Act
             var result = await authService.LoginAsync(request);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.False(string.IsNullOrEmpty(result.AccessToken));
+            if (expectSuccess)
+            {
+                Assert.NotNull(result);
+                if (expectToken)
+                {
+                    Assert.False(string.IsNullOrEmpty(result.AccessToken));
+                }
+            }
+            else
+            {
+                Assert.Null(result);
+            }
         }
 
-        [Fact]
-        public async Task LoginAsync_Fail_When_User_Not_Exists()
+        public static IEnumerable<object[]> LoginTestData()
         {
-            // Arrange
-            var dbName = Guid.NewGuid().ToString();
-            var context = CreateContext(dbName);
-            var userRepo = new UserRepository(context);
-            var baseRepo = new BaseRepository(context);
-            var authService = new AuthService(baseRepo, userRepo, CreateFakeConfig());
-
-            var request = new UserLoginRequest
-            {
-                PhoneNumber = "0000000000",
-                Password = "AnyPassword"
-            };
-
-            // Act
-            var result = await authService.LoginAsync(request);
-
-            // Assert
-            Assert.Null(result);
-        }
-
-        [Fact]
-        public async Task LoginAsync_Fail_When_Wrong_Password()
-        {
-            // Arrange
-            var dbName = Guid.NewGuid().ToString();
-            var context = CreateContext(dbName);
-            await SeedUserAsync(context, "0123456789", "CorrectPassword");
-            var userRepo = new UserRepository(context);
-            var baseRepo = new BaseRepository(context);
-            var authService = new AuthService(baseRepo, userRepo, CreateFakeConfig());
-
-            var request = new UserLoginRequest
-            {
-                PhoneNumber = "0123456789",
-                Password = "WrongPassword"
-            };
-
-            // Act
-            var result = await authService.LoginAsync(request);
-
-            // Assert
-            Assert.Null(result);
-        }
-
-        [Fact]
-        public async Task LoginAsync_Fail_When_Using_DefaultPassword()
-        {
-            // Arrange
-            var dbName = Guid.NewGuid().ToString();
-            var context = CreateContext(dbName);
-            await SeedUserAsync(context, "0123456789", "Default@123");
-            var userRepo = new UserRepository(context);
-            var baseRepo = new BaseRepository(context);
-            var authService = new AuthService(baseRepo, userRepo, CreateFakeConfig());
-
-            var request = new UserLoginRequest
-            {
-                PhoneNumber = "0123456789",
-                Password = "Default@123" // Mật khẩu mặc định, sẽ bị chặn
-            };
-
-            // Act
-            var result = await authService.LoginAsync(request);
-
-            // Assert
-            Assert.Null(result);
+            // seedPhone, seedPassword, loginPhone, loginPassword, expectSuccess, expectToken
+            yield return new object[] { "0123456789", "TestPassword!1", "0123456789", "TestPassword!1", true, true }; // success
+            yield return new object[] { "", "", "0000000000", "AnyPassword", false, false }; // user not exists
+            yield return new object[] { "0123456789", "CorrectPassword", "0123456789", "WrongPassword", false, false }; // wrong password
+            yield return new object[] { "0123456789", "Default@123", "0123456789", "Default@123", false, false }; // default password
         }
     }
 }
