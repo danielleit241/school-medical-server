@@ -1,5 +1,5 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos;
-using SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration;
+using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
 

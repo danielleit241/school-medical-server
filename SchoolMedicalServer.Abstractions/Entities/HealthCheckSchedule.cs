@@ -9,8 +9,6 @@ public partial class HealthCheckSchedule
 
     public Guid? StudentId { get; set; }
 
-    public Guid? UserId { get; set; }
-
     public string? Title { get; set; }
 
     public string? Description { get; set; }
@@ -27,5 +25,4 @@ public partial class HealthCheckSchedule
 
     public virtual Student? Student { get; set; }
 
-    public virtual User? User { get; set; }
 }

@@ -1,5 +1,5 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos;
-using SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration;
+using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
@@ -25,12 +25,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return null!;
             }
-            if (request.StaffNurseId == null)
+            var nurse = await userRepository.GetByIdAsync(request.StaffNurseId);
+            if (nurse == null || medicalRegistration.StaffNurseId != request.StaffNurseId)
             {
                 return null!;
             }
-
-            medicalRegistration.StaffNurseId = request.StaffNurseId;
             medicalRegistration.DateApproved = request.DateApproved ?? DateOnly.FromDateTime(DateTime.Now);
             medicalRegistration.Status = true;
 
@@ -72,6 +71,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<NotificationRequest> CreateMedicalRegistrationAsync(MedicalRegistrationRequest request)
         {
+            var nurse = await userRepository.GetUserByRoleName("nurse"); //giả sửa hệ thống chỉ có 1 staff nurse duy nhất
+            if (nurse == null)
+            {
+                return null!;
+            }
             var medicalRegistration = new MedicalRegistration
             {
                 RegistrationId = Guid.NewGuid(),
@@ -82,6 +86,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 TotalDosages = request.MedicalRegistration.TotalDosages,
                 Notes = request.MedicalRegistration.Notes,
                 ParentalConsent = request.MedicalRegistration.ParentConsent,
+                StaffNurseId = nurse!.UserId,
             };
 
             foreach (var detail in request.MedicalRegistrationDetails)
@@ -105,7 +110,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 NotificationTypeId = medicalRegistration.RegistrationId,
                 SenderId = medicalRegistration.UserId,
-                ReceiverId = medicalRegistration.StudentId,
+                ReceiverId = medicalRegistration.StaffNurseId,
             };
         }
 

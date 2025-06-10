@@ -1,4 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
@@ -13,7 +13,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IAppointmentRepository appointmentRepository,
         IMedicalRegistrationRepository medicalRegistrationRepository,
         IMedicalRegistrationDetailsRepository medicalRegistrationDetailsRepository,
-        IMedicalEventRepository medicalEventRepository) : INotificationService
+        IMedicalEventRepository medicalEventRepository,
+        IStudentRepository studentRepository) : INotificationService
     {
         public async Task<PaginationResponse<NotificationResponse>> GetUserNotificationsAsync(PaginationRequest? pagination, Guid userId)
         {
@@ -111,8 +112,33 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var notiInfo = NotificationInformation(notification);
             return GetResponse(notiInfo, sender, receiver);
         }
-
-
+        public async Task<NotificationResponse> SendMedicalRegistrationNotificationToNurseAsync(NotificationRequest request)
+        {
+            var medicalRegistration = await medicalRegistrationRepository.GetByIdAsync(request.NotificationTypeId);
+            if (medicalRegistration == null)
+            {
+                return null!;
+            }
+            var receiver = await ReceiverInformation(request);
+            var sender = await SenderInformation(request);
+            var student = await studentRepository.GetStudentInfoAsync(medicalRegistration.StudentId);
+            var notification = new Notification
+            {
+                NotificationId = Guid.NewGuid(),
+                UserId = receiver!.UserId,
+                SenderId = sender!.UserId,
+                Title = "New Medical Registration Notification",
+                Content = $"A new medical registration for {student!.StudentFullName} has been created by {sender.UserName} with medication: {medicalRegistration.MedicationName}. Please review it.",
+                SendDate = DateTime.UtcNow,
+                IsRead = false,
+                Type = NotificationTypes.MedicalRegistration,
+                SourceId = medicalRegistration.RegistrationId
+            };
+            await notificationRepository.AddAsync(notification);
+            await baseRepository.SaveChangesAsync();
+            var notiInfo = NotificationInformation(notification);
+            return GetResponse(notiInfo, sender, receiver);
+        }
         public async Task<NotificationResponse> SendMedicalRegistrationApprovedNotificationToParentAsync(NotificationRequest request)
         {
             var medicalRegistration = await medicalRegistrationRepository.GetApprovedByIdWithStudentAsync(request.NotificationTypeId);
@@ -143,7 +169,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var notiInfo = NotificationInformation(notification);
             return GetResponse(notiInfo, sender, receiver);
         }
-
         public async Task<NotificationResponse> SendMedicalRegistrationCompletedNotificationToParentAsync(NotificationRequest request)
         {
             var medicalRegistrationDetail = await medicalRegistrationDetailsRepository.GetByIdWithRegistrationAndStudentAsync(request.NotificationTypeId);
