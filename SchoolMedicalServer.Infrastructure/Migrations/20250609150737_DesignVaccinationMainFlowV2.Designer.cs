@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolMedicalServer.Infrastructure;
 
@@ -11,9 +12,11 @@ using SchoolMedicalServer.Infrastructure;
 namespace SchoolMedicalServer.Infrastructure.Migrations
 {
     [DbContext(typeof(SchoolMedicalManagementContext))]
-    partial class SchoolMedicalManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20250609150737_DesignVaccinationMainFlowV2")]
+    partial class DesignVaccinationMainFlowV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -839,10 +842,6 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("Status");
 
-                    b.Property<string>("TargetGrade")
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
-
                     b.HasKey("RoundId");
 
                     b.HasIndex("ScheduleId");
@@ -873,6 +872,10 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("StudentID");
 
+                    b.Property<string>("TargetGrade")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
                     b.Property<string>("Title")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -886,9 +889,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.HasIndex("VaccineId")
-                        .IsUnique()
-                        .HasFilter("[VaccineID] IS NOT NULL");
+                    b.HasIndex("VaccineId");
 
                     b.ToTable("VaccinationSchedule", (string)null);
                 });
@@ -1155,9 +1156,8 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasForeignKey("StudentId");
 
                     b.HasOne("SchoolMedicalServer.Abstractions.Entities.VaccineDetail", "Vaccine")
-                        .WithOne("VaccinationSchedule")
-                        .HasForeignKey("SchoolMedicalServer.Abstractions.Entities.VaccinationSchedule", "VaccineId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany()
+                        .HasForeignKey("VaccineId");
 
                     b.Navigation("Student");
 
@@ -1236,11 +1236,6 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.Navigation("Rounds");
 
                     b.Navigation("VaccinationResults");
-                });
-
-            modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.VaccineDetail", b =>
-                {
-                    b.Navigation("VaccinationSchedule");
                 });
 #pragma warning restore 612, 618
         }

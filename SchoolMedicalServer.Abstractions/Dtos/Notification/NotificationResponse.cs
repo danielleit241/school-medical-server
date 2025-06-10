@@ -1,6 +1,6 @@
 ﻿using SchoolMedicalServer.Abstractions.Entities;
 
-namespace SchoolMedicalServer.Abstractions.Dtos
+namespace SchoolMedicalServer.Abstractions.Dtos.Notification
 {
     public class NotificationResponse
     {
