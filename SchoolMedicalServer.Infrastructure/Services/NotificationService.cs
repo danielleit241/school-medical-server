@@ -1,4 +1,6 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
+using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
@@ -7,6 +9,7 @@ using SchoolMedicalServer.Abstractions.IServices;
 namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class NotificationService(
+
         IBaseRepository baseRepository,
         INotificationRepository notificationRepository,
         IUserRepository userRepository,
@@ -23,6 +26,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return null!;
             }
+            int pageIndex = pagination?.PageIndex ?? 0;
+            int pageSize = pagination?.PageSize ?? 10;
+            int skip = pageIndex * pageSize;
 
             var notifications = await notificationRepository.GetByUserIdPagedAsync(userId, pagination?.PageIndex ?? 0, pagination?.PageSize ?? 10);
 
@@ -43,10 +49,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
 
             return new PaginationResponse<NotificationResponse>(
-                   pagination!.PageIndex,
-                   pagination.PageSize,
-                    totalCount,
-                    result
+                   pageIndex,   
+                   pageSize,   
+                   totalCount,
+                   result
              );
         }
 

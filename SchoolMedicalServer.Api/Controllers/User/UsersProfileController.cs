@@ -41,6 +41,24 @@ namespace SchoolMedicalServer.Api.Controllers.User
 
             return BadRequest("Update not successful");
         }
+
+        [HttpPut("{userId}/avatar")]
+        [Authorize]
+        public async Task<IActionResult> UpdateProfileImageAsync(Guid userId, [FromBody] UserProfileRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var updatedUrl = await userProfileService.UpdateUserProfileImageAsync(userId, request);
+            if (updatedUrl != null)
+            {
+                return Ok(updatedUrl);
+            }
+
+            return BadRequest("Update avatar not successful");
+        }
     }
 }
 

@@ -5,7 +5,7 @@ using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class StudentService(IStudentRepository studentRepository) : IStudentService
+    public class StudentService(IBaseRepository baseRepository, IStudentRepository studentRepository) : IStudentService
     {
         public async Task<PaginationResponse<StudentInformationResponse>> GetAllStudentsAsync(PaginationRequest? paginationRequest)
         {
@@ -33,6 +33,39 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 totalCount,
                 studentDtos
             );
+        }
+
+        public async  Task<StudentInformationResponse?> UpdateStudentInformationAsync(Guid studentId, StudentInformationResponse dto)
+        {
+            var student = await studentRepository.GetStudentByIdAsync(studentId);
+            if (student == null) return null;
+
+            student.StudentCode = dto.StudentCode;
+            student.FullName = dto.FullName!;
+            student.DayOfBirth = dto.DayOfBirth;
+            student.Gender = dto.Gender;
+            student.Grade = dto.Grade;
+            student.Address = dto.Address;
+            student.ParentPhoneNumber = dto.ParentPhoneNumber;
+            student.ParentEmailAddress = dto.ParentEmailAddress;
+
+            studentRepository.UpdateStudent(student);
+            await baseRepository.SaveChangesAsync();
+
+            var response = new StudentInformationResponse
+            {
+                StudentId = student.StudentId,
+                StudentCode = student.StudentCode,
+                FullName = student.FullName,
+                DayOfBirth = student.DayOfBirth ?? default,
+                Gender = student.Gender,
+                Grade = student.Grade,
+                Address = student.Address,
+                ParentPhoneNumber = student.ParentPhoneNumber,
+                ParentEmailAddress = student.ParentEmailAddress
+            };
+
+            return response;
         }
     }
 }

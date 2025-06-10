@@ -35,5 +35,10 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         {
             context.MedicalInventories.Update(inventory);
         }
+
+        public void Delete(MedicalInventory inventory)
+        {
+            context.MedicalInventories.Remove(inventory);
+        }
     }
 }
