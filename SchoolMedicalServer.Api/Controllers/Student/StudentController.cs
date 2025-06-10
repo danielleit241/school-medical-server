@@ -46,5 +46,17 @@ namespace SchoolMedicalServer.Api.Controllers.Student
 
             return BadRequest("Update not successful");
         }
+
+        [HttpGet("students/{studentId}")]
+        [Authorize(Roles = "admin, manager, nurse")]
+        public async Task<IActionResult> GetStudentByIdAsync(Guid studentId)
+        {
+            var student = await service.GetStudentByIdAsync(studentId);
+            if (student == null)
+            {
+                return NotFound("Student not found.");
+            }
+            return Ok(student);
+        }
     }
 }
