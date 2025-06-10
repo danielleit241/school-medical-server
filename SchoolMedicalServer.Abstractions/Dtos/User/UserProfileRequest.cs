@@ -2,6 +2,7 @@
 {
     public class UserProfileRequest
     {
+        public Guid StudentId { get; set; }
         public string FullName { get; set; } = default!;
 
         public DateOnly? DateOfBirth { get; set; }

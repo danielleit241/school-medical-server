@@ -1,5 +1,6 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.Student;
+using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
 
@@ -35,24 +36,30 @@ namespace SchoolMedicalServer.Infrastructure.Services
             );
         }
 
-        public async  Task<StudentInformationResponse?> UpdateStudentInformationAsync(Guid studentId, StudentInformationResponse dto)
+        public async Task<StudentInformationResponse?> UpdateStudentInformationAsync(Guid studentId, StudentInformationRequest request)
         {
             var student = await studentRepository.GetStudentByIdAsync(studentId);
             if (student == null) return null;
 
-            student.StudentCode = dto.StudentCode;
-            student.FullName = dto.FullName!;
-            student.DayOfBirth = dto.DayOfBirth;
-            student.Gender = dto.Gender;
-            student.Grade = dto.Grade;
-            student.Address = dto.Address;
-            student.ParentPhoneNumber = dto.ParentPhoneNumber;
-            student.ParentEmailAddress = dto.ParentEmailAddress;
+            student.StudentCode = request.StudentCode;
+            student.FullName = request.FullName!;
+            student.DayOfBirth = request.DayOfBirth;
+            student.Gender = request.Gender;
+            student.Grade = request.Grade;
+            student.Address = request.Address;
+            student.ParentPhoneNumber = request.ParentPhoneNumber;
+            student.ParentEmailAddress = request.ParentEmailAddress;
 
             studentRepository.UpdateStudent(student);
             await baseRepository.SaveChangesAsync();
 
-            var response = new StudentInformationResponse
+            return ToStudentInformationResponse(student);
+        }
+
+ 
+        private static StudentInformationResponse ToStudentInformationResponse(Student student)
+        {
+            return new StudentInformationResponse
             {
                 StudentId = student.StudentId,
                 StudentCode = student.StudentCode,
@@ -64,8 +71,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 ParentPhoneNumber = student.ParentPhoneNumber,
                 ParentEmailAddress = student.ParentEmailAddress
             };
-
-            return response;
         }
     }
 }

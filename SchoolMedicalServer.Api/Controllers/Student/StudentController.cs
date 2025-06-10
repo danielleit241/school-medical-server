@@ -26,7 +26,7 @@ namespace SchoolMedicalServer.Api.Controllers.Student
 
         [HttpPut("students/{studentId}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateStudentInformationAsync(Guid studentId, [FromBody] StudentInformationResponse request)
+        public async Task<IActionResult> UpdateStudentInformationAsync(Guid studentId, [FromBody] StudentInformationRequest request)
         {
             if (!ModelState.IsValid)
             {

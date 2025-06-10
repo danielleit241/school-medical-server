@@ -7,8 +7,10 @@ using SchoolMedicalServer.Infrastructure.Repositories;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class MedicalInventoryService(IBaseRepository baseRepository,
-        IMedicalInventoryRepository medicalInventoryRepository) : IMedicalInventoryService
+    public class MedicalInventoryService(
+        IBaseRepository baseRepository,
+        IMedicalInventoryRepository medicalInventoryRepository
+    ) : IMedicalInventoryService
     {
         public async Task<MedicalInventoryResponse?> CreateMedicalInventoryAsync(MedicalInventoryRequest request)
         {
@@ -36,21 +38,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             await medicalInventoryRepository.AddAsync(entity);
             await baseRepository.SaveChangesAsync();
 
-            return new MedicalInventoryResponse
-            {
-                ItemId = entity.ItemId,
-                ItemName = entity.ItemName,
-                Category = entity.Category,
-                Description = entity.Description,
-                QuantityInStock = entity.QuantityInStock,
-                UnitOfMeasure = entity.UnitOfMeasure,
-                MinimumStockLevel = entity.MinimumStockLevel,
-                MaximumStockLevel = entity.MaximumStockLevel,
-                LastImportDate = entity.LastImportDate,
-                LastExportDate = entity.LastExportDate,
-                ExpiryDate = entity.ExpiryDate,
-                Status = entity.Status
-            };
+            return ToMedicalInventoryResponse(entity);
         }
 
         public async Task<MedicalInventoryResponse?> DeleteMedicalInventoryAsync(Guid itemId)
@@ -61,48 +49,15 @@ namespace SchoolMedicalServer.Infrastructure.Services
             medicalInventoryRepository.Delete(item);
             await baseRepository.SaveChangesAsync();
 
-            var response = new MedicalInventoryResponse
-            {
-                ItemId = item.ItemId,
-                ItemName = item.ItemName,
-                Category = item.Category,
-                Description = item.Description,
-                QuantityInStock = item.QuantityInStock,
-                UnitOfMeasure = item.UnitOfMeasure,
-                MinimumStockLevel = item.MinimumStockLevel,
-                MaximumStockLevel = item.MaximumStockLevel,
-                LastImportDate = item.LastImportDate,
-                LastExportDate = item.LastExportDate,
-                ExpiryDate = item.ExpiryDate,
-                Status = item.Status
-            };
-
-            return response;
+            return ToMedicalInventoryResponse(item);
         }
 
         public async Task<MedicalInventoryResponse?> GetMedicalInventoryByIdAsync(Guid itemId)
         {
-            var item = await medicalInventoryRepository.GetByIdAsync (itemId);
-            if (item == null)
-            {
-                return null;
-            }
+            var item = await medicalInventoryRepository.GetByIdAsync(itemId);
+            if (item == null) return null;
 
-            return new MedicalInventoryResponse
-            {
-                ItemId = item.ItemId,
-                ItemName = item.ItemName,
-                Category = item.Category,
-                Description = item.Description,
-                QuantityInStock = item.QuantityInStock,
-                UnitOfMeasure = item.UnitOfMeasure,
-                MinimumStockLevel = item.MinimumStockLevel,
-                MaximumStockLevel = item.MaximumStockLevel,
-                LastImportDate = item.LastImportDate,
-                LastExportDate = item.LastExportDate,
-                ExpiryDate = item.ExpiryDate,
-                Status = item.Status
-            };
+            return ToMedicalInventoryResponse(item);
         }
 
         public async Task<PaginationResponse<MedicalInventoryResponse>?> PaginationMedicalInventoriesAsync(PaginationRequest? pagination)
@@ -113,21 +68,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             int skip = (pagination!.PageIndex - 1) * pagination.PageSize;
             var items = await medicalInventoryRepository.GetPagedAsync(skip, pagination.PageSize);
 
-            var result = items.Select(item => new MedicalInventoryResponse
-            {
-                ItemId = item.ItemId,
-                ItemName = item.ItemName,
-                Category = item.Category,
-                Description = item.Description,
-                QuantityInStock = item.QuantityInStock,
-                UnitOfMeasure = item.UnitOfMeasure,
-                MinimumStockLevel = item.MinimumStockLevel,
-                MaximumStockLevel = item.MaximumStockLevel,
-                LastImportDate = item.LastImportDate,
-                LastExportDate = item.LastExportDate,
-                ExpiryDate = item.ExpiryDate,
-                Status = item.Status
-            }).ToList();
+            var result = items.Select(ToMedicalInventoryResponse).ToList();
 
             return new PaginationResponse<MedicalInventoryResponse>(
                 pagination.PageIndex,
@@ -157,7 +98,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
             medicalInventoryRepository.Update(item);
             await baseRepository.SaveChangesAsync();
 
-            var response = new MedicalInventoryResponse
+            return ToMedicalInventoryResponse(item);
+        }
+
+
+        private static MedicalInventoryResponse ToMedicalInventoryResponse(MedicalInventory item)
+        {
+            return new MedicalInventoryResponse
             {
                 ItemId = item.ItemId,
                 ItemName = item.ItemName,
@@ -172,8 +119,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 ExpiryDate = item.ExpiryDate,
                 Status = item.Status
             };
-
-            return response;
         }
     }
 }
