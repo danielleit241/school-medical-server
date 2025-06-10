@@ -554,9 +554,7 @@ public partial class SchoolMedicalManagementContext : DbContext
         modelBuilder.Entity<VaccinationResult>(entity =>
         {
             entity.HasKey(e => e.VaccinationResultId).HasName("PK__Vaccinat__12DE8FD91DB6B240");
-
             entity.ToTable("VaccinationResult");
-
             entity.Property(e => e.VaccinationResultId)
                 .ValueGeneratedNever()
                 .HasColumnName("VaccinationResultID");
@@ -564,14 +562,21 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.RecorderId).HasColumnName("RecorderID");
             entity.Property(e => e.HealthProfileId).HasColumnName("HealthProfileID");
             entity.Property(e => e.RoundId).HasColumnName("RoundID");
-            entity.Property(e => e.Status).HasMaxLength(30);
-            entity.Property(e => e.RoundId).HasColumnName("RoundID");
+            entity.Property(e => e.ParentConfirmed).HasColumnName("ParentConfirmed");
+            entity.Property(e => e.HealthQualified).HasColumnName("HealthQualified");
+            entity.Property(e => e.Vaccinated).HasColumnName("Vaccinated");
+            entity.Property(e => e.VaccinatedDate).HasColumnName("VaccinatedDate").HasColumnType("date");
+
             entity.HasOne(vr => vr.HealthProfile)
                 .WithMany(hp => hp.VaccinationResults)
                 .HasForeignKey(vr => vr.HealthProfileId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // 1-1 với VaccinationObservation
+            entity.HasOne(vr => vr.Round)
+                .WithMany(r => r.VaccinationResults)
+                .HasForeignKey(vr => vr.RoundId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             entity.HasOne(vr => vr.VaccinationObservation)
                 .WithOne(obs => obs.VaccinationResult)
                 .HasForeignKey<VaccinationObservation>(obs => obs.VaccinationResultId)
@@ -605,16 +610,18 @@ public partial class SchoolMedicalManagementContext : DbContext
         modelBuilder.Entity<VaccinationSchedule>(entity =>
         {
             entity.HasKey(e => e.ScheduleId).HasName("PK__Vaccinat__9C8A5B694492A7A5");
-
             entity.ToTable("VaccinationSchedule");
-
             entity.Property(e => e.ScheduleId)
                 .ValueGeneratedNever()
                 .HasColumnName("ScheduleID");
             entity.Property(e => e.Description).HasMaxLength(255);
             entity.Property(e => e.Title).HasMaxLength(100);
             entity.Property(e => e.VaccineId).HasColumnName("VaccineID");
-            entity.Property(e => e.StudentId).HasColumnName("StudentID");
+            entity.Property(e => e.ParentNotificationStartDate).HasColumnType("date");
+            entity.Property(e => e.ParentNotificationEndDate).HasColumnType("date");
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasColumnType("int");
             entity.HasOne(sch => sch.Vaccine)
                 .WithMany(vd => vd.VaccinationSchedules)
                 .HasForeignKey(sch => sch.VaccineId)
@@ -690,9 +697,7 @@ public partial class SchoolMedicalManagementContext : DbContext
         modelBuilder.Entity<VaccinationRound>(entity =>
         {
             entity.HasKey(e => e.RoundId);
-
             entity.ToTable("VaccinationRound");
-
             entity.Property(e => e.RoundId)
                 .ValueGeneratedNever()
                 .HasColumnName("RoundID");
@@ -700,8 +705,8 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.RoundName).HasMaxLength(100);
             entity.Property(e => e.TargetGrade).HasMaxLength(12);
             entity.Property(e => e.Description).HasMaxLength(255);
-            entity.Property(e => e.StartDate).HasColumnName("StartDate");
-            entity.Property(e => e.EndDate).HasColumnName("EndDate");
+            entity.Property(e => e.StartDate).HasColumnName("StartDate").HasColumnType("date");
+            entity.Property(e => e.EndDate).HasColumnName("EndDate").HasColumnType("date");
             entity.Property(e => e.Status).HasColumnName("Status");
 
             entity.HasOne(e => e.Schedule)
@@ -709,7 +714,13 @@ public partial class SchoolMedicalManagementContext : DbContext
                 .HasForeignKey(e => e.ScheduleId)
                 .HasConstraintName("FK_VaccinationRound_VaccinationSchedule")
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(r => r.VaccinationResults)
+                .WithOne(vr => vr.Round)
+                .HasForeignKey(vr => vr.RoundId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
+
         OnModelCreatingPartial(modelBuilder);
     }
 

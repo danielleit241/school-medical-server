@@ -1,4 +1,4 @@
-﻿namespace SchoolMedicalServer.Abstractions.Dtos
+﻿namespace SchoolMedicalServer.Abstractions.Dtos.VaccinationDetails
 {
     public class VaccinationDetailsResponse
     {

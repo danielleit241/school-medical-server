@@ -27,12 +27,11 @@ namespace SchoolMedicalServer.Tests.Services
             var config = new ConfigurationBuilder()
                 .AddInMemoryCollection(new[]
                 {
-         
             new KeyValuePair<string, string>("Jwt:Key", "123456789012345678901234567890123456789012345678901234567890abcd"),
             new KeyValuePair<string, string>("Jwt:Issuer", "TestIssuer"),
             new KeyValuePair<string, string>("Jwt:Audience", "TestAudience"),
             new KeyValuePair<string, string>("DefaultAccountCreate:Password", "Default@123")
-                }).Build();
+                }!).Build();
             return config;
         }
 
@@ -48,7 +47,7 @@ namespace SchoolMedicalServer.Tests.Services
             {
                 UserId = Guid.NewGuid(),
                 PhoneNumber = phone,
-                PasswordHash = new PasswordHasher<User>().HashPassword(null, password),
+                PasswordHash = new PasswordHasher<User>().HashPassword(null!, password),
                 RoleId = role.RoleId,
                 Role = role,
                 Status = status
