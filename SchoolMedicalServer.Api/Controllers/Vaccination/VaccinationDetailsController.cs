@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Dtos.VaccinationDetails;
+using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Vaccines;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Api.Controllers.Vaccination

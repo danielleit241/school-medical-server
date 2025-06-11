@@ -9,6 +9,7 @@
         public string? ReactionType { get; set; }
         public string? SeverityLevel { get; set; }
         public string? ImmediateReaction { get; set; }
+
         public string? Notes { get; set; }
 
         public virtual VaccinationResult? VaccinationResult { get; set; }

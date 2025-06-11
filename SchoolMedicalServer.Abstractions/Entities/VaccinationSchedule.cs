@@ -7,9 +7,9 @@
         public string? Title { get; set; }
         public string? Description { get; set; }
 
-        //start time
-        //end time
-        //managerId
+        public DateOnly? StartDate { get; set; }
+        public DateOnly? EndDate { get; set; }
+        public Guid CreatedBy { get; set; }
 
         public DateOnly? ParentNotificationStartDate { get; set; }
         public DateOnly? ParentNotificationEndDate { get; set; }
@@ -20,5 +20,6 @@
 
         public virtual VaccinationDetail? Vaccine { get; set; }
         public virtual ICollection<VaccinationRound> Rounds { get; set; } = [];
+
     }
 }

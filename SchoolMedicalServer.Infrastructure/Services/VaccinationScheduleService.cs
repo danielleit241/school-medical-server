@@ -1,7 +1,8 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos;
-using SchoolMedicalServer.Abstractions.Dtos.Notification;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Dtos.VaccinationDetails;
+using SchoolMedicalServer.Abstractions.Dtos.Vaccination;
+using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules;
+using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Vaccines;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
@@ -17,7 +18,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IStudentRepository studentRepository,
         IHealthProfileRepository profileRepository) : IVaccinationScheduleService
     {
-        public async Task<List<NotificationRequest>> CreateScheduleAsync(VaccinationScheduleRequest request)
+        public async Task<NotificationVaccinationResponse> CreateScheduleAsync(VaccinationScheduleRequest request)
         {
             if (request == null)
             {
@@ -30,6 +31,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 VaccineId = request.VaccineId,
                 Title = request.Title,
                 Description = request.Description,
+                StartDate = request.StartDate,
+                EndDate = request.EndDate,
+                ParentNotificationStartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                ParentNotificationEndDate = request.StartDate!.Value.AddDays(-1),
+                CreatedBy = request.CreatedBy,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
                 Rounds = [.. request.VaccinationRounds.Select(round => new VaccinationRound
@@ -39,23 +45,21 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     TargetGrade = round.TargetGrade,
                     Description = round.Description,
                     StartDate = round.StartDate,
-                    EndDate = round.EndDate
+                    EndDate = round.EndDate,
+                    NurseId = round.NurseId,
                 })]
             };
 
             await vaccinationScheduleRepository.CreateVaccinationSchedule(vaccinationSchedule);
             await baseRepository.SaveChangesAsync();
-
-            var notificationRequests = await CreateVaccinationResultsByRounds(vaccinationSchedule.ScheduleId);
+            var notificationRequests = await CreateVaccinationResultsByRounds(vaccinationSchedule.Rounds, vaccinationSchedule.ScheduleId, vaccinationSchedule.CreatedBy);
             return notificationRequests;
         }
 
-        private async Task<List<NotificationRequest>> CreateVaccinationResultsByRounds(Guid scheduleId)
+        private async Task<NotificationVaccinationResponse> CreateVaccinationResultsByRounds(ICollection<VaccinationRound> rounds, Guid scheduleId, Guid CreateBy)
         {
-            var notiRequests = new List<NotificationRequest>();
-            var sender = await vaccinationScheduleRepository.GetVaccinationScheduleByIdAsync(scheduleId);
-
-            var rounds = await vaccinationRoundRepository.GetVaccinationRoundsByScheduleIdAsync(scheduleId);
+            var toParents = new List<NotificationRequest>();
+            var toNurses = new List<NotificationRequest>();
             foreach (var round in rounds)
             {
                 var students = await studentRepository.GetStudentsByGradeAsync(round.TargetGrade);
@@ -68,23 +72,28 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         HealthProfileId = healthProfile!.HealthProfileId,
                         RoundId = round.RoundId,
                         ParentConfirmed = false,
-                        HealthQualified = false,
                         Vaccinated = false,
                         VaccinatedDate = null,
-                        RecorderId = Guid.Empty,
+                        RecorderId = round.NurseId,
                         Notes = null
                     };
                     await resultRepository.Create(result);
-                    notiRequests.Add(new NotificationRequest
+                    toParents.Add(new NotificationRequest
                     {
                         NotificationTypeId = scheduleId,
-                        SenderId = sender!.ScheduleId, //managerId
+                        SenderId = CreateBy,
                         ReceiverId = student.UserId,
                     });
                 }
+                toNurses.Add(new NotificationRequest
+                {
+                    NotificationTypeId = scheduleId,
+                    SenderId = CreateBy,
+                    ReceiverId = round.NurseId,
+                });
             }
             await baseRepository.SaveChangesAsync();
-            return notiRequests;
+            return new NotificationVaccinationResponse(toParents, toNurses);
         }
 
         public async Task<PaginationResponse<VaccinationScheduleResponse?>?> GetPaginationVaccinationSchedule(PaginationRequest? pagination)
@@ -159,6 +168,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     Manufacturer = vaccinationDetails.Manufacturer,
                 }
             };
+        }
+
+        public Task<bool> ConfirmOrDeclineVaccination(Guid scheduleId, ParentVaccinationConfirmationRequest request)
+        {
+            throw new NotImplementedException();
         }
     }
 }

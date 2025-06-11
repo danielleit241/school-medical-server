@@ -28,16 +28,9 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public void UpdateVaccinationRound(Guid id, VaccinationRound request)
+        public void UpdateVaccinationRound(VaccinationRound request)
         {
-            var existingRound = _context.VaccinationRounds.Find(id);
-            //if (existingRound != null)
-            //{
-            //    existingRound.Date = request.Date;
-            //    existingRound.Location = request.Location;
-            //    existingRound.ScheduleId = request.ScheduleId;
-            //    _context.VaccinationRounds.Update(existingRound);
-            //}
+            _context.VaccinationRounds.Update(request);
         }
     }
 }

@@ -1,9 +1,10 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Dtos.VaccinationDetails;
+using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Vaccines;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
+using SchoolMedicalServer.Abstractions.IServices;
 
-namespace SchoolMedicalServer.Abstractions.IServices
+namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class VaccinationDetailsService(IVacctionDetailsRepository vacctionDetailsRepository, IBaseRepository baseRepository) : IVaccinationDetailsService
     {

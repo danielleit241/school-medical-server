@@ -9,7 +9,7 @@ using SchoolMedicalServer.Api.Helpers;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Infrastructure.Repositories;
 
-namespace SchoolMedicalServer.Api.Boostraping
+namespace SchoolMedicalServer.Api.Bootstrapping
 {
     public static class ApplicationServiceExtensions
     {

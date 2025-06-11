@@ -563,9 +563,9 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.HealthProfileId).HasColumnName("HealthProfileID");
             entity.Property(e => e.RoundId).HasColumnName("RoundID");
             entity.Property(e => e.ParentConfirmed).HasColumnName("ParentConfirmed");
-            entity.Property(e => e.HealthQualified).HasColumnName("HealthQualified");
             entity.Property(e => e.Vaccinated).HasColumnName("Vaccinated");
             entity.Property(e => e.VaccinatedDate).HasColumnName("VaccinatedDate").HasColumnType("date");
+            entity.Property(e => e.Status).HasMaxLength(50);
 
             entity.HasOne(vr => vr.HealthProfile)
                 .WithMany(hp => hp.VaccinationResults)
@@ -586,20 +586,18 @@ public partial class SchoolMedicalManagementContext : DbContext
         modelBuilder.Entity<VaccinationObservation>(entity =>
         {
             entity.HasKey(e => e.VaccinationObservationId);
+            entity.ToTable("VaccinationObservation");
 
             entity.Property(e => e.VaccinationObservationId)
                 .ValueGeneratedNever()
                 .HasColumnName("VaccinationObservationID");
-
             entity.Property(e => e.VaccinationResultId).HasColumnName("VaccinationResultID");
-
             entity.Property(e => e.ReactionStartTime).HasColumnType("datetime");
             entity.Property(e => e.ReactionType).HasMaxLength(100);
             entity.Property(e => e.SeverityLevel).HasMaxLength(50);
             entity.Property(e => e.ImmediateReaction).HasMaxLength(100);
             entity.Property(e => e.Notes).HasMaxLength(255);
 
-            // Đảm bảo 1-1 với VaccinationResult
             entity.HasOne(e => e.VaccinationResult)
                 .WithOne(r => r.VaccinationObservation)
                 .HasForeignKey<VaccinationObservation>(e => e.VaccinationResultId)
@@ -621,7 +619,8 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.ParentNotificationEndDate).HasColumnType("date");
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
             entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasColumnType("int");
+            entity.Property(e => e.Status).HasColumnType("bit");
+
             entity.HasOne(sch => sch.Vaccine)
                 .WithMany(vd => vd.VaccinationSchedules)
                 .HasForeignKey(sch => sch.VaccineId)
