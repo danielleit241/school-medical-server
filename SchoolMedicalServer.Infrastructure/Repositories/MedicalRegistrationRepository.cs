@@ -10,8 +10,9 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task<MedicalRegistration?> GetByIdAsync(Guid registrationId)
             => await _context.MedicalRegistrations.FirstOrDefaultAsync(m => m.RegistrationId == registrationId);
 
-        public async Task<List<MedicalRegistration>> GetPagedAsync(int skip, int take)
+        public async Task<List<MedicalRegistration>> GetNursePagedAsync(Guid staffId, int skip, int take)
             => await _context.MedicalRegistrations
+                .Where(m => m.StaffNurseId == staffId)
                 .OrderByDescending(m => m.DateSubmitted)
                 .Skip(skip).Take(take)
                 .ToListAsync();

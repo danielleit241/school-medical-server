@@ -10,11 +10,11 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalRegistration
     [ApiController]
     public class NurseMedicalRegistrationController(IMedicalRegistrationService service) : ControllerBase
     {
-        [HttpGet("nurses/medical-registrations")]
+        [HttpGet("nurses/{nurseId}/medical-registrations")]
         [Authorize(Roles = "nurse")]
-        public async Task<IActionResult> GetMedicalRegistrations([FromQuery] PaginationRequest? paginationRequest)
+        public async Task<IActionResult> GetMedicalRegistrations([FromQuery] PaginationRequest? paginationRequest, Guid nurseId)
         {
-            var registrations = await service.GetMedicalRegistrationsAsync(paginationRequest);
+            var registrations = await service.GetMedicalRegistrationsAsync(paginationRequest, nurseId);
             if (registrations == null)
             {
                 return NotFound("No medical registrations found.");

@@ -5,7 +5,7 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
     public interface IMedicalRegistrationRepository
     {
         Task<MedicalRegistration?> GetByIdAsync(Guid registrationId);
-        Task<List<MedicalRegistration>> GetPagedAsync(int skip, int take);
+        Task<List<MedicalRegistration>> GetNursePagedAsync(Guid nurseId, int skip, int take);
         Task<int> CountAsync();
         Task<List<MedicalRegistration>> GetByUserPagedAsync(Guid userId, int skip, int take);
         Task<int> CountByUserAsync(Guid userId);

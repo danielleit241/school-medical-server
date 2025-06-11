@@ -71,11 +71,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<NotificationRequest> CreateMedicalRegistrationAsync(MedicalRegistrationRequest request)
         {
-            var nurse = await userRepository.GetUserByRoleName("nurse"); //giả sửa hệ thống chỉ có 1 staff nurse duy nhất
-            if (nurse == null)
-            {
-                return null!;
-            }
             var medicalRegistration = new MedicalRegistration
             {
                 RegistrationId = Guid.NewGuid(),
@@ -86,7 +81,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 TotalDosages = request.MedicalRegistration.TotalDosages,
                 Notes = request.MedicalRegistration.Notes,
                 ParentalConsent = request.MedicalRegistration.ParentConsent,
-                StaffNurseId = nurse!.UserId,
+                StaffNurseId = request.MedicalRegistration.StaffNurseId,
             };
 
             foreach (var detail in request.MedicalRegistrationDetails)
@@ -137,7 +132,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return response;
         }
 
-        public async Task<PaginationResponse<MedicalRegistrationResponse?>> GetMedicalRegistrationsAsync(PaginationRequest? paginationRequest)
+        public async Task<PaginationResponse<MedicalRegistrationResponse?>> GetMedicalRegistrationsAsync(PaginationRequest? paginationRequest, Guid nurseId)
         {
             var totalCount = await medicalRegistrationRepository.CountAsync();
             if (totalCount == 0)
@@ -147,7 +142,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             int skip = (paginationRequest!.PageIndex - 1) * paginationRequest.PageSize;
 
-            var registrations = await medicalRegistrationRepository.GetPagedAsync(skip, paginationRequest.PageSize);
+            var registrations = await medicalRegistrationRepository.GetNursePagedAsync(nurseId, skip, paginationRequest.PageSize);
 
             var result = new List<MedicalRegistrationResponse?>();
 

@@ -16,6 +16,9 @@ namespace SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration
         [Required(ErrorMessage = "User ID is required.")]
         public Guid UserId { get; set; }
 
+        [Required(ErrorMessage = "Staff nurse ID is required.")]
+        public Guid StaffNurseId { get; set; }
+
         [Required(ErrorMessage = "Date submitted is required.")]
         public DateOnly? DateSubmitted { get; set; }
 
