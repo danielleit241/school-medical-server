@@ -11,7 +11,11 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task<NotificationRequest> RegisterAppointment(AppointmentRequest request);
 
         Task<AppointmentResponse> GetStaffNurseAppointment(Guid staffNurseId, Guid appointmentId);
-        Task<PaginationResponse<AppointmentResponse>> GetStaffNurseAppointments(Guid staffNurseId, PaginationRequest? paginationRequest);
+        Task<PaginationResponse<AppointmentResponse>> GetStaffNurseAppointments(Guid staffNurseId,
+            PaginationRequest? paginationRequest,
+            bool? confirmationStatus = null, // Add confirmationStatus parameter
+            string? sortBy = null,           // Add sortBy parameter
+            string? sortOrder = null);
 
         Task<AppointmentResponse> GetUserAppointment(Guid userId, Guid appointmentId);
         Task<PaginationResponse<AppointmentResponse>> GetUserAppointments(Guid userId, PaginationRequest? paginationRequest);

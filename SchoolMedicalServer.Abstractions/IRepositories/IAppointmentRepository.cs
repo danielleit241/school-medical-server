@@ -16,5 +16,11 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<Appointment?> GetByIdAsync(Guid appointmentId);
         void Update(Appointment appointment);
         Task<Appointment?> GetByIdWithStudentAsync(Guid appointmentId);
+        Task<List<Appointment>> GetPagedAsync(
+               bool? confirmationStatus,
+               string? sortBy,
+               string? sortOrder,
+               int skip,
+               int take);
     }
 }
