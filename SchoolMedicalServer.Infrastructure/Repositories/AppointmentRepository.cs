@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
-using System.Linq.Dynamic.Core;
+
 namespace SchoolMedicalServer.Infrastructure.Repositories
 {
     public class AppointmentRepository(SchoolMedicalManagementContext _context) : IAppointmentRepository
@@ -75,32 +75,5 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .Include(a => a.Student)
                 .FirstOrDefaultAsync();
         }
-
-        public async Task<List<Appointment>> GetPagedAsync(
-                    bool? confirmationStatus,        // Dùng nullable bool để cho phép không lọc khi null
-                    string? sortBy,
-                    string? sortOrder,
-                    int skip,
-                    int take)
-        {
-            IQueryable<Appointment> query = _context.Appointments.AsNoTracking();
-
-            // Tìm kiếm theo ConfirmationStatus (bool)
-            if (confirmationStatus.HasValue)
-            {
-                query = query.Where(s => s.ConfirmationStatus == confirmationStatus.Value);
-            }
-
-            // Mặc định sắp xếp theo AppointmentDate tăng dần
-            string defaultSort = "AppointmentDate ascending";
-            string sortString = !string.IsNullOrWhiteSpace(sortBy)
-                ? $"{sortBy} {(sortOrder?.ToLower() == "desc" ? "descending" : "ascending")}"
-                : defaultSort;
-
-            query = query.OrderBy(sortString);
-
-            return await query.Skip(skip).Take(take).ToListAsync();
-        }
-
     }
 }

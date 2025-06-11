@@ -98,5 +98,22 @@ namespace SchoolMedicalServer.Api.Controllers.File
                 return StatusCode(400, ex.Message);
             }
         }
+
+        [HttpGet("vaccines/export-excel")]
+        [Authorize(Roles = "admin,manager")]
+        public async Task<IActionResult> ExportVaccinationDetails()
+        {
+            try
+            {
+                var fileBytes = await service.ExportVaccinationDetailsExcelFileAsync();
+                var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                var fileName = $"vaccination_details_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
+                return File(fileBytes, contentType, fileName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.Message);
+            }
+        }
     }
 }

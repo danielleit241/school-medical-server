@@ -117,13 +117,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return response;
         }
 
-        public async Task<PaginationResponse<AppointmentResponse>> GetStaffNurseAppointments(
-            Guid staffNurseId,
-            PaginationRequest? paginationRequest,
-            bool? confirmationStatus = null, 
-            string? sortBy = null,           
-            string? sortOrder = null         
-        )
+        public async Task<PaginationResponse<AppointmentResponse>> GetStaffNurseAppointments(Guid staffNurseId, PaginationRequest? paginationRequest)
         {
             var totalCount = await appointmentRepository.CountByStaffNurseIdAsync(staffNurseId);
             if (totalCount == 0)
@@ -135,12 +129,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
             int pageSize = paginationRequest!.PageSize;
             int skip = (pageIndex - 1) * pageSize;
 
-            var appointments = await appointmentRepository.GetPagedAsync(
-                confirmationStatus: confirmationStatus,  
-                sortBy: sortBy ?? "AppointmentDate",      
-                sortOrder: sortOrder ?? "asc",            
-                skip: skip,
-                take: pageSize
+            var appointments = await appointmentRepository.GetByStaffNursePagedAsync(
+                staffNurseId,
+                skip,
+                pageSize
             );
 
             if (appointments == null || appointments.Count == 0) return null!;

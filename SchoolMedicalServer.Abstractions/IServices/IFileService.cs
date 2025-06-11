@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace SchoolMedicalServer.Abstractions.IServices
 {
@@ -10,6 +9,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task UploadVaccinationDetailFile(IFormFile file);
         Task<byte[]> ExportStudentsExcelFileAsync();
         Task<byte[]> ExportMedicalInventoriesExcelFileAsync();
+        Task<byte[]> ExportVaccinationDetailsExcelFileAsync();
 
     }
 }

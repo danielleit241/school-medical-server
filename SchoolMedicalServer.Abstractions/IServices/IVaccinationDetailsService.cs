@@ -9,5 +9,6 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task<VaccinationDetailsResponse> GetVaccineDetailAsync(Guid id);
         Task<PaginationResponse<VaccinationDetailsResponse>> GetVaccineDetailsAsync(PaginationRequest? pagination);
         Task<bool> UpdateVaccineDetailAsync(Guid id, VaccinationDetailsRequest vaccineDetail);
+        Task<VaccinationDetailsResponse> DeleteVaccineDetailAsync(Guid id);
     }
 }
