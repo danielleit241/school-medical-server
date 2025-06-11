@@ -1,5 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.MedicalEvent;
-using SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration;
 using SchoolMedicalServer.Abstractions.Entities;
 
 namespace SchoolMedicalServer.Abstractions.IRepositories
@@ -12,7 +11,7 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<List<string>> GetParentsPhoneNumber();
         Task<List<Student>> GetStudentsWithParentPhoneAsync();
         Task<int> CountAsync();
-        Task<List<Student>> GetPagedAsync(int skip, int take);
+        Task<List<Student>> GetPagedAsync(string search, string sortBy, string sortOrder, int skip, int take);
         Task<List<Student>> GetByParentIdAsync(Guid parentId);
         Task<Student?> GetByParentIdAndStudentIdAsync(Guid parentId, Guid studentId);
         Task<MedicalRegistrationStudentResponse?> GetStudentInfoAsync(Guid? studentId);
@@ -20,5 +19,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<Guid?> GetParentUserIdAsync(Guid? studentId);
         Task<Student?> FindByStudentCodeAsync(string studentCode);
         Task<string> GenerateStudentCodeAsync();
+        Task<IEnumerable<Student>> GetStudentsByGradeAsync(string? targetGrade);
     }
 }

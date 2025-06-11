@@ -13,7 +13,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var totalCount = await studentRepository.CountAsync();
 
             int skip = (paginationRequest!.PageIndex - 1) * paginationRequest.PageSize;
-            var students = await studentRepository.GetPagedAsync(skip, paginationRequest.PageSize);
+            var students = await studentRepository.GetPagedAsync(
+                paginationRequest.Search!,
+                paginationRequest.SortBy!,
+                paginationRequest.SortOrder!,
+                skip, paginationRequest.PageSize);
 
             var studentDtos = students.Select(s => new StudentInformationResponse
             {
@@ -56,7 +60,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return ToStudentInformationResponse(student);
         }
 
- 
+
         private static StudentInformationResponse ToStudentInformationResponse(Student student)
         {
             return new StudentInformationResponse

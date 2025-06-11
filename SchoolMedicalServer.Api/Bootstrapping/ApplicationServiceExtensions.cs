@@ -103,6 +103,7 @@ namespace SchoolMedicalServer.Api.Boostraping
             services.AddScoped<IVacctionDetailsRepository, VaccinationDetailsRepository>();
             services.AddScoped<IVaccinationScheduleRepository, VaccinationScheduleRepository>();
             services.AddScoped<IVaccinationRoundRepository, VaccinationRoundRepository>();
+            services.AddScoped<IVaccinationResultRepository, VaccinationResultRepository>();
 
             services.AddScoped<IAuthService, AuthService>();
             services.AddTransient<IAccountService, AccountService>();
@@ -119,6 +120,7 @@ namespace SchoolMedicalServer.Api.Boostraping
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IVaccinationDetailsService, VaccinationDetailsService>();
             services.AddScoped<IVaccinationScheduleService, VaccinationScheduleService>();
+            services.AddScoped<IVaccinationRoundService, VaccinationRoundService>();
 
             services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
             services.AddTransient<IEmailHelper, EmailHelper>();

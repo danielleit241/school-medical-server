@@ -1,5 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Entities;
+﻿using SchoolMedicalServer.Abstractions.Entities;
 
 namespace SchoolMedicalServer.Abstractions.IRepositories
 {
@@ -8,7 +7,7 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<List<VaccinationDetail>> GetAllAsync();
         Task<VaccinationDetail?> GetByIdAsync(Guid? id);
         Task<bool> IsExistsAsync(string code);
-        Task<List<VaccinationDetail>> GetPagedAsync(int skip, int take);
+        Task<List<VaccinationDetail>> GetPagedAsync(string search, string sortBy, string sortOrder, int skip, int take);
         Task<int> CountAsync();
         Task AddAsync(VaccinationDetail vacctionDetails);
         void Update(VaccinationDetail vacctionDetails);

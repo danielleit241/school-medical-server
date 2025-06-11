@@ -11,6 +11,8 @@
         public DateOnly? EndDate { get; set; }
         public bool Status { get; set; }
 
+        //nurseid
+
         public virtual VaccinationSchedule? Schedule { get; set; }
         public virtual ICollection<VaccinationResult> VaccinationResults { get; set; } = [];
     }

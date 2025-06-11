@@ -7,11 +7,11 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<List<MedicalInventory>> GetAllAsync();
         Task AddAsync(MedicalInventory inventory);
         Task<int> CountAsync();
-        Task<List<MedicalInventory>> GetPagedAsync(int skip, int take);
+        Task<List<MedicalInventory>> GetPagedAsync(string search, string sortBy, string sortOder, int skip, int take);
         Task<MedicalInventory?> GetByIdAsync(Guid itemId);
         Task<bool> IsEnoughQuantityAsync(Guid itemId, int requestQuantity, int? minimumStockLevel = null);
         void Update(MedicalInventory inventory);
-        void Delete(MedicalInventory inventory); 
+        void Delete(MedicalInventory inventory);
 
     }
 }

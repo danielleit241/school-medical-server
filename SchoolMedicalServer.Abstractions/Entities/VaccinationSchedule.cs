@@ -6,6 +6,11 @@
         public Guid? VaccineId { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
+
+        //start time
+        //end time
+        //managerId
+
         public DateOnly? ParentNotificationStartDate { get; set; }
         public DateOnly? ParentNotificationEndDate { get; set; }
 

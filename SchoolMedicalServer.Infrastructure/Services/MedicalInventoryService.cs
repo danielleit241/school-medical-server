@@ -65,7 +65,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
             if (totalCount == 0) return null!;
 
             int skip = (pagination!.PageIndex - 1) * pagination.PageSize;
-            var items = await medicalInventoryRepository.GetPagedAsync(skip, pagination.PageSize);
+            var items = await medicalInventoryRepository.GetPagedAsync(
+                pagination.Search!,
+                pagination.SortBy!,
+                pagination.SortOrder!,
+                skip, pagination.PageSize);
 
             var result = items.Select(ToMedicalInventoryResponse).ToList();
 
@@ -99,7 +103,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             return ToMedicalInventoryResponse(item);
         }
-
 
         private static MedicalInventoryResponse ToMedicalInventoryResponse(MedicalInventory item)
         {

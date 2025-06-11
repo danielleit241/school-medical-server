@@ -12,24 +12,18 @@ namespace SchoolMedicalServer.Infrastructure.Services
     {
         public async Task<PaginationResponse<UserInformation?>> GetUsersByRoleNamePaginationAsync(PaginationRequest? paginationRequest, string roleName)
         {
-            if (paginationRequest == null)
-            {
-                paginationRequest = new PaginationRequest();
-            }
-            if (paginationRequest.PageIndex <= 0)
-            {
-                paginationRequest.PageIndex = 1;
-            }
-            if (paginationRequest.PageSize <= 0)
-            {
-                paginationRequest.PageSize = 10;
-            }
             var role = await userRepository.GetRoleByNameAsync(roleName);
             if (role == null) return null!;
 
             var totalCount = await userRepository.CountByRoleIdAsync(role.RoleId);
-            int skip = (paginationRequest.PageIndex - 1) * paginationRequest.PageSize;
-            var users = await userRepository.GetUsersByRoleIdPagedAsync(role.RoleId, skip, paginationRequest.PageSize);
+            int skip = (paginationRequest!.PageIndex - 1) * paginationRequest.PageSize;
+            var users = await userRepository.GetUsersByRoleIdPagedAsync(
+                role.RoleId,
+                paginationRequest.Search!,
+                paginationRequest.SortBy!,
+                paginationRequest.SortOrder!,
+                skip, paginationRequest.PageSize);
+
             if (users == null) return null!;
 
             var userDtos = new List<UserInformation>();

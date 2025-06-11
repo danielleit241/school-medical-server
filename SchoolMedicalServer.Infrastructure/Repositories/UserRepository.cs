@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SchoolMedicalServer.Abstractions.Dtos;
+﻿using System.Linq.Dynamic.Core;
+using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
+
 
 namespace SchoolMedicalServer.Infrastructure.Repositories
 {
@@ -52,12 +53,33 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task<int> CountByRoleIdAsync(int roleId)
              => await _context.Users.CountAsync(u => u.RoleId == roleId);
 
-        public async Task<List<User>> GetUsersByRoleIdPagedAsync(int roleId, int skip, int take)
-            => await _context.Users.Include(u => u.Role)
-                .Where(u => u.RoleId == roleId)
-                .OrderBy(u => u.FullName)
-                .Skip(skip)
-                .Take(take)
-                .ToListAsync();
+
+        public async Task<List<User>> GetUsersByRoleIdPagedAsync(
+            int roleId,
+            string? search,
+            string? sortBy,
+            string? sortOrder,
+            int skip,
+            int take)
+        {
+            IQueryable<User> query = _context.Users
+                .Include(u => u.Role)
+                .Where(u => u.RoleId == roleId);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var lowerSearch = search.ToLower();
+                query = query.Where(u => u.FullName!.ToLower().Contains(lowerSearch));
+            }
+
+            string defaultSort = "FullName ascending";
+            string sortString = !string.IsNullOrWhiteSpace(sortBy)
+                ? $"{sortBy} {(sortOrder?.ToLower() == "desc" ? "descending" : "ascending")}"
+                : defaultSort;
+
+            query = query.OrderBy(sortString);
+
+            return await query.Skip(skip).Take(take).ToListAsync();
+        }
     }
 }
