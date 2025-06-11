@@ -1,4 +1,5 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos;
+using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.VaccinationDetails;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -7,13 +8,20 @@ using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class VaccinationScheduleService(IVaccinationScheduleRepository vaccinationScheduleRepository, IBaseRepository baseRepository, IVaccinationRoundRepository vaccinationRoundRepository, IVacctionDetailsRepository vacctionDetailsRepository) : IVaccinationScheduleService
+    public class VaccinationScheduleService(
+        IVaccinationScheduleRepository vaccinationScheduleRepository,
+        IBaseRepository baseRepository,
+        IVaccinationRoundRepository vaccinationRoundRepository,
+        IVacctionDetailsRepository vacctionDetailsRepository,
+        IVaccinationResultRepository resultRepository,
+        IStudentRepository studentRepository,
+        IHealthProfileRepository profileRepository) : IVaccinationScheduleService
     {
-        public async Task<bool> CreateScheduleAsync(VaccinationScheduleRequest request)
+        public async Task<List<NotificationRequest>> CreateScheduleAsync(VaccinationScheduleRequest request)
         {
             if (request == null)
             {
-                return false;
+                return null!;
             }
 
             var vaccinationSchedule = new VaccinationSchedule
@@ -37,7 +45,46 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             await vaccinationScheduleRepository.CreateVaccinationSchedule(vaccinationSchedule);
             await baseRepository.SaveChangesAsync();
-            return true;
+
+            var notificationRequests = await CreateVaccinationResultsByRounds(vaccinationSchedule.ScheduleId);
+            return notificationRequests;
+        }
+
+        private async Task<List<NotificationRequest>> CreateVaccinationResultsByRounds(Guid scheduleId)
+        {
+            var notiRequests = new List<NotificationRequest>();
+            var sender = await vaccinationScheduleRepository.GetVaccinationScheduleByIdAsync(scheduleId);
+
+            var rounds = await vaccinationRoundRepository.GetVaccinationRoundsByScheduleIdAsync(scheduleId);
+            foreach (var round in rounds)
+            {
+                var students = await studentRepository.GetStudentsByGradeAsync(round.TargetGrade);
+                foreach (var student in students)
+                {
+                    var healthProfile = await profileRepository.GetByStudentIdAsync(student.StudentId);
+                    var result = new VaccinationResult
+                    {
+                        VaccinationResultId = Guid.NewGuid(),
+                        HealthProfileId = healthProfile!.HealthProfileId,
+                        RoundId = round.RoundId,
+                        ParentConfirmed = false,
+                        HealthQualified = false,
+                        Vaccinated = false,
+                        VaccinatedDate = null,
+                        RecorderId = Guid.Empty,
+                        Notes = null
+                    };
+                    await resultRepository.Create(result);
+                    notiRequests.Add(new NotificationRequest
+                    {
+                        NotificationTypeId = scheduleId,
+                        SenderId = sender!.ScheduleId, //managerId
+                        ReceiverId = student.UserId,
+                    });
+                }
+            }
+            await baseRepository.SaveChangesAsync();
+            return notiRequests;
         }
 
         public async Task<PaginationResponse<VaccinationScheduleResponse?>?> GetPaginationVaccinationSchedule(PaginationRequest? pagination)

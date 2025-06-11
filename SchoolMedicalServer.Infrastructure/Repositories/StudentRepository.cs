@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Dynamic.Core;
+using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
+
 
 namespace SchoolMedicalServer.Infrastructure.Repositories
 {
@@ -25,11 +27,31 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
 
         public async Task<int> CountAsync() => await _context.Students.CountAsync();
 
-        public async Task<List<Student>> GetPagedAsync(int skip, int take) => await _context.Students
-                .Skip(skip)
-                .Take(take)
-                .AsNoTracking()
-                .ToListAsync();
+        public async Task<List<Student>> GetPagedAsync(
+                string? search,
+                string? sortBy,
+                string? sortOrder,
+                int skip,
+                int take)
+        {
+            IQueryable<Student> query = _context.Students.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var lowerSearch = search.ToLower();
+                query = query.Where(s => s.FullName.ToLower().Contains(lowerSearch));
+            }
+
+            string defaultSort = "StudentCode ascending";
+            string sortString = !string.IsNullOrWhiteSpace(sortBy)
+                ? $"{sortBy} {(sortOrder?.ToLower() == "desc" ? "descending" : "ascending")}"
+                : defaultSort;
+
+            query = query.OrderBy(sortString);
+
+            return await query.Skip(skip).Take(take).ToListAsync();
+        }
+
         public async Task<List<Student>> GetByParentIdAsync(Guid parentId)
         {
             return await _context.Students
@@ -99,6 +121,12 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
             return $"{prefix}{nextNumber:D5}";
         }
 
+        public async Task<IEnumerable<Student>> GetStudentsByGradeAsync(string? targetGrade)
+        {
+            return await _context.Students
+                .Where(s => s.Grade == targetGrade)
+                .ToListAsync();
+        }
     }
 }
 

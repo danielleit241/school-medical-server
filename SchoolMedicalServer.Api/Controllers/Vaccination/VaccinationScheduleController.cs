@@ -14,12 +14,12 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
         [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> CreateVaccinationSchedule([FromBody] VaccinationScheduleRequest request)
         {
-            var isCreated = await service.CreateScheduleAsync(request);
-            if (!isCreated)
+            var notificationRequests = await service.CreateScheduleAsync(request);
+            if (notificationRequests == null)
             {
                 return BadRequest(new { Message = "Failed to create vaccination schedule." });
             }
-            return Ok(new { Message = "Vaccination schedule created successfully." });
+            return Ok(notificationRequests);
         }
 
         [HttpGet("vaccinations/schedules")]

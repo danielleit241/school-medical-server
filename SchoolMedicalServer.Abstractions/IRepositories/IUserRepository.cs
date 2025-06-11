@@ -1,5 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos;
-using SchoolMedicalServer.Abstractions.Entities;
+﻿using SchoolMedicalServer.Abstractions.Entities;
 
 namespace SchoolMedicalServer.Abstractions.IRepositories
 {
@@ -18,6 +17,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<bool> UserExistsByPhoneNumberAsync(string phoneNumber);
         Task<Role?> GetRoleByNameAsync(string roleName);
         Task<int> CountByRoleIdAsync(int roleId);
-        Task<List<User>> GetUsersByRoleIdPagedAsync(int roleId, int skip, int take);
+        Task<List<User>> GetUsersByRoleIdPagedAsync(int roleId, string search, string sortBy, string sortOrder, int skip, int take);
     }
 }

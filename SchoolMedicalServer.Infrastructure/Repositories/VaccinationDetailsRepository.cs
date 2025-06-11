@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
+using System.Linq.Dynamic.Core;
 
 namespace SchoolMedicalServer.Infrastructure.Repositories
 {
@@ -33,12 +33,29 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .FirstOrDefaultAsync(v => v.VaccineId == id);
         }
 
-        public async Task<List<VaccinationDetail>> GetPagedAsync(int skip, int take)
+        public async Task<List<VaccinationDetail>> GetPagedAsync(
+                string? search,
+                string? sortBy,
+                string? sortOrder,
+                int skip,
+                int take)
         {
-            return await _context.VaccinationDetails
-                .Skip(skip)
-                .Take(take)
-                .ToListAsync();
+            IQueryable<VaccinationDetail> query = _context.VaccinationDetails.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var lowerSearch = search.ToLower();
+                query = query.Where(s => s.VaccineCode!.ToLower().Contains(lowerSearch));
+            }
+
+            string defaultSort = "VaccineCode ascending";
+            string sortString = !string.IsNullOrWhiteSpace(sortBy)
+                ? $"{sortBy} {(sortOrder?.ToLower() == "desc" ? "descending" : "ascending")}"
+                : defaultSort;
+
+            query = query.OrderBy(sortString);
+
+            return await query.Skip(skip).Take(take).ToListAsync();
         }
 
         public async Task<bool> IsExistsAsync(string code)

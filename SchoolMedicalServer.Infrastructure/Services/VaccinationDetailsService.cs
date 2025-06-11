@@ -56,7 +56,11 @@ namespace SchoolMedicalServer.Abstractions.IServices
         {
             var total = await vacctionDetailsRepository.CountAsync();
             var skip = (pagination!.PageIndex - 1) * pagination.PageSize;
-            var vaccineDetails = await vacctionDetailsRepository.GetPagedAsync(skip, pagination.PageSize);
+            var vaccineDetails = await vacctionDetailsRepository.GetPagedAsync(
+                pagination.Search!,
+                pagination.SortBy!,
+                pagination.SortOrder!,
+                skip, pagination.PageSize);
             var response = vaccineDetails.Select(v => MapToResponse(v)).ToList();
             return new PaginationResponse<VaccinationDetailsResponse>(
                 pagination.PageIndex,
