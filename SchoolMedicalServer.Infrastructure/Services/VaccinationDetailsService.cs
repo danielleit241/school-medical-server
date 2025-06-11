@@ -1,5 +1,6 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Vaccines;
+﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using SchoolMedicalServer.Abstractions.Dtos.Pagination;
+using SchoolMedicalServer.Abstractions.Dtos.VaccinationDetails;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
@@ -38,6 +39,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             await baseRepository.SaveChangesAsync();
             return true;
         }
+
+        
 
         public async Task<VaccinationDetailsResponse> GetVaccineDetailAsync(Guid id)
         {
@@ -94,7 +97,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return true;
         }
 
-        private VaccinationDetailsResponse MapToResponse(VaccinationDetail detail)
+        private static VaccinationDetailsResponse MapToResponse(VaccinationDetail detail)
         {
             return new VaccinationDetailsResponse
             {
@@ -111,6 +114,17 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 CreateAt = detail.CreatedAt,
                 UpdateAt = detail.UpdatedAt
             };
+        }
+
+        public async Task<VaccinationDetailsResponse> DeleteVaccineDetailAsync(Guid id)
+        {
+            var vaccineDetail = await vacctionDetailsRepository.GetByIdAsync(id);
+            if (vaccineDetail == null) return null!;
+
+            vacctionDetailsRepository.Delete(vaccineDetail);
+            await baseRepository.SaveChangesAsync();
+
+            return MapToResponse(vaccineDetail);
         }
     }
 }

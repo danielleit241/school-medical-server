@@ -68,5 +68,10 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         {
             _context.VaccinationDetails.Update(vacctionDetails);
         }
+
+        public void Delete(VaccinationDetail vaccinationDetail)
+        {
+            _context.VaccinationDetails.Remove(vaccinationDetail);
+        }
     }
 }
