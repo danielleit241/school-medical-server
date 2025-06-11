@@ -1,4 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.Pagination;
+﻿ using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.Student;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;

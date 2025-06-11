@@ -334,5 +334,57 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 throw new Exception($"Error exporting medical inventories: {ex.Message}", ex);
             }
         }
+
+        public async Task<byte[]> ExportVaccinationDetailsExcelFileAsync()
+        {
+            try
+            {
+                var vaccinationDetails = await vacctionDetailsRepository.GetAllAsync();
+
+                using var workbook = new XLWorkbook();
+                var worksheet = workbook.Worksheets.Add("VaccinationDetails");
+
+                worksheet.Cell(1, 1).Value = "VaccineId";
+                worksheet.Cell(1, 2).Value = "VaccineCode";
+                worksheet.Cell(1, 3).Value = "VaccineName";
+                worksheet.Cell(1, 4).Value = "Manufacturer";
+                worksheet.Cell(1, 5).Value = "VaccineType";
+                worksheet.Cell(1, 6).Value = "AgeRecommendation";
+                worksheet.Cell(1, 7).Value = "BatchNumber";
+                worksheet.Cell(1, 8).Value = "ExpirationDate";
+                worksheet.Cell(1, 9).Value = "ContraindicationNotes";
+                worksheet.Cell(1, 10).Value = "Description";
+                worksheet.Cell(1, 11).Value = "CreatedAt";
+                worksheet.Cell(1, 12).Value = "UpdatedAt";
+
+                int row = 2;
+                foreach (var detail in vaccinationDetails)
+                {
+                    worksheet.Cell(row, 1).Value = detail.VaccineId.ToString();
+                    worksheet.Cell(row, 2).Value = detail.VaccineCode ?? "";
+                    worksheet.Cell(row, 3).Value = detail.VaccineName ?? "";
+                    worksheet.Cell(row, 4).Value = detail.Manufacturer ?? "";
+                    worksheet.Cell(row, 5).Value = detail.VaccineType ?? "";
+                    worksheet.Cell(row, 6).Value = detail.AgeRecommendation ?? "";
+                    worksheet.Cell(row, 7).Value = detail.BatchNumber ?? "";
+                    worksheet.Cell(row, 8).Value = detail.ExpirationDate.HasValue
+                        ? detail.ExpirationDate.Value.ToString("yyyy-MM-dd")
+                        : "";
+                    worksheet.Cell(row, 9).Value = detail.ContraindicationNotes ?? "";
+                    worksheet.Cell(row, 10).Value = detail.Description ?? "";
+                    worksheet.Cell(row, 11).Value = detail.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss");
+                    worksheet.Cell(row, 12).Value = detail.UpdatedAt.ToString("yyyy-MM-dd HH:mm:ss");
+                    row++;
+                }
+
+                using var stream = new MemoryStream();
+                workbook.SaveAs(stream);
+                return stream.ToArray();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error exporting vaccination details: {ex.Message}", ex);
+            }
+        }
     }
 }

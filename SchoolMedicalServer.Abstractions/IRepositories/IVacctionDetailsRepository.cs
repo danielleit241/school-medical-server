@@ -11,6 +11,7 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<int> CountAsync();
         Task AddAsync(VaccinationDetail vacctionDetails);
         void Update(VaccinationDetail vacctionDetails);
-        void Delete(Guid id);
+        void Delete(VaccinationDetail vaccinationDetail);
+
     }
 }

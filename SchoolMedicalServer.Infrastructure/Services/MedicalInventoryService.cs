@@ -40,16 +40,16 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return ToMedicalInventoryResponse(entity);
         }
 
-        public async Task<MedicalInventoryResponse?> DeleteMedicalInventoryAsync(Guid itemId)
-        {
-            var item = await medicalInventoryRepository.GetByIdAsync(itemId);
-            if (item == null) return null;
+            public async Task<MedicalInventoryResponse?> DeleteMedicalInventoryAsync(Guid itemId)
+            {
+                var item = await medicalInventoryRepository.GetByIdAsync(itemId);
+                if (item == null) return null;
 
-            medicalInventoryRepository.Delete(item);
-            await baseRepository.SaveChangesAsync();
+                medicalInventoryRepository.Delete(item);
+                await baseRepository.SaveChangesAsync();
 
-            return ToMedicalInventoryResponse(item);
-        }
+                return ToMedicalInventoryResponse(item);
+            }
 
         public async Task<MedicalInventoryResponse?> GetMedicalInventoryByIdAsync(Guid itemId)
         {

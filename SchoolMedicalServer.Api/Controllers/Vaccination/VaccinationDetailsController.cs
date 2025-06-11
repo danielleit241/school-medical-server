@@ -54,5 +54,18 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             }
             return BadRequest("Failed to update vaccine detail.");
         }
+
+
+        [HttpDelete("vaccination-details/{id:guid}")]
+        [Authorize(Roles = "admin, manager")]
+        public async Task<IActionResult> DeleteVaccinationDetail(Guid id )
+        {
+            var deletedDetail = await service.DeleteVaccineDetailAsync(id );
+            if (deletedDetail == null)
+            {
+                return NotFound($"No vaccination detail found with id {id}");
+            }
+            return Ok(deletedDetail);
+        }
     }
 }
