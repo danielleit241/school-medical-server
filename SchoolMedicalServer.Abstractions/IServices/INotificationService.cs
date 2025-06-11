@@ -18,5 +18,9 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task<int> GetUserUnReadNotificationsAsync(Guid? userId);
         Task<NotificationResponse> GetUserNotificationDetailsAsync(Guid notificationId);
         Task<NotificationResponse> SendMedicalRegistrationNotificationToNurseAsync(NotificationRequest request);
+
+
+        Task<IEnumerable<NotificationResponse>> SendVaccinationNotificationToParents(IEnumerable<NotificationRequest> requests);
+        Task<IEnumerable<NotificationResponse>> SendVaccinationNotificationToNurses(IEnumerable<NotificationRequest> requests);
     }
 }

@@ -310,5 +310,15 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var receiver = await ReceiverInformation(request);
             return GetResponse(notiInfo, sender, receiver);
         }
+
+        public Task<IEnumerable<NotificationResponse>> SendVaccinationNotificationToParents(IEnumerable<NotificationRequest> requests)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<NotificationResponse>> SendVaccinationNotificationToNurses(IEnumerable<NotificationRequest> requests)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

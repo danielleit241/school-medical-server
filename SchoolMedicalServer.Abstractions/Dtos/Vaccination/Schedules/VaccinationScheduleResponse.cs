@@ -1,6 +1,6 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.VaccinationDetails;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Vaccines;
 
-namespace SchoolMedicalServer.Abstractions.Dtos
+namespace SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules
 {
     public class VaccinationScheduleResponse
     {

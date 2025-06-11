@@ -1,5 +1,5 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Dtos.VaccinationDetails;
+using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Vaccines;
 
 namespace SchoolMedicalServer.Abstractions.IServices
 {

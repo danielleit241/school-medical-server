@@ -10,8 +10,8 @@
         public DateOnly? StartDate { get; set; }
         public DateOnly? EndDate { get; set; }
         public bool Status { get; set; }
+        public Guid NurseId { get; set; }
 
-        //nurseid
 
         public virtual VaccinationSchedule? Schedule { get; set; }
         public virtual ICollection<VaccinationResult> VaccinationResults { get; set; } = [];
