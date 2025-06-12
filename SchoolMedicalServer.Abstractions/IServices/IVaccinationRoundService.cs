@@ -1,4 +1,5 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos.Pagination;
+using SchoolMedicalServer.Abstractions.Dtos.Vaccination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Rounds;
 
 namespace SchoolMedicalServer.Abstractions.IServices
