@@ -1,7 +1,9 @@
 ﻿using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
+using System.Linq.Dynamic.Core;
 
 namespace SchoolMedicalServer.Infrastructure.Repositories
 {
@@ -22,17 +24,39 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task<int> CountByStaffNurseIdAsync(Guid staffNurseId)
             => await _context.Appointments.CountAsync(a => a.StaffNurseId == staffNurseId);
 
-        public async Task<List<Appointment>> GetByStaffNursePagedAsync(Guid staffNurseId, int skip, int take)
-            => await _context.Appointments
-                    .Include(a => a.User)
-                    .Include(a => a.Student)
-                    .Where(a => a.StaffNurseId == staffNurseId)
-                    .OrderByDescending(a => a.AppointmentDate)
-                    .ThenBy(a => a.AppointmentStartTime)
-                    .Skip(skip)
-                    .Take(take)
-                    .AsNoTracking()
-                    .ToListAsync();
+        public async Task<List<Appointment>> GetByStaffNursePagedAsync(
+                 Guid staffNurseId,
+                 string? search,
+                 string? sortBy,
+                 string? sortOrder,
+                 int skip,
+                 int take)
+        {
+            IQueryable<Appointment> query = _context.Appointments
+                .Include(a => a.User)
+                .Include(a => a.Student)
+                .Where(a => a.StaffNurseId == staffNurseId)
+                .AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+               
+                if (bool.TryParse(search, out var confirmationStatus))
+                {
+                    query = query.Where(a => a.ConfirmationStatus == confirmationStatus);
+                }
+                
+            }
+
+            string defaultSort = "AppointmentDate ascending";
+            string sortString = !string.IsNullOrWhiteSpace(sortBy)
+                ? $"{sortBy} {(sortOrder?.ToLower() == "desc" ? "descending" : "ascending")}"
+                : defaultSort;
+
+            query = query.OrderBy(sortString);
+
+            return await query.Skip(skip).Take(take).ToListAsync();
+        }
 
         public async Task<Appointment?> GetByUserAndAppointmentIdAsync(Guid userId, Guid appointmentId)
             => await _context.Appointments
@@ -43,17 +67,42 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task<int> CountByUserIdAsync(Guid userId)
             => await _context.Appointments.CountAsync(a => a.UserId == userId);
 
-        public async Task<List<Appointment>> GetByUserPagedAsync(Guid userId, int skip, int take)
-            => await _context.Appointments
-                    .Include(a => a.User)
-                    .Include(a => a.Student)
-                    .Where(a => a.UserId == userId)
-                    .OrderByDescending(a => a.AppointmentDate)
-                    .ThenBy(a => a.AppointmentStartTime)
-                    .Skip(skip)
-                    .Take(take)
-                    .AsNoTracking()
-                    .ToListAsync();
+        public async Task<List<Appointment>> GetByUserPagedAsync(Guid userId,
+        string? search,
+        string? sortBy,
+        string? sortOrder,
+        int skip,
+        int take)
+        {
+            IQueryable<Appointment> query = _context.Appointments
+                .Where(a => a.UserId == userId)
+                .Include(a => a.User)
+                .Include(a => a.Student)
+                .AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                if (bool.TryParse(search, out var boolValue))
+                {
+                    query = query.Where(a => a.ConfirmationStatus == boolValue);
+                }
+                else
+                {
+                    var lowerSearch = search.ToLowerInvariant();
+                    // Nếu muốn hỗ trợ search theo các trường khác, bổ sung tại đây
+                    // query = query.Where(a => a.ConfirmationStatus.ToString().ToLower().Contains(lowerSearch));
+                }
+            }
+
+            string defaultSort = "AppointmentDate ascending";
+            string sortString = !string.IsNullOrWhiteSpace(sortBy)
+                ? $"{sortBy} {(sortOrder?.ToLower() == "desc" ? "descending" : "ascending")}"
+                : defaultSort;
+
+            query = query.OrderBy(sortString);
+
+            return await query.Skip(skip).Take(take).ToListAsync();
+        }
 
         public async Task<bool> StaffHasAppointmentAsync(Guid? staffNurseId, DateOnly? date, TimeOnly? start, TimeOnly? end)
             => await _context.Appointments.AnyAsync(a =>
@@ -75,5 +124,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .Include(a => a.Student)
                 .FirstOrDefaultAsync();
         }
+
+      
     }
 }

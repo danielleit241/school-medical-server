@@ -4,6 +4,7 @@ using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
+using SchoolMedicalServer.Infrastructure.Repositories;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
@@ -125,14 +126,15 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return null!;
             }
 
-            int pageIndex = paginationRequest!.PageIndex;
-            int pageSize = paginationRequest!.PageSize;
-            int skip = (pageIndex - 1) * pageSize;
+            int skip = (paginationRequest!.PageIndex - 1) * paginationRequest.PageSize;
 
             var appointments = await appointmentRepository.GetByStaffNursePagedAsync(
                 staffNurseId,
+                paginationRequest.Search,
+                paginationRequest.SortBy,
+                paginationRequest.SortOrder,
                 skip,
-                pageSize
+                paginationRequest.PageSize
             );
 
             if (appointments == null || appointments.Count == 0) return null!;
@@ -144,8 +146,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
 
             return new PaginationResponse<AppointmentResponse>(
-                pageIndex,
-                pageSize,
+                paginationRequest.PageIndex,
+                paginationRequest.PageSize,
                 totalCount,
                 response
             );
@@ -176,17 +178,18 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             var appointments = await appointmentRepository.GetByUserPagedAsync(
                 userId,
+                paginationRequest.Search,
+                paginationRequest.SortBy,
+                paginationRequest.SortOrder,
                 skip,
                 pageSize
             );
 
-            if (appointments == null) return null!;
-
+            if (appointments == null || appointments.Count == 0) return null!;
 
             var response = new List<AppointmentResponse>();
             foreach (var appointment in appointments)
             {
-
                 response.Add(await GetResponseAsync(appointment));
             }
             return new PaginationResponse<AppointmentResponse>(
