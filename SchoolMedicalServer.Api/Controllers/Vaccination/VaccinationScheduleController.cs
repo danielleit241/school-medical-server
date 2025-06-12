@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Dtos.Vaccination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules;
 using SchoolMedicalServer.Abstractions.IServices;
 
@@ -39,25 +38,12 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
         [Authorize(Roles = "admin, manager, nurse")]
         public async Task<IActionResult> GetVaccinationSchedule(Guid id)
         {
-
             var vaccinationSchedule = await service.GetVaccinationSchedule(id);
             if (vaccinationSchedule == null)
             {
                 return NotFound(new { Message = "No vaccination schedules found." });
             }
             return Ok(vaccinationSchedule);
-        }
-
-        [HttpPut("vaccinations/schedules/{scheduleId}")]
-        [Authorize(Roles = "parent")]
-        public async Task<IActionResult> ConfirmOrDeclineVaccination(Guid scheduleId, [FromBody] ParentVaccinationConfirmationRequest request)
-        {
-            var result = await service.ConfirmOrDeclineVaccination(scheduleId, request);
-            if (result)
-            {
-                return NotFound(new { Message = "Vaccination schedule not found." });
-            }
-            return Ok(result);
         }
     }
 }

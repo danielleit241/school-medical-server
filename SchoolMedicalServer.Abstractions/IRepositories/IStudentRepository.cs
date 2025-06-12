@@ -20,5 +20,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<Student?> FindByStudentCodeAsync(string studentCode);
         Task<string> GenerateStudentCodeAsync();
         Task<IEnumerable<Student>> GetStudentsByGradeAsync(string? targetGrade);
+        Task<Student?> GetStudentByHealthProfileId(Guid? healthProfileId);
     }
 }

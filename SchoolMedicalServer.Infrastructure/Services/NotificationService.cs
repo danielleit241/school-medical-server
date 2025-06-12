@@ -14,7 +14,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IMedicalRegistrationRepository medicalRegistrationRepository,
         IMedicalRegistrationDetailsRepository medicalRegistrationDetailsRepository,
         IMedicalEventRepository medicalEventRepository,
-        IStudentRepository studentRepository) : INotificationService
+        IStudentRepository studentRepository,
+        IVaccinationResultRepository resultRepository,
+        IVaccinationRoundRepository roundRepository,
+        IVaccinationScheduleRepository scheduleRepository,
+        IVacctionDetailsRepository detailsRepository) : INotificationService
     {
         public async Task<PaginationResponse<NotificationResponse>> GetUserNotificationsAsync(PaginationRequest? pagination, Guid userId)
         {
@@ -311,14 +315,92 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return GetResponse(notiInfo, sender, receiver);
         }
 
-        public Task<IEnumerable<NotificationResponse>> SendVaccinationNotificationToParents(IEnumerable<NotificationRequest> requests)
+        public async Task<IEnumerable<NotificationResponse>> SendVaccinationNotificationToParents(IEnumerable<NotificationRequest> requests)
         {
-            throw new NotImplementedException();
+            List<NotificationResponse> responses = [];
+            foreach (var request in requests)
+            {
+                try
+                {
+                    var result = await resultRepository.GetByIdAsync(request.NotificationTypeId);
+                    var round = await roundRepository.GetVaccinationRoundByIdAsync(result!.RoundId);
+                    var schedule = await scheduleRepository.GetVaccinationScheduleByIdAsync(round!.ScheduleId);
+                    var sender = await SenderInformation(request);
+                    var receiver = await ReceiverInformation(request);
+                    var student = await studentRepository.GetStudentByHealthProfileId(result.HealthProfileId);
+                    var vaccine = await detailsRepository.GetByIdAsync(schedule!.VaccineId);
+
+                    var notification = new Notification
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = receiver.UserId,
+                        SenderId = sender.UserId,
+                        Title = schedule!.Title,
+                        Content = $"Your child {student!.FullName} has received the vaccination: {vaccine!.VaccineName} on {round.StartDate?.ToString("d")}.",
+                        SendDate = DateTime.UtcNow,
+                        IsRead = false,
+                        Type = NotificationTypes.Vaccination,
+                        SourceId = result.VaccinationResultId
+                    };
+                    await notificationRepository.AddAsync(notification);
+                    await baseRepository.SaveChangesAsync();
+                    var notiInfo = NotificationInformation(notification);
+                    responses.Add(GetResponse(notiInfo, sender, receiver));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+            if (responses.Count == 0)
+            {
+                return null!;
+            }
+            return responses;
         }
 
-        public Task<IEnumerable<NotificationResponse>> SendVaccinationNotificationToNurses(IEnumerable<NotificationRequest> requests)
+        public async Task<IEnumerable<NotificationResponse>> SendVaccinationNotificationToNurses(IEnumerable<NotificationRequest> requests)
         {
-            throw new NotImplementedException();
+            List<NotificationResponse> responses = [];
+            foreach (var request in requests)
+            {
+                try
+                {
+                    var schedule = await scheduleRepository.GetVaccinationScheduleByIdAsync(request.NotificationTypeId);
+                    var sender = await SenderInformation(request);
+                    var receiver = await ReceiverInformation(request);
+                    if (schedule == null || sender == null || receiver == null)
+                    {
+                        continue;
+                    }
+                    var nurseRounds = schedule.Rounds.ToList().Where(r => r.NurseId == request.ReceiverId).ToList();
+                    var notification = new Notification
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = receiver.UserId,
+                        SenderId = sender.UserId,
+                        Title = schedule.Title,
+                        Content = $"You have been assigned to the vaccination schedule: {schedule.Vaccine!.VaccineName} with {nurseRounds.Count} rounds.",
+                        SendDate = DateTime.UtcNow,
+                        IsRead = false,
+                        Type = NotificationTypes.Vaccination,
+                        SourceId = schedule.ScheduleId
+                    };
+                    await notificationRepository.AddAsync(notification);
+                    await baseRepository.SaveChangesAsync();
+                    var notiInfo = NotificationInformation(notification);
+                    responses.Add(GetResponse(notiInfo, sender, receiver));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+            if (responses.Count == 0)
+            {
+                return null!;
+            }
+            return responses;
         }
     }
 }
