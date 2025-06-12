@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.IServices;
@@ -10,7 +11,8 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
     [ApiController]
     public class NotificationVaccinationController(INotificationService service, IHubContext<NotificationHub> hubContext) : ControllerBase
     {
-        [HttpPost("notification/vaccinations/to-parent")]
+        [HttpPost("notifications/vaccinations/to-parent")]
+        //[Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> SendVaccinationNotificationToParent([FromBody] IEnumerable<NotificationRequest> requests)
         {
             var notifications = await service.SendVaccinationNotificationToParents(requests);
@@ -22,10 +24,11 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 await NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
             });
-            return Ok(new { Message = "Vaccination notification sent to parent successfully." });
+            return Ok(notifications);
         }
 
-        [HttpPost("notification/vaccinations/to-nurse")]
+        [HttpPost("notifications/vaccinations/to-nurse")]
+        //[Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> SendVaccinationNotificationToNurse([FromBody] IEnumerable<NotificationRequest> requests)
         {
             var notifications = await service.SendVaccinationNotificationToNurses(requests);
@@ -37,7 +40,7 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 await NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
             });
-            return Ok(new { Message = "Vaccination notification sent to nurse successfully." });
+            return Ok(notifications);
         }
 
         private async Task NotifyUserUnreadCountAsync(Guid? userId)

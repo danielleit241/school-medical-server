@@ -2,7 +2,6 @@
 {
     public class ParentVaccinationConfirmationRequest
     {
-        public Guid UserId { get; set; }
-        public bool status { get; set; }
+        public bool Status { get; set; }
     }
 }

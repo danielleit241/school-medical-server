@@ -1,6 +1,5 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Dtos.Vaccination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Vaccines;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -80,7 +79,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     await resultRepository.Create(result);
                     toParents.Add(new NotificationRequest
                     {
-                        NotificationTypeId = scheduleId,
+                        NotificationTypeId = result.VaccinationResultId,
                         SenderId = CreateBy,
                         ReceiverId = student.UserId,
                     });
@@ -168,11 +167,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     Manufacturer = vaccinationDetails.Manufacturer,
                 }
             };
-        }
-
-        public Task<bool> ConfirmOrDeclineVaccination(Guid scheduleId, ParentVaccinationConfirmationRequest request)
-        {
-            throw new NotImplementedException();
         }
     }
 }

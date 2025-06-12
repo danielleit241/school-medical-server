@@ -127,6 +127,13 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .Where(s => s.Grade == targetGrade)
                 .ToListAsync();
         }
+
+        public async Task<Student?> GetStudentByHealthProfileId(Guid? healthProfileId)
+        {
+            return await _context.Students
+                .Include(s => s.HealthProfile)
+                .FirstOrDefaultAsync(s => s.HealthProfile!.HealthProfileId == healthProfileId);
+        }
     }
 }
 

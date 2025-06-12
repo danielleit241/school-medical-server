@@ -7,7 +7,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class VaccinationRoundService(
         IVaccinationRoundRepository vaccinationRound,
-        IVaccinationResultRepository vaccinationResultRepository) : IVaccinationRoundService
+        IVaccinationResultRepository vaccinationResultRepository,
+        IStudentRepository studentRepository) : IVaccinationRoundService
     {
         public Task<PaginationResponse<VaccinationRoundStudentResponse>> GetStudentsByVacciantionRoundIdAsync(PaginationRequest? pagination, Guid roundId)
         {

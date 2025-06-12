@@ -121,6 +121,7 @@ namespace SchoolMedicalServer.Api.Bootstrapping
             services.AddScoped<IVaccinationDetailsService, VaccinationDetailsService>();
             services.AddScoped<IVaccinationScheduleService, VaccinationScheduleService>();
             services.AddScoped<IVaccinationRoundService, VaccinationRoundService>();
+            services.AddScoped<IVaccinationResultService, VaccinationResultService>();
 
             services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
             services.AddTransient<IEmailHelper, EmailHelper>();
