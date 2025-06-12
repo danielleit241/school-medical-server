@@ -6,6 +6,12 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
 {
     public class VaccinationRoundRepository(SchoolMedicalManagementContext _context) : IVaccinationRoundRepository
     {
+        public async Task<int> CountByNurseIdAsync(Guid nurseId)
+        {
+            return await _context.VaccinationRounds
+                .CountAsync(round => round.NurseId == nurseId);
+        }
+
         public async Task CreateVaccinationRoundAsync(VaccinationRound request)
         {
             await _context.VaccinationRounds.AddAsync(request);
@@ -19,6 +25,18 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task<IEnumerable<VaccinationRound>> GetVaccinationRoundsAsync()
         {
             return await _context.VaccinationRounds.ToListAsync();
+        }
+
+        public async Task<IEnumerable<VaccinationRound>> GetVaccinationRoundsByNurseIdAsync(Guid nurseId, string search, int skip, int pageSize)
+        {
+            return await _context.VaccinationRounds
+                .Where(round => round.NurseId == nurseId &&
+                               (string.IsNullOrEmpty(search) ||
+                               round.RoundName!.Contains(search) ||
+                               round.TargetGrade!.Contains(search)))
+                .Skip(skip)
+                .Take(pageSize)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<VaccinationRound>> GetVaccinationRoundsByScheduleIdAsync(Guid scheduleId)

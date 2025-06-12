@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SchoolMedicalServer.Abstractions.Dtos.Authentication;
@@ -9,13 +6,12 @@ using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Infrastructure;
 using SchoolMedicalServer.Infrastructure.Repositories;
 using SchoolMedicalServer.Infrastructure.Services;
-using Xunit;
 
 namespace SchoolMedicalServer.Tests.Services
 {
     public class AuthServiceInMemoryTests
     {
-        private SchoolMedicalManagementContext CreateContext(string dbName)
+        private static SchoolMedicalManagementContext CreateContext(string dbName)
         {
             var options = new DbContextOptionsBuilder<SchoolMedicalManagementContext>()
                 .UseInMemoryDatabase(databaseName: dbName)
@@ -23,23 +19,21 @@ namespace SchoolMedicalServer.Tests.Services
             return new SchoolMedicalManagementContext(options);
         }
 
-       private IConfiguration CreateFakeConfig()
-{
-    var config = new ConfigurationBuilder()
-        .AddInMemoryCollection(new Dictionary<string, string?>
+       private static IConfiguration CreateFakeConfig()
         {
+            var config = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["Jwt:Key"] = "123456789012345678901234567890123456789012345678901234567890abcd",
+                    ["Jwt:Issuer"] = "TestIssuer",
+                    ["Jwt:Audience"] = "TestAudience",
+                    ["DefaultAccountCreate:Password"] = "Default@123"
+                })
+                .Build();
+            return config;
+        }
 
-            ["Jwt:Key"] = "123456789012345678901234567890123456789012345678901234567890abcd",
-            ["Jwt:Issuer"] = "TestIssuer",
-            ["Jwt:Audience"] = "TestAudience",
-            ["DefaultAccountCreate:Password"] = "Default@123"
-        })
-        .Build();
-    return config;
-}
-
-
-        private async Task SeedUserAsync(
+        private static async Task SeedUserAsync(
             SchoolMedicalManagementContext context,
             string phone,
             string password,
@@ -59,6 +53,14 @@ namespace SchoolMedicalServer.Tests.Services
             await context.Roles.AddAsync(role);
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
+        }
+
+        public static IEnumerable<object[]> LoginTestData()
+        {
+            yield return new object[] { "0123456789", "TestPassword!1", "0123456789", "TestPassword!1", true, true }; // success
+            yield return new object[] { "", "", "0000000000", "AnyPassword", false, false }; // user not exists
+            yield return new object[] { "0123456789", "CorrectPassword", "0123456789", "WrongPassword", false, false }; // wrong password
+            yield return new object[] { "0123456789", "Default@123", "0123456789", "Default@123", false, false }; // default password
         }
 
         [Theory]
@@ -108,13 +110,5 @@ namespace SchoolMedicalServer.Tests.Services
             }
         }
 
-        public static IEnumerable<object[]> LoginTestData()
-        {
-            // seedPhone, seedPassword, loginPhone, loginPassword, expectSuccess, expectToken
-            yield return new object[] { "0123456789", "TestPassword!1", "0123456789", "TestPassword!1", true, true }; // success
-            yield return new object[] { "", "", "0000000000", "AnyPassword", false, false }; // user not exists
-            yield return new object[] { "0123456789", "CorrectPassword", "0123456789", "WrongPassword", false, false }; // wrong password
-            yield return new object[] { "0123456789", "Default@123", "0123456789", "Default@123", false, false }; // default password
-        }
     }
 }
