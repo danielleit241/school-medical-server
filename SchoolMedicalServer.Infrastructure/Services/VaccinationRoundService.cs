@@ -146,9 +146,44 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return response;
         }
 
-        public Task<PaginationResponse<VaccinationRoundStudentResponse>> GetStudentsByVacciantionRoundIdForNurseAsync(PaginationRequest? pagination, Guid roundId, Guid nurseId)
+        public async Task<PaginationResponse<VaccinationRoundStudentResponse>> GetStudentsByVacciantionRoundIdForNurseAsync(PaginationRequest? pagination, Guid roundId, Guid nurseId)
         {
-            throw new NotImplementedException();
+            var round = await vaccinationRound.GetVaccinationRoundByIdAsync(roundId);
+            if (round == null || round.NurseId != nurseId)
+            {
+                return null!;
+            }
+
+            var totalCount = await vaccinationResultRepository.CountByRoundIdAsync(roundId);
+            if (totalCount == 0)
+            {
+                return null!;
+            }
+            var skip = (pagination!.PageIndex - 1) * pagination.PageSize;
+            var results = await vaccinationResultRepository.GetPagedStudents(roundId, pagination.Search!, skip, pagination.PageSize);
+
+            var confirmedResults = results
+                      .Where(r => r != null && r.ParentConfirmed == true)
+                       .ToList();
+
+            List<VaccinationRoundStudentResponse> responses = new();
+            foreach (var result in confirmedResults)
+            {
+                var studentResponse = await StudentsOfRoundResponse(result!);
+                var parentResponse = await ParentOfStudentResponse(result!);
+                responses.Add(new VaccinationRoundStudentResponse
+                {
+                    StudentsOfRoundResponse = studentResponse,
+                    ParentsOfStudent = parentResponse
+                });
+            }
+            return new PaginationResponse<VaccinationRoundStudentResponse>(
+                totalCount,
+                pagination.PageIndex,
+                pagination.PageSize,
+                responses
+            );
+
         }
     }
 }
