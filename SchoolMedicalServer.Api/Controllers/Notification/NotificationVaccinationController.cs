@@ -26,6 +26,19 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             return Ok(notifications);
         }
 
+        [HttpPost("notifications/vaccinations/observations/to-parent")]
+        [Authorize(Roles = "admin, manager, nurse")]
+        public async Task<IActionResult> SendVaccinationObservationNotificationToParent([FromBody] NotificationRequest requests)
+        {
+            var notification = await service.SendVaccinationObservationNotificationToParent(requests);
+            if (notification == null)
+            {
+                return BadRequest("Failed to send vaccination observation notification.");
+            }
+            await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
+            return Ok(notification);
+        }
+
         [HttpPost("notifications/vaccinations/to-nurse")]
         [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> SendVaccinationNotificationToNurse([FromBody] IEnumerable<NotificationRequest> requests)

@@ -22,5 +22,6 @@ public enum NotificationTypes
     MedicalEvent = 3,
     MedicalRegistration = 4,
     Vaccination = 5,
-    GeneralNotification = 6
+    GeneralNotification = 6,
+    VaccinationObservation = 7
 }

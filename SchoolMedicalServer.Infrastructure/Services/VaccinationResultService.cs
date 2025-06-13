@@ -1,6 +1,7 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Results;
+using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
 
@@ -11,6 +12,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IVaccinationRoundRepository roundRepository,
         IVaccinationScheduleRepository scheduleRepository,
         IVaccinationObservationRepository observationRepository,
+        IHealthProfileRepository healthProfileRepository,
+        IStudentRepository studentRepository,
         IBaseRepository baseRepository) : IVaccinationResultService
     {
         public async Task<bool?> ConfirmOrDeclineVaccination(Guid resultId, ParentVaccinationConfirmationRequest request)
@@ -50,9 +53,47 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return result.ParentConfirmed;
         }
 
-        public Task<NotificationRequest> CreateVaccinationObservation(VaccinationObservationRequest request)
+        public async Task<NotificationRequest> CreateVaccinationObservation(VaccinationObservationRequest request)
         {
-            throw new NotImplementedException();
+            var result = await resultRepository.GetByIdAsync(request.VaccinationResultId);
+            if (result == null)
+            {
+                return null!;
+            }
+            if (result.Vaccinated == false)
+            {
+                return null!;
+            }
+            if (await observationRepository.IsExistResultIdAsync(request.VaccinationResultId))
+            {
+                return null!;
+            }
+            var observation = new VaccinationObservation
+            {
+                VaccinationObservationId = Guid.NewGuid(),
+                VaccinationResultId = request.VaccinationResultId,
+                ObservationStartTime = request.ObservationStartTime,
+                ObservationEndTime = request.ObservationEndTime,
+                ReactionStartTime = request.ReactionStartTime,
+                ImmediateReaction = request.ImmediateReaction,
+                ObservedBy = request.ObservedBy,
+                Intervention = request.Intervention,
+                ReactionType = request.ReactionType,
+                SeverityLevel = request.SeverityLevel,
+                Notes = request.Notes,
+            };
+
+            var healthProfile = await healthProfileRepository.GetHealthProfileById(result.HealthProfileId);
+            var parentId = await studentRepository.GetParentUserIdAsync(healthProfile!.StudentId);
+            observationRepository.CreateVaccinationObservation(observation);
+            await baseRepository.SaveChangesAsync();
+
+            return new NotificationRequest
+            {
+                NotificationTypeId = observation.VaccinationObservationId,
+                SenderId = result.Round!.NurseId,
+                ReceiverId = parentId,
+            };
         }
 
         public async Task<bool> CreateVaccinationResult(VaccinationResultRequest request)
