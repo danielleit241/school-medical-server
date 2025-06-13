@@ -73,9 +73,40 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return true;
         }
 
-        public Task<VaccinationResultResponse> GetVaccinationResult(Guid resultId)
+        public async Task<VaccinationResultResponse> GetVaccinationResult(Guid resultId)
         {
-            throw new NotImplementedException();
+            var result = await resultRepository.GetByIdAsync(resultId);
+            if (result == null)
+            {
+                return null!;
+            }
+
+            return new VaccinationResultResponse
+            {
+                VaccinationResultId = result.VaccinationResultId,
+                RoundId = result.RoundId,
+                HealthProfileId = result.HealthProfileId,
+                ParentConfirmed = result.ParentConfirmed,
+                Vaccinated = result.Vaccinated,
+                VaccinatedDate = result.VaccinatedDate,
+                InjectionSite = result.InjectionSite,
+                RecorderId = result.RecorderId,
+                Status = result.Status,
+                Notes = result.Notes,
+                Observation = result.VaccinationObservation == null ? null : new VaccinationObservationInformationResponse
+                   {
+                       ObservationStartTime = result.VaccinationObservation.ObservationStartTime,
+                       ObservationEndTime = result.VaccinationObservation.ObservationEndTime,
+                       ReactionStartTime = result.VaccinationObservation.ReactionStartTime,
+                       ReactionType = result.VaccinationObservation.ReactionType,
+                       SeverityLevel = result.VaccinationObservation.SeverityLevel,
+                       ImmediateReaction = result.VaccinationObservation.ImmediateReaction,
+                       Intervention = result.VaccinationObservation.Intervention,
+                       ObservedBy = result.VaccinationObservation.ObservedBy,
+                       Notes = result.VaccinationObservation.Notes
+                   }
+            };
+
         }
 
         public async Task<bool?> IsVaccinationConfirmed(Guid resultId)
