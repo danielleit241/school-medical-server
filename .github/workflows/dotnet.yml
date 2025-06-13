@@ -1,0 +1,29 @@
+name: CI/CD - Medicare
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 🧾 Checkout code
+      uses: actions/checkout@v3
+
+    - name: ⚙️ Setup .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x' # hoặc 7.0.x nếu bạn dùng bản thấp hơn
+
+    - name: 📦 Restore dependencies
+      run: dotnet restore
+
+    - name: 🛠 Build solution
+      run: dotnet build --no-restore --configuration Release
+
+    - name: ✅ Run unit tests
+      run: dotnet test SchoolMedicalServer.Test/SchoolMedicalServer.Test.csproj --verbosity normal
