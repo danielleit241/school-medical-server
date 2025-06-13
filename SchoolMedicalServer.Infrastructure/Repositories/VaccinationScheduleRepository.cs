@@ -35,7 +35,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
             return await _context.VaccinationSchedules.ToListAsync();
         }
 
-        public void UpdateVaccinationSchedule(Guid id, VaccinationSchedule request)
+        public void UpdateVaccinationSchedule(VaccinationSchedule request)
         {
             _context.VaccinationSchedules.Update(request);
         }

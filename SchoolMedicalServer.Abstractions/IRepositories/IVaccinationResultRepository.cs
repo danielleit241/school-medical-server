@@ -11,5 +11,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<int> CountByRoundIdAsync(Guid roundId);
         void Update(VaccinationResult vaccinationResult);
         Task<IEnumerable<VaccinationResult?>> GetPagedStudents(Guid roundId, string search, int skip, int take);
+        Task<bool> IsExistStudentByRoundId(Guid id);
     }
 }

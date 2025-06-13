@@ -566,6 +566,7 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.Vaccinated).HasColumnName("Vaccinated");
             entity.Property(e => e.VaccinatedDate).HasColumnName("VaccinatedDate").HasColumnType("date");
             entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.InjectionSite).HasMaxLength(50);
 
             entity.HasOne(vr => vr.HealthProfile)
                 .WithMany(hp => hp.VaccinationResults)
@@ -591,12 +592,36 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.VaccinationObservationId)
                 .ValueGeneratedNever()
                 .HasColumnName("VaccinationObservationID");
-            entity.Property(e => e.VaccinationResultId).HasColumnName("VaccinationResultID");
-            entity.Property(e => e.ReactionStartTime).HasColumnType("datetime");
-            entity.Property(e => e.ReactionType).HasMaxLength(100);
-            entity.Property(e => e.SeverityLevel).HasMaxLength(50);
-            entity.Property(e => e.ImmediateReaction).HasMaxLength(100);
-            entity.Property(e => e.Notes).HasMaxLength(255);
+
+            entity.Property(e => e.VaccinationResultId)
+                .HasColumnName("VaccinationResultID");
+
+            entity.Property(e => e.ObservationStartTime)
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.ObservationEndTime)
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.ReactionStartTime)
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.ReactionType)
+                .HasMaxLength(100);
+
+            entity.Property(e => e.SeverityLevel)
+                .HasMaxLength(50);
+
+            entity.Property(e => e.ImmediateReaction)
+                .HasMaxLength(100);
+
+            entity.Property(e => e.Intervention)
+                .HasMaxLength(255);
+
+            entity.Property(e => e.ObservedBy)
+                .HasMaxLength(100);
+
+            entity.Property(e => e.Notes)
+                .HasMaxLength(255);
 
             entity.HasOne(e => e.VaccinationResult)
                 .WithOne(r => r.VaccinationObservation)
@@ -604,6 +629,7 @@ public partial class SchoolMedicalManagementContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_VaccinationObservation_VaccinationResult");
         });
+
 
         modelBuilder.Entity<VaccinationSchedule>(entity =>
         {

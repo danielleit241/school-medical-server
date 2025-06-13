@@ -52,6 +52,11 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .ToListAsync() ?? [];
         }
 
+        public async Task<bool> IsExistStudentByRoundId(Guid id)
+        {
+            return await _context.VaccinationResults.AnyAsync(vr => vr.RoundId == id);
+        }
+
         public void Update(VaccinationResult vaccinationResult)
         {
             _context.VaccinationResults.Update(vaccinationResult);

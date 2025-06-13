@@ -70,21 +70,5 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             }
             return Ok(vaccinationRounds);
         }
-
-        [HttpPut("vaccination-rounds/{roundId}")]
-        [Authorize(Roles = "admin, manager")]
-        public async Task<IActionResult> UpdateVaccinationRound(Guid roundId, [FromBody] VaccinationRoundRequest request)
-        {
-            if (request == null || !ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var updatedRound = await service.UpdateVaccinationRoundAsync(roundId, request);
-            if (updatedRound)
-            {
-                return NotFound(new { Message = "Vaccination round not found." });
-            }
-            return Ok(updatedRound);
-        }
     }
 }
