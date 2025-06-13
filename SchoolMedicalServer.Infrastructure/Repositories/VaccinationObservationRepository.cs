@@ -23,6 +23,12 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .FirstOrDefaultAsync(o => o.VaccinationObservationId == observationId);
         }
 
+        public async Task<bool> IsExistResultIdAsync(Guid vaccinationResultId)
+        {
+            return await _context.VaccinationObservations
+                .AnyAsync(o => o.VaccinationResultId == vaccinationResultId);
+        }
+
         public void UpdateVaccinationObservation(VaccinationObservation observation)
         {
             _context.VaccinationObservations.Update(observation);

@@ -27,6 +27,10 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
         public async Task<IActionResult> CreateVaccinationObservation([FromBody] VaccinationObservationRequest request)
         {
             var notification = await service.CreateVaccinationObservation(request);
+            if (notification == null)
+            {
+                return BadRequest(new { Message = "Failed to create vaccination observation." });
+            }
             return Ok(notification);
         }
 

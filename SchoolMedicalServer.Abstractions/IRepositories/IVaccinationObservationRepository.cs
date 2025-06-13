@@ -8,5 +8,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<VaccinationObservation?> GetVaccinationObservationByIdAsync(Guid observationId);
         Task<VaccinationObservation?> GetObservationsByResultIdAsync(Guid resultId);
         void UpdateVaccinationObservation(VaccinationObservation observation);
+        Task<bool> IsExistResultIdAsync(Guid vaccinationResultId);
     }
 }

@@ -25,5 +25,10 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
 
         public async Task AddVaccinationDeclarationAsync(VaccinationDeclaration declaration)
             => await _context.VaccinationDeclarations.AddAsync(declaration);
+
+        public async Task<HealthProfile?> GetHealthProfileById(Guid healthProfileId)
+        {
+            return await _context.HealthProfiles.FirstOrDefaultAsync(h => h.HealthProfileId == healthProfileId);
+        }
     }
 }

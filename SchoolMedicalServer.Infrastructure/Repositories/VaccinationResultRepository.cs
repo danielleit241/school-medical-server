@@ -43,7 +43,8 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task<IEnumerable<VaccinationResult?>> GetPagedStudents(Guid roundId, string search, int skip, int take)
         {
             return await _context.VaccinationResults
-                .Include(vr => vr.HealthProfile).ThenInclude(hp => hp!.Student)
+                .Include(vr => vr.HealthProfile)
+                .ThenInclude(hp => hp!.Student)
                 .Where(vr => vr.RoundId == roundId &&
                             (string.IsNullOrEmpty(search) ||
                             vr.HealthProfile!.Student.FullName.Contains(search)))

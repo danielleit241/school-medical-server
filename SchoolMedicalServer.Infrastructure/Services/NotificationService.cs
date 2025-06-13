@@ -18,7 +18,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IVaccinationResultRepository resultRepository,
         IVaccinationRoundRepository roundRepository,
         IVaccinationScheduleRepository scheduleRepository,
-        IVacctionDetailsRepository detailsRepository) : INotificationService
+        IVacctionDetailsRepository detailsRepository,
+        IVaccinationObservationRepository observationRepository,
+        IHealthProfileRepository profileRepository) : INotificationService
     {
         public async Task<PaginationResponse<NotificationResponse>> GetUserNotificationsAsync(PaginationRequest? pagination, Guid userId)
         {
@@ -401,6 +403,43 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return null!;
             }
             return responses;
+        }
+
+        public async Task<NotificationResponse> SendVaccinationObservationNotificationToParent(NotificationRequest requests)
+        {
+            var observation = await observationRepository.GetVaccinationObservationByIdAsync(requests.NotificationTypeId);
+            if (observation == null)
+            {
+                return null!;
+            }
+            var result = await resultRepository.GetByIdAsync(observation.VaccinationResultId);
+            if (result == null)
+            {
+                return null!;
+            }
+            var healthProfile = await profileRepository.GetHealthProfileById(result.HealthProfileId);
+            var student = await studentRepository.GetStudentByHealthProfileId(healthProfile!.HealthProfileId);
+            var receiver = await ReceiverInformation(requests);
+            var sender = await SenderInformation(requests);
+            var notification = new Notification
+            {
+                NotificationId = Guid.NewGuid(),
+                UserId = receiver!.UserId,
+                SenderId = sender!.UserId,
+                Title = "Vaccination Observation Notification",
+                Content = $"A post-vaccination reaction has been observed for student {student!.FullName}. " +
+                      $"The reaction began at {observation.ReactionStartTime?.ToString("g") ?? "an unknown time"}, " +
+                      $"identified as {observation.ReactionType ?? "unspecified"} with a severity level of {observation.SeverityLevel ?? "unspecified"}. " +
+                      $"Intervention provided: {observation.Intervention ?? "none"}",
+                SendDate = DateTime.UtcNow,
+                IsRead = false,
+                Type = NotificationTypes.VaccinationObservation,
+                SourceId = observation.VaccinationObservationId
+            };
+            await notificationRepository.AddAsync(notification);
+            await baseRepository.SaveChangesAsync();
+            var notiInfo = NotificationInformation(notification);
+            return GetResponse(notiInfo, sender, receiver);
         }
     }
 }
