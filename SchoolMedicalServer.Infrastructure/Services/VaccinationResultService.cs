@@ -1,6 +1,7 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Results;
+using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
 
@@ -76,12 +77,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
         public async Task<VaccinationResultResponse> GetVaccinationResult(Guid resultId)
         {
             var result = await resultRepository.GetByIdAsync(resultId);
-            if (result == null)
-            {
-                return null!;
-            }
+            if (result == null) return null!;
+            return MapToVaccinationResultResponse(result);
 
-            return new VaccinationResultResponse
+        }
+
+
+        private static VaccinationResultResponse MapToVaccinationResultResponse(VaccinationResult result) => new VaccinationResultResponse
             {
                 VaccinationResultId = result.VaccinationResultId,
                 RoundId = result.RoundId,
@@ -93,21 +95,24 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 RecorderId = result.RecorderId,
                 Status = result.Status,
                 Notes = result.Notes,
-                Observation = result.VaccinationObservation == null ? null : new VaccinationObservationInformationResponse
-                   {
-                       ObservationStartTime = result.VaccinationObservation.ObservationStartTime,
-                       ObservationEndTime = result.VaccinationObservation.ObservationEndTime,
-                       ReactionStartTime = result.VaccinationObservation.ReactionStartTime,
-                       ReactionType = result.VaccinationObservation.ReactionType,
-                       SeverityLevel = result.VaccinationObservation.SeverityLevel,
-                       ImmediateReaction = result.VaccinationObservation.ImmediateReaction,
-                       Intervention = result.VaccinationObservation.Intervention,
-                       ObservedBy = result.VaccinationObservation.ObservedBy,
-                       Notes = result.VaccinationObservation.Notes
-                   }
+                Observation = MapToObservationResponse(result.VaccinationObservation)
             };
 
-        }
+        private static VaccinationObservationInformationResponse? MapToObservationResponse(VaccinationObservation? obs) =>
+            obs == null ? null : new VaccinationObservationInformationResponse
+            {
+                ObservationStartTime = obs.ObservationStartTime,
+                ObservationEndTime = obs.ObservationEndTime,
+                ReactionStartTime = obs.ReactionStartTime,
+                ReactionType = obs.ReactionType,
+                SeverityLevel = obs.SeverityLevel,
+                ImmediateReaction = obs.ImmediateReaction,
+                Intervention = obs.Intervention,
+                ObservedBy = obs.ObservedBy,
+                Notes = obs.Notes
+            };
+
+
 
         public async Task<bool?> IsVaccinationConfirmed(Guid resultId)
         {

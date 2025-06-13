@@ -1,4 +1,6 @@
-﻿namespace SchoolMedicalServer.Abstractions.Dtos.Vaccination.Results
+﻿using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules;
+
+namespace SchoolMedicalServer.Abstractions.Dtos.Vaccination.Results
 {
     public class VaccinationResultResponse
     {
@@ -20,7 +22,9 @@
 
     public class VaccinationResultInformationResponse
     {
-
+        public VaccinationResultResponse VaccinationResult { get; set; } = default!;
+        public VaccinationRoundResponseDto Round { get; set; } = default!;
+        public VaccinationObservationInformationResponse? VaccinationObservation { get; set; }
     }
 
     public class VaccinationObservationInformationResponse
