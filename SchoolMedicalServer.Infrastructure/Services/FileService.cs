@@ -193,7 +193,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         var ageRecommendation = row.Cell(5).GetString();
                         var batchNumber = row.Cell(6).GetString();
                         DateOnly? expirationDate = null;
-                        if (row.Cell(3).DataType == XLDataType.DateTime)
+                        if (row.Cell(7).DataType == XLDataType.DateTime)
                         {
                             var dateTime = row.Cell(7).GetDateTime();
                             expirationDate = DateOnly.FromDateTime(dateTime);

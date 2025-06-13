@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.IServices;
-using SchoolMedicalServer.Api.Hubs;
+using SchoolMedicalServer.Api.Helpers;
 
 namespace SchoolMedicalServer.Api.Controllers.Notification
 {
     [Route("api")]
     [ApiController]
-    public class NotificationMedicalRegistrationController(INotificationService service, IHubContext<NotificationHub> hubContext) : ControllerBase
+    public class NotificationMedicalRegistrationController(INotificationService service, INotificationSender notificationSender) : ControllerBase
     {
         [HttpPost("notifications/medical-registrations/to-nurse")]
         [Authorize(Roles = "parent")]
@@ -20,7 +19,7 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return BadRequest("Failed to send medical registration notification to parent.");
             }
-            await NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
+            await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
             return Ok(notification);
         }
 
@@ -33,7 +32,7 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return BadRequest("Failed to send medical registration notification to parent.");
             }
-            await NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
+            await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
             return Ok(notification);
         }
 
@@ -46,14 +45,8 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return BadRequest("Failed to send medical registration details notification to parent.");
             }
-            await NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
+            await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
             return Ok(notification);
-        }
-
-        private async Task NotifyUserUnreadCountAsync(Guid? userId)
-        {
-            var unreadCount = await service.GetUserUnReadNotificationsAsync(userId);
-            await hubContext.Clients.Users(userId.ToString()!).SendAsync("NotificationSignal", unreadCount);
         }
     }
 }

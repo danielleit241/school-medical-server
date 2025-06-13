@@ -14,9 +14,9 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
         public async Task<IActionResult> IsVaccinationConfirmed(Guid resultId)
         {
             var result = await service.IsVaccinationConfirmed(resultId);
-            if (!result)
+            if (result == null)
             {
-                return NotFound(new { Message = "Vaccination round not found." });
+                return NotFound(new { Message = "Parent is not confirm or decline" });
             }
             return Ok(result);
         }
@@ -26,11 +26,15 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
         public async Task<IActionResult> ConfirmOrDeclineVaccination(Guid resultId, [FromBody] ParentVaccinationConfirmationRequest request)
         {
             var result = await service.ConfirmOrDeclineVaccination(resultId, request);
-            if (!result)
+            if (result == null)
             {
                 return NotFound(new { Message = "Vaccination round not found." });
             }
-            return Ok(result);
+            if (result == false)
+            {
+                return Ok(new { Message = "Parent is decline" });
+            }
+            return Ok(new { Message = "Parent is confirm" });
         }
     }
 }

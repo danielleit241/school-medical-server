@@ -10,7 +10,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IVaccinationScheduleRepository scheduleRepository,
         IBaseRepository baseRepository) : IVaccinationResultService
     {
-        public async Task<bool> ConfirmOrDeclineVaccination(Guid resultId, ParentVaccinationConfirmationRequest request)
+        public async Task<bool?> ConfirmOrDeclineVaccination(Guid resultId, ParentVaccinationConfirmationRequest request)
         {
             var result = await resultRepository.GetByIdAsync(resultId);
             if (result == null)
@@ -39,17 +39,17 @@ namespace SchoolMedicalServer.Infrastructure.Services
             result.ParentConfirmed = request.Status;
             resultRepository.Update(result);
             await baseRepository.SaveChangesAsync();
-            return true;
+            return result.ParentConfirmed;
         }
 
-        public async Task<bool> IsVaccinationConfirmed(Guid resultId)
+        public async Task<bool?> IsVaccinationConfirmed(Guid resultId)
         {
             var result = await resultRepository.GetByIdAsync(resultId);
             if (result == null)
             {
                 return false;
             }
-            return result.ParentConfirmed == true;
+            return result.ParentConfirmed;
         }
     }
 }

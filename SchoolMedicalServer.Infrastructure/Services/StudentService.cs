@@ -1,4 +1,5 @@
-﻿ using SchoolMedicalServer.Abstractions.Dtos.Pagination;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Appointment;
+using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.Student;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
@@ -82,6 +83,23 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var student = await studentRepository.GetStudentByIdAsync(studentId);
             if (student == null) return null;
             return ToStudentInformationResponse(student);
+        }
+
+        public async Task<IEnumerable<StudentInfo>> GetAllStudentsNoPaginationAsync()
+        {
+            var students = await studentRepository.GetAllAsync();
+            if (students == null || !students.Any())
+            {
+                return null!;
+            }
+            var result = students.Select(s => new StudentInfo
+            {
+                StudentId = s.StudentId,
+                StudentCode = s.StudentCode,
+                FullName = s.FullName,
+            });
+
+            return result;
         }
     }
 }

@@ -125,6 +125,7 @@ namespace SchoolMedicalServer.Api.Bootstrapping
 
             services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
             services.AddTransient<IEmailHelper, EmailHelper>();
+            services.AddTransient<INotificationSender, NotificationSender>();
 
             return services;
         }

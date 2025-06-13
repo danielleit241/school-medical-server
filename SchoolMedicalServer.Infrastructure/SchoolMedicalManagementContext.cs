@@ -562,7 +562,7 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.RecorderId).HasColumnName("RecorderID");
             entity.Property(e => e.HealthProfileId).HasColumnName("HealthProfileID");
             entity.Property(e => e.RoundId).HasColumnName("RoundID");
-            entity.Property(e => e.ParentConfirmed).HasColumnName("ParentConfirmed");
+            entity.Property(e => e.ParentConfirmed).HasColumnName("ParentConfirmed").HasDefaultValue(null);
             entity.Property(e => e.Vaccinated).HasColumnName("Vaccinated");
             entity.Property(e => e.VaccinatedDate).HasColumnName("VaccinatedDate").HasColumnType("date");
             entity.Property(e => e.Status).HasMaxLength(50);

@@ -4,7 +4,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
 {
     public interface IVaccinationResultService
     {
-        Task<bool> ConfirmOrDeclineVaccination(Guid resultId, ParentVaccinationConfirmationRequest request);
-        Task<bool> IsVaccinationConfirmed(Guid resultId);
+        Task<bool?> ConfirmOrDeclineVaccination(Guid resultId, ParentVaccinationConfirmationRequest request);
+        Task<bool?> IsVaccinationConfirmed(Guid resultId);
     }
 }

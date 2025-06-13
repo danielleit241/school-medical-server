@@ -12,7 +12,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IStudentRepository studentRepository,
         IUserRepository userRepository) : IVaccinationRoundService
     {
-        public async Task<PaginationResponse<VaccinationRoundStudentResponse>> GetStudentsByVacciantionRoundIdAsync(PaginationRequest? pagination, Guid roundId)
+        public async Task<PaginationResponse<VaccinationRoundStudentResponse>> GetStudentsByVacciantionRoundIdForManagerAsync(PaginationRequest? pagination, Guid roundId)
         {
             var totalCount = await vaccinationResultRepository.CountByRoundIdAsync(roundId);
             if (totalCount == 0)
@@ -144,6 +144,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 response.Add(MapToRoundResponse(round, nurse!));
             }
             return response;
+        }
+
+        public Task<PaginationResponse<VaccinationRoundStudentResponse>> GetStudentsByVacciantionRoundIdForNurseAsync(PaginationRequest? pagination, Guid roundId, Guid nurseId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
