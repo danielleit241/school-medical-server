@@ -74,7 +74,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return true;
         }
 
-        public async Task<VaccinationResultResponse> GetVaccinationResult(Guid resultId)
+        public async Task<VaccinationResultInformationResponse> GetVaccinationResult(Guid resultId)
         {
             var result = await resultRepository.GetByIdAsync(resultId);
             if (result == null) return null!;
@@ -83,8 +83,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
         }
 
 
-        private static VaccinationResultResponse MapToVaccinationResultResponse(VaccinationResult result) => new VaccinationResultResponse
-            {
+        private static VaccinationResultInformationResponse MapToVaccinationResultResponse(VaccinationResult result) => new VaccinationResultInformationResponse
+        {
                 VaccinationResultId = result.VaccinationResultId,
                 RoundId = result.RoundId,
                 HealthProfileId = result.HealthProfileId,
