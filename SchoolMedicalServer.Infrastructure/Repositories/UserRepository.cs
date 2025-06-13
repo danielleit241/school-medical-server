@@ -24,8 +24,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task<User?> GetByPhoneAndOtpAsync(string phoneNumber, string otp) =>
             await _context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber && u.Otp == otp);
 
-        public void Update(User user) =>
-            _context.Users.Update(user);
+        public void Update(User user) => _context.Users.Update(user);
 
         public async Task<Dictionary<string, User>> GetUsersByPhoneNumbersAsync(List<string> phoneNumbers) =>
             await _context.Users
