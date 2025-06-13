@@ -8,25 +8,25 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<Appointment?> GetByStaffNurseAndAppointmentIdAsync(Guid staffNurseId, Guid appointmentId);
         Task<int> CountByStaffNurseIdAsync(Guid staffNurseId);
         Task<List<Appointment>> GetByStaffNursePagedAsync(
-    Guid staffNurseId,
-    string? search,
-    string? sortBy,
-    string? sortOrder,
-    int skip,
-    int take);
+            Guid staffNurseId,
+            string? search,
+            string? sortBy,
+            string? sortOrder,
+            int skip,
+            int take);
         Task<Appointment?> GetByUserAndAppointmentIdAsync(Guid userId, Guid appointmentId);
         Task<int> CountByUserIdAsync(Guid userId);
         Task<List<Appointment>> GetByUserPagedAsync(Guid userId,
-        string? search,
-        string? sortBy,
-        string? sortOrder,
-        int skip,
-        int take);
+            string? search,
+            string? sortBy,
+            string? sortOrder,
+            int skip,
+            int take);
         Task<bool> StaffHasAppointmentAsync(Guid? staffNurseId, DateOnly? date, TimeOnly? start, TimeOnly? end);
         Task AddAsync(Appointment appointment);
         Task<Appointment?> GetByIdAsync(Guid appointmentId);
         void Update(Appointment appointment);
         Task<Appointment?> GetByIdWithStudentAsync(Guid appointmentId);
-   
+
     }
 }

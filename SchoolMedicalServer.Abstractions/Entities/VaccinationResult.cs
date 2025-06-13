@@ -9,6 +9,7 @@
         public bool? ParentConfirmed { get; set; } = null;
         public bool Vaccinated { get; set; }
         public DateOnly? VaccinatedDate { get; set; }
+        public string? InjectionSite { get; set; }
         public Guid RecorderId { get; set; }
 
         public string? Status { get; set; } // "Pending", "Completed", "Failed", etc.

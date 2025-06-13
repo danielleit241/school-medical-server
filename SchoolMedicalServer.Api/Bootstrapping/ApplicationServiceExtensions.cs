@@ -104,6 +104,7 @@ namespace SchoolMedicalServer.Api.Bootstrapping
             services.AddScoped<IVaccinationScheduleRepository, VaccinationScheduleRepository>();
             services.AddScoped<IVaccinationRoundRepository, VaccinationRoundRepository>();
             services.AddScoped<IVaccinationResultRepository, VaccinationResultRepository>();
+            services.AddScoped<IVaccinationObservationRepository, VaccinationObservationRepository>();
 
             services.AddScoped<IAuthService, AuthService>();
             services.AddTransient<IAccountService, AccountService>();

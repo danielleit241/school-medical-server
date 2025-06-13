@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination;
+using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Results;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Api.Controllers.Vaccination
@@ -9,6 +10,39 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
     [ApiController]
     public class VaccinationResultController(IVaccinationResultService service) : ControllerBase
     {
+        [HttpPost("vaccination-results")]
+        [Authorize(Roles = "nurse")]
+        public async Task<IActionResult> CreateVaccinationResult([FromBody] VaccinationResultRequest request)
+        {
+            var result = await service.CreateVaccinationResult(request);
+            if (!result)
+            {
+                return BadRequest(new { Message = "Failed to create vaccination result." });
+            }
+            return Ok();
+        }
+
+        [HttpPost("vaccination-results/observations")]
+        [Authorize(Roles = "nurse")]
+        public async Task<IActionResult> CreateVaccinationObservation([FromBody] VaccinationObservationRequest request)
+        {
+            var notification = await service.CreateVaccinationObservation(request);
+            return Ok(notification);
+        }
+
+        [HttpGet("vaccination-results/{resultId}")]
+        [Authorize(Roles = "admin, manager, nurse")]
+        public async Task<IActionResult> GetVaccinationResult(Guid resultId)
+        {
+            var result = await service.GetVaccinationResult(resultId);
+            if (result == null)
+            {
+                return NotFound(new { Message = "Vaccination result not found." });
+            }
+            return Ok(result);
+        }
+
+
         [HttpGet("vaccination-results/{resultId}/is-confirmed")]
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> IsVaccinationConfirmed(Guid resultId)
