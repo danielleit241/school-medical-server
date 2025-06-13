@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.Student;
 using SchoolMedicalServer.Abstractions.IServices;
-using SchoolMedicalServer.Infrastructure.Services;
 
 namespace SchoolMedicalServer.Api.Controllers.Student
 {
@@ -13,10 +12,22 @@ namespace SchoolMedicalServer.Api.Controllers.Student
     {
         [HttpGet("students")]
         [Authorize(Roles = "admin, manager, nurse")]
-        public async Task<IActionResult> GetAllStudents([FromQuery] PaginationRequest? paginationRequest)
+        public async Task<IActionResult> GetAllStudentsPagination([FromQuery] PaginationRequest? paginationRequest)
         {
             var students = await service.GetAllStudentsAsync(paginationRequest);
             if (students == null || !students.Items.Any())
+            {
+                return NotFound("No students found.");
+            }
+            return Ok(students);
+        }
+
+        [HttpGet("students/no-paged")]
+        [Authorize(Roles = "admin, manager, nurse")]
+        public async Task<IActionResult> GetAllStudentsNoPagination()
+        {
+            var students = await service.GetAllStudentsNoPaginationAsync();
+            if (students == null || !students.Any())
             {
                 return NotFound("No students found.");
             }

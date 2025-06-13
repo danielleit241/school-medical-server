@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.IServices;
-using SchoolMedicalServer.Api.Hubs;
+using SchoolMedicalServer.Api.Helpers;
 
 namespace SchoolMedicalServer.Api.Controllers.Notification
 {
     [Route("api")]
     [ApiController]
-    public class NotificationMedicalEventController(INotificationService service, IHubContext<NotificationHub> hubContext) : ControllerBase
+    public class NotificationMedicalEventController(INotificationService service, INotificationSender notificationSender) : ControllerBase
     {
         [HttpPost("notifications/medical-events/to-parent")]
         [Authorize(Roles = "nurse")]
@@ -20,14 +19,8 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return NotFound("Notification not found.");
             }
-            await NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
-
+            await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
             return Ok(notification);
-        }
-        private async Task NotifyUserUnreadCountAsync(Guid? userId)
-        {
-            var unreadCount = await service.GetUserUnReadNotificationsAsync(userId);
-            await hubContext.Clients.Users(userId.ToString()!).SendAsync("NotificationSignal", unreadCount);
         }
     }
 }

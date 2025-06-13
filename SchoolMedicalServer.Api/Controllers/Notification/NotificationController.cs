@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.IServices;
-using SchoolMedicalServer.Api.Hubs;
+using SchoolMedicalServer.Api.Helpers;
 
 namespace SchoolMedicalServer.Api.Controllers.Notification
 {
     [Route("api")]
     [ApiController]
-    public class NotificationController(INotificationService service, IHubContext<NotificationHub> hubContext) : ControllerBase
+    public class NotificationController(INotificationService service, INotificationSender notificationSender) : ControllerBase
     {
         [HttpGet]
         [Route("users/{userId}/notifications")]
@@ -57,14 +56,8 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return NotFound(new { Message = "No notifications found to mark as read." });
             }
-            await NotifyUserUnreadCountAsync(userId);
+            await notificationSender.NotifyUserUnreadCountAsync(userId);
             return Ok(new { Message = "Readed" });
-        }
-
-        private async Task NotifyUserUnreadCountAsync(Guid? userId)
-        {
-            var unreadCount = await service.GetUserUnReadNotificationsAsync(userId);
-            await hubContext.Clients.Users(userId.ToString()!).SendAsync("NotificationSignal", unreadCount);
         }
     }
 }

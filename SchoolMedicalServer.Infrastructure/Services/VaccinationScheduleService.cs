@@ -70,7 +70,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         VaccinationResultId = Guid.NewGuid(),
                         HealthProfileId = healthProfile!.HealthProfileId,
                         RoundId = round.RoundId,
-                        ParentConfirmed = false,
                         Vaccinated = false,
                         VaccinatedDate = null,
                         RecorderId = round.NurseId,

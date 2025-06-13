@@ -11,11 +11,11 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
     [ApiController]
     public class VaccinationRoundController(IVaccinationRoundService service) : ControllerBase
     {
-        [HttpGet("vaccination-rounds/{roundId}/students")]
+        [HttpGet("manager/vaccination-rounds/{roundId}/students")]
         [Authorize(Roles = "admin, manager, nurse")]
         public async Task<IActionResult> GetStudentsByVacciantionRoundId([FromQuery] PaginationRequest? pagination, Guid roundId)
         {
-            var vaccinationRound = await service.GetStudentsByVacciantionRoundIdAsync(pagination, roundId);
+            var vaccinationRound = await service.GetStudentsByVacciantionRoundIdForManagerAsync(pagination, roundId);
             if (vaccinationRound == null)
             {
                 return NotFound(new { Message = "Vaccination round not found." });
@@ -35,7 +35,19 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             return Ok(vaccinationRound);
         }
 
-        [HttpGet("vaccination-rounds/nurses/{nurseId}")]
+        [HttpGet("nurses/{nurseId}/vaccination-rounds/{roundId}/students")]
+        [Authorize(Roles = "nurse")]
+        public async Task<IActionResult> GetStudentsByVacciantionRoundIdForNurse([FromQuery] PaginationRequest? pagination, Guid roundId, Guid nurseId)
+        {
+            var vaccinationRound = await service.GetStudentsByVacciantionRoundIdForNurseAsync(pagination, roundId, nurseId);
+            if (vaccinationRound == null)
+            {
+                return NotFound(new { Message = "Vaccination round not found." });
+            }
+            return Ok(vaccinationRound);
+        }
+
+        [HttpGet("nurses/{nurseId}/vaccination-rounds")]
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> GetVaccinationRoundsByUserId(Guid nurseId, [FromQuery] PaginationRequest? pagination)
         {

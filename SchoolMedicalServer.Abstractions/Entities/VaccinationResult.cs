@@ -6,7 +6,7 @@
         public Guid RoundId { get; set; }
         public Guid HealthProfileId { get; set; }
 
-        public bool ParentConfirmed { get; set; }
+        public bool? ParentConfirmed { get; set; } = null;
         public bool Vaccinated { get; set; }
         public DateOnly? VaccinatedDate { get; set; }
         public Guid RecorderId { get; set; }
