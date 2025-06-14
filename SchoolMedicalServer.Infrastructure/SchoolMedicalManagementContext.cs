@@ -730,8 +730,6 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.RoundName).HasMaxLength(100);
             entity.Property(e => e.TargetGrade).HasMaxLength(12);
             entity.Property(e => e.Description).HasMaxLength(255);
-            entity.Property(e => e.StartDate).HasColumnName("StartDate").HasColumnType("date");
-            entity.Property(e => e.EndDate).HasColumnName("EndDate").HasColumnType("date");
             entity.Property(e => e.Status).HasColumnName("Status");
             entity.Property(e => e.StartTime);
             entity.Property(e => e.EndTime);

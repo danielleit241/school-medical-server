@@ -91,8 +91,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     RoundId = round.RoundId,
                     RoundName = round.RoundName!,
                     TargetGrade = round.TargetGrade!,
-                    StartDate = round.StartDate,
-                    EndDate = round.EndDate,
+                    StartTime = round.StartTime,
+                    EndTime = round.EndTime,
                     Description = round.Description!,
                     Status = round.Status
                 },
