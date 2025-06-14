@@ -105,6 +105,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             result.Vaccinated = request.Vaccinated;
             result.VaccinatedDate = request.VaccinatedDate ?? DateOnly.FromDateTime(DateTime.UtcNow);
+            result.VaccinatedTime = request.VaccinatedTime ?? DateTime.UtcNow;
             result.InjectionSite = request.InjectionSite;
             result.Notes = request.Notes;
             result.Status = request.Status ?? "Failed";

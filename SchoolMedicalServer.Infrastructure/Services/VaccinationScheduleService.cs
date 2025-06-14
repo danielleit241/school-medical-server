@@ -45,6 +45,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     Description = round.Description,
                     StartDate = round.StartDate,
                     EndDate = round.EndDate,
+                    StartTime = round.StartTime,
+                    EndTime = round.EndTime,
                     NurseId = round.NurseId,
                 })]
             };
