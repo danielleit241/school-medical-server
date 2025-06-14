@@ -1,12 +1,8 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Vaccines;
-
-namespace SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules
+﻿namespace SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules
 {
     public class VaccinationScheduleResponse
     {
         public VaccinationScheduleResponseDto VaccinationScheduleResponseDto { get; set; } = default!;
-        public VaccinationDetailsResponse VaccinationDetailsResponse { get; set; } = default!;
-        public IEnumerable<VaccinationRoundResponseDto> VaccinationRounds { get; set; } = default!;
     }
 
     public class VaccinationScheduleResponseDto
@@ -21,16 +17,5 @@ namespace SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules
         public bool Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-    }
-
-    public class VaccinationRoundResponseDto
-    {
-        public Guid RoundId { get; set; }
-        public string? RoundName { get; set; }
-        public string? TargetGrade { get; set; }
-        public string? Description { get; set; }
-        public DateTime? StartTime { get; set; }
-        public DateTime? EndTime { get; set; }
-        public bool Status { get; set; }
     }
 }
