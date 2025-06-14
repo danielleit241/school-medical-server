@@ -27,7 +27,7 @@ namespace SchoolMedicalServer.Tests.Services
             {
                 UserId = Guid.NewGuid(),
                 PhoneNumber = "1234567890",
-                PasswordHash = new PasswordHasher<User>().HashPassword(null, "YourStr0ngPassw0rd!"),
+                PasswordHash = new PasswordHasher<User>().HashPassword(null!, "YourStr0ngPassw0rd!"),
                 RoleId = adminRole.RoleId,
                 Status = true
             };
