@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using SchoolMedicalServer.Abstractions.IServices;
 using SchoolMedicalServer.Api.Hubs;
 

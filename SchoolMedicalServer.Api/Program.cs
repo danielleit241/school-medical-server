@@ -18,6 +18,8 @@ namespace SchoolMedicalServer.Api
             builder.Services.AddControllers();
 
             builder.Services.AddApplicationServices(builder.Configuration);
+            builder.Services.AddRepositories();
+            builder.Services.AddServices();
 
             builder.Services.AddSignalR();
 
@@ -62,7 +64,7 @@ namespace SchoolMedicalServer.Api
 
             app.MapControllers();
             app.MapHub<NotificationHub>("/notificationHub");
-         
+
             app.Run();
         }
     }
