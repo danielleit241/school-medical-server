@@ -15,6 +15,7 @@ namespace SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules
         public string? Description { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
+        public Guid NurseId { get; set; }
         public bool Status { get; set; }
     }
 }

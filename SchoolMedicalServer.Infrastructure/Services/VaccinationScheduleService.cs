@@ -140,6 +140,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     ScheduleId = schedule.ScheduleId,
                     Title = schedule.Title,
                     Description = schedule.Description,
+                    StartDate = schedule.StartDate,
+                    EndDate = schedule.EndDate,
                     ParentNotificationStartDate = schedule.ParentNotificationStartDate,
                     ParentNotificationEndDate = schedule.ParentNotificationEndDate,
                     CreatedAt = schedule.CreatedAt,
@@ -160,6 +162,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         Description = round.Description,
                         StartTime = round.StartTime,
                         EndTime = round.EndTime,
+                        NurseId = round.NurseId,
                         Status = round.Status
                     })],
                 VaccinationDetailsResponse = new VaccinationDetailsResponse

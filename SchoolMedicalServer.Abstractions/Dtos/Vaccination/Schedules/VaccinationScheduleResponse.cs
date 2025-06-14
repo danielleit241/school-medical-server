@@ -13,6 +13,9 @@
         public string? Description { get; set; }
         public DateOnly? ParentNotificationStartDate { get; set; }
         public DateOnly? ParentNotificationEndDate { get; set; }
+        public DateOnly? StartDate { get; set; }
+        public DateOnly? EndDate { get; set; }
+
 
         public bool Status { get; set; }
         public DateTime CreatedAt { get; set; }
