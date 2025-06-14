@@ -338,7 +338,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         UserId = receiver.UserId,
                         SenderId = sender.UserId,
                         Title = schedule!.Title,
-                        Content = $"Your child {student!.FullName} has received the vaccination: {vaccine!.VaccineName} on {round.StartDate?.ToString("d")}.",
+                        Content = $"Your child {student!.FullName} has received the vaccination: {vaccine!.VaccineName} on {round.StartTime?.ToString("d")}.",
                         SendDate = DateTime.UtcNow,
                         IsRead = false,
                         Type = NotificationTypes.Vaccination,

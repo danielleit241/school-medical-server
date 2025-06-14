@@ -43,8 +43,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     RoundName = round.RoundName,
                     TargetGrade = round.TargetGrade,
                     Description = round.Description,
-                    StartDate = round.StartDate,
-                    EndDate = round.EndDate,
                     StartTime = round.StartTime,
                     EndTime = round.EndTime,
                     NurseId = round.NurseId,
@@ -153,8 +151,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         RoundName = round.RoundName,
                         TargetGrade = round.TargetGrade,
                         Description = round.Description,
-                        StartDate = round.StartDate,
-                        EndDate = round.EndDate,
+                        StartTime = round.StartTime,
+                        EndTime = round.EndTime,
                         Status = round.Status
                     })],
                 VaccinationDetailsResponse = new VaccinationDetailsResponse
