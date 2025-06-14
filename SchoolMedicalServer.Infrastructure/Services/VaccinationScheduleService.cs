@@ -109,9 +109,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             List<VaccinationScheduleResponse> vaccinationScheduleResponses = [];
             foreach (var schedule in schedules)
             {
-                var vaccinationRounds = await vaccinationRoundRepository.GetVaccinationRoundsByScheduleIdAsync(schedule.ScheduleId);
-                var vaccinationDetails = await vacctionDetailsRepository.GetByIdAsync(schedule.VaccineId);
-                vaccinationScheduleResponses.Add(GetResponse(schedule, vaccinationRounds, vaccinationDetails));
+                vaccinationScheduleResponses.Add(GetScheduleResponse(schedule));
             }
             return new PaginationResponse<VaccinationScheduleResponse?>(
                 pagination!.PageIndex,
@@ -121,7 +119,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             );
         }
 
-        public async Task<VaccinationScheduleResponse?> GetVaccinationSchedule(Guid id)
+        public async Task<VaccinationScheduleDetailsResponse?> GetVaccinationSchedule(Guid id)
         {
             var schedule = await vaccinationScheduleRepository.GetVaccinationScheduleByIdAsync(id);
             if (schedule == null)
@@ -130,10 +128,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             var vaccinationRounds = await vaccinationRoundRepository.GetVaccinationRoundsByScheduleIdAsync(schedule.ScheduleId);
             var vaccinationDetails = await vacctionDetailsRepository.GetByIdAsync(schedule.VaccineId);
-            return GetResponse(schedule, vaccinationRounds, vaccinationDetails);
+            return GetScheduleDetailsResponse(vaccinationRounds, vaccinationDetails);
         }
 
-        public VaccinationScheduleResponse GetResponse(VaccinationSchedule schedule, IEnumerable<VaccinationRound> rounds, VaccinationDetail? vaccinationDetails)
+        public VaccinationScheduleResponse GetScheduleResponse(VaccinationSchedule schedule)
         {
             return new VaccinationScheduleResponse
             {
@@ -142,9 +140,18 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     ScheduleId = schedule.ScheduleId,
                     Title = schedule.Title,
                     Description = schedule.Description,
+                    ParentNotificationStartDate = schedule.ParentNotificationStartDate,
+                    ParentNotificationEndDate = schedule.ParentNotificationEndDate,
                     CreatedAt = schedule.CreatedAt,
                     UpdatedAt = schedule.UpdatedAt
-                },
+                }
+            };
+        }
+
+        public VaccinationScheduleDetailsResponse GetScheduleDetailsResponse(IEnumerable<VaccinationRound> rounds, VaccinationDetail? vaccinationDetails)
+        {
+            return new VaccinationScheduleDetailsResponse
+            {
                 VaccinationRounds = [.. rounds.Select(round => new VaccinationRoundResponseDto
                     {
                         RoundId = round.RoundId,
