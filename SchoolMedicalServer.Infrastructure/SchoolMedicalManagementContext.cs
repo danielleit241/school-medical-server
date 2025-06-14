@@ -567,7 +567,7 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.VaccinatedDate).HasColumnName("VaccinatedDate").HasColumnType("date");
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.InjectionSite).HasMaxLength(50);
-
+            entity.Property(e => e.VaccinatedTime);
             entity.HasOne(vr => vr.HealthProfile)
                 .WithMany(hp => hp.VaccinationResults)
                 .HasForeignKey(vr => vr.HealthProfileId)
@@ -733,7 +733,8 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.StartDate).HasColumnName("StartDate").HasColumnType("date");
             entity.Property(e => e.EndDate).HasColumnName("EndDate").HasColumnType("date");
             entity.Property(e => e.Status).HasColumnName("Status");
-
+            entity.Property(e => e.StartTime);
+            entity.Property(e => e.EndTime);
             entity.HasOne(e => e.Schedule)
                 .WithMany(s => s.Rounds)
                 .HasForeignKey(e => e.ScheduleId)

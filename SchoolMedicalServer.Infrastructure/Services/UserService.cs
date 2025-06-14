@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SchoolMedicalServer.Abstractions.Dtos.Pagination;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.User;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;

@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using SchoolMedicalServer.Abstractions.IServices;
-using SchoolMedicalServer.Infrastructure.Services;
-using SchoolMedicalServer.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SchoolMedicalServer.Api.Helpers;
-using SchoolMedicalServer.Abstractions.IRepositories;
-using SchoolMedicalServer.Infrastructure.Repositories;
+using SchoolMedicalServer.Infrastructure;
 
 namespace SchoolMedicalServer.Api.Bootstrapping
 {
@@ -89,40 +85,6 @@ namespace SchoolMedicalServer.Api.Bootstrapping
                 });
             });
 
-            services.AddScoped<IBaseRepository, BaseRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IStudentRepository, StudentRepository>();
-            services.AddScoped<IHealthProfileRepository, HealthProfileRepository>();
-            services.AddScoped<IMedicalInventoryRepository, MedicalInventoryRepository>();
-            services.AddScoped<IAppointmentRepository, AppointmentRepository>();
-            services.AddScoped<IMedicalRegistrationRepository, MedicalRegistrationRepository>();
-            services.AddScoped<IMedicalRegistrationDetailsRepository, MedicalRegistrationDetailsRepository>();
-            services.AddScoped<IMedicalEventRepository, MedicalEventRepository>();
-            services.AddScoped<IMedicalRequestRepository, MedicalRequestRepository>();
-            services.AddScoped<INotificationRepository, NotificationRepository>();
-            services.AddScoped<IVacctionDetailsRepository, VaccinationDetailsRepository>();
-            services.AddScoped<IVaccinationScheduleRepository, VaccinationScheduleRepository>();
-            services.AddScoped<IVaccinationRoundRepository, VaccinationRoundRepository>();
-            services.AddScoped<IVaccinationResultRepository, VaccinationResultRepository>();
-            services.AddScoped<IVaccinationObservationRepository, VaccinationObservationRepository>();
-
-            services.AddScoped<IAuthService, AuthService>();
-            services.AddTransient<IAccountService, AccountService>();
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IUserProfileService, UserProfileService>();
-            services.AddScoped<IHealthProfileDeclarationService, HealthProfileDeclarationService>();
-            services.AddScoped<IAppointmentService, AppointmentService>();
-            services.AddScoped<IParentStudentService, ParentStudentService>();
-            services.AddTransient<IFileService, FileService>();
-            services.AddScoped<IStudentService, StudentService>();
-            services.AddTransient<IMedicalRegistrationService, MedicalRegistrationService>();
-            services.AddTransient<IMedicalEventService, MedicalEventService>();
-            services.AddScoped<IMedicalInventoryService, MedicalInventoryService>();
-            services.AddScoped<INotificationService, NotificationService>();
-            services.AddScoped<IVaccinationDetailsService, VaccinationDetailsService>();
-            services.AddScoped<IVaccinationScheduleService, VaccinationScheduleService>();
-            services.AddScoped<IVaccinationRoundService, VaccinationRoundService>();
-            services.AddScoped<IVaccinationResultService, VaccinationResultService>();
 
             services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
             services.AddTransient<IEmailHelper, EmailHelper>();

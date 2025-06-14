@@ -40,12 +40,12 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-               
+
                 if (bool.TryParse(search, out var confirmationStatus))
                 {
                     query = query.Where(a => a.ConfirmationStatus == confirmationStatus);
                 }
-                
+
             }
 
             string defaultSort = "AppointmentDate ascending";
@@ -89,8 +89,6 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 else
                 {
                     var lowerSearch = search.ToLowerInvariant();
-                    // Nếu muốn hỗ trợ search theo các trường khác, bổ sung tại đây
-                    // query = query.Where(a => a.ConfirmationStatus.ToString().ToLower().Contains(lowerSearch));
                 }
             }
 
@@ -124,7 +122,5 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .Include(a => a.Student)
                 .FirstOrDefaultAsync();
         }
-
-      
     }
 }

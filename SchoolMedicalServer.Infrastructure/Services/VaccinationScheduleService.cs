@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
-using SchoolMedicalServer.Abstractions.Dtos.Notification;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Vaccines;
@@ -46,6 +45,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     Description = round.Description,
                     StartDate = round.StartDate,
                     EndDate = round.EndDate,
+                    StartTime = round.StartTime,
+                    EndTime = round.EndTime,
                     NurseId = round.NurseId,
                 })]
             };

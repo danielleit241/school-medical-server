@@ -7,11 +7,11 @@ namespace SchoolMedicalServer.Api.Controllers.HealthDeclaration
 {
     [Route("api")]
     [ApiController]
-    public class ParentHealthDeclarationController(IHealthProfileDeclarationService service) : ControllerBase
+    public class HealthDeclarationController(IHealthProfileDeclarationService service) : ControllerBase
     {
 
         [HttpGet("students/{studentId}/health-declarations")]
-        [Authorize(Roles = "parent")]
+        [Authorize(Roles = "parent, nurse")]
         public async Task<IActionResult> GetHealthProfileDeclaration(Guid studentId)
         {
             if (studentId == Guid.Empty)
