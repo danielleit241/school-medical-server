@@ -138,6 +138,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 VaccinationScheduleResponseDto = new VaccinationScheduleResponseDto
                 {
                     ScheduleId = schedule.ScheduleId,
+                    VaccineId = schedule.VaccineId,
                     Title = schedule.Title,
                     Description = schedule.Description,
                     StartDate = schedule.StartDate,
