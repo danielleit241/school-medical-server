@@ -30,5 +30,12 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         {
             return await _context.HealthProfiles.FirstOrDefaultAsync(h => h.HealthProfileId == healthProfileId);
         }
+
+        public async Task<IEnumerable<HealthProfile>> GetByIdsAsync(List<Guid> healthProfileIds)
+        {
+            return await _context.HealthProfiles
+                .Where(h => healthProfileIds.Contains(h.HealthProfileId))
+                .ToListAsync();
+        }
     }
 }

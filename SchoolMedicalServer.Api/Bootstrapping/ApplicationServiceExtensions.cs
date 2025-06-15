@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SchoolMedicalServer.Api.BackgroundServices;
 using SchoolMedicalServer.Api.Helpers;
 using SchoolMedicalServer.Infrastructure;
 
@@ -72,6 +73,7 @@ namespace SchoolMedicalServer.Api.Bootstrapping
                 options.UseSqlServer(configuration.GetConnectionString("DBDefault"),
                     sqlOptions => sqlOptions.MigrationsAssembly("SchoolMedicalServer.Infrastructure"));
             });
+            services.AddHostedService<WeeklyVaccinationReminderService>();
 
 
             services.AddCors(options =>
@@ -87,8 +89,8 @@ namespace SchoolMedicalServer.Api.Bootstrapping
 
 
             services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
-            services.AddTransient<IEmailHelper, EmailHelper>();
-            services.AddTransient<INotificationSender, NotificationSender>();
+            services.AddScoped<IEmailHelper, EmailHelper>();
+            services.AddScoped<INotificationSender, NotificationSender>();
 
             return services;
         }

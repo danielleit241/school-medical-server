@@ -53,6 +53,8 @@ namespace SchoolMedicalServer.Tests.Services
             Assert.NotNull(result);
             Assert.NotEmpty(result.AccessToken);
             Assert.NotEmpty(result.RefreshToken);
+
+            //Decode jwt
         }
 
         [Fact]

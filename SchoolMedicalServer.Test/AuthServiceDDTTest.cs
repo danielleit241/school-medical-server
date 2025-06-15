@@ -39,7 +39,7 @@ namespace SchoolMedicalServer.Test
         public static IEnumerable<object[]> ValidLoginData() => Users.ToList().Select(u => new object[] { u.Phone, u.Password });
         public static IEnumerable<object[]> InvalidLoginData() => [
             ["1234567890", "WrongPassword!"],
-            ["0000000000", "YourStr0ngPassw0rd!"],
+            ["9817232134", "YourStr0ngPassw0rd!"],
             ["0000000000", "WrongPassword!"]
         ];
 
@@ -60,11 +60,16 @@ namespace SchoolMedicalServer.Test
             Assert.NotNull(result);
             Assert.NotEmpty(result.AccessToken);
             Assert.NotEmpty(result.RefreshToken);
+
+            //decode jwt
         }
 
 
         [Theory]
-        [MemberData(nameof(InvalidLoginData))]
+        //[MemberData(nameof(InvalidLoginData))]
+        [InlineData("1234567890", "WrongPassword!")]
+        [InlineData("9817232134", "YourStr0ngPassw0rd!")]
+        [InlineData("0000000000", "WrongPassword!")]
         public async Task AuthenticateUser_ShouldReturnNull_WhenCredentialsAreInvalid(string phoneNumber, string password)
         {
             var context = CreateContext();

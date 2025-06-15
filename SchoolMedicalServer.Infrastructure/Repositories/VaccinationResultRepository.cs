@@ -16,6 +16,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task Create(VaccinationResult vaccinationResult)
         {
             await _context.VaccinationResults.AddAsync(vaccinationResult);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<VaccinationResult>> GetAllAsync()
@@ -52,6 +53,14 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync() ?? [];
+        }
+
+        public async Task<List<Guid>> GetHealthProfileIdsByRoundIdsAsync(List<Guid> guids)
+        {
+            return await _context.VaccinationResults
+                .Where(vr => guids.Contains(vr.RoundId))
+                .Select(vr => vr.VaccinationResultId)
+                .ToListAsync();
         }
 
         public async Task<bool> IsExistStudentByRoundId(Guid id)

@@ -33,7 +33,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
 
         public async Task<IEnumerable<VaccinationSchedule>> GetVaccinationSchedulesAsync()
         {
-            return await _context.VaccinationSchedules.ToListAsync();
+            return await _context.VaccinationSchedules.Include(s => s.Rounds).Include(s => s.Vaccine).ToListAsync();
         }
 
         public void UpdateVaccinationSchedule(VaccinationSchedule request)
