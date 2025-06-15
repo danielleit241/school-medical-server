@@ -1,5 +1,4 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Dtos.Vaccination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Rounds;
 
 namespace SchoolMedicalServer.Abstractions.IServices
@@ -12,5 +11,6 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task<IEnumerable<VaccinationRoundResponse>> GetVaccinationRoundsByScheduleIdAsync(Guid scheduleId);
         Task<PaginationResponse<VaccinationRoundResponse>> GetVaccinationRoundsByNurseIdAsync(Guid nurseId, PaginationRequest? pagination);
         Task<bool> UpdateVaccinationRoundAsync(Guid roundId, VaccinationRoundRequest request);
+        Task<bool> CreateVaccinationRoundByScheduleIdAsync(VaccinationRoundRequest request);
     }
 }

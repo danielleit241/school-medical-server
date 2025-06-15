@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 
@@ -15,6 +16,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task CreateVaccinationRoundAsync(VaccinationRound request)
         {
             await _context.VaccinationRounds.AddAsync(request);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<VaccinationRound?> GetVaccinationRoundByIdAsync(Guid id)
@@ -46,9 +48,10 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public void UpdateVaccinationRound(VaccinationRound request)
+        public async Task UpdateVaccinationRound(VaccinationRound request)
         {
             _context.VaccinationRounds.Update(request);
+            await _context.SaveChangesAsync();
         }
     }
 }

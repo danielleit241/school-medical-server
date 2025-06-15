@@ -14,6 +14,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task CreateVaccinationSchedule(VaccinationSchedule request)
         {
             await _context.VaccinationSchedules.AddAsync(request);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<VaccinationSchedule>> GetPagedVaccinationSchedule(int skip, int take)
@@ -38,6 +39,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public void UpdateVaccinationSchedule(VaccinationSchedule request)
         {
             _context.VaccinationSchedules.Update(request);
+            _context.SaveChanges();
         }
     }
 }

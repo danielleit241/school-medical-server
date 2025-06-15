@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Dtos.Vaccination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Rounds;
 using SchoolMedicalServer.Abstractions.IServices;
 
@@ -11,6 +10,22 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
     [ApiController]
     public class VaccinationRoundController(IVaccinationRoundService service) : ControllerBase
     {
+        [HttpPost("schedules/vaccination-rounds")]
+        [Authorize(Roles = "admin, manager")]
+        public async Task<IActionResult> CreateVaccinationRound([FromBody] VaccinationRoundRequest request)
+        {
+            if (request == null)
+            {
+                return BadRequest(new { Message = "Invalid request data." });
+            }
+            var result = await service.CreateVaccinationRoundByScheduleIdAsync(request);
+            if (!result)
+            {
+                return NotFound(new { Message = "Vaccination round not found or update failed." });
+            }
+            return Ok(new { Message = "Vaccination round updated successfully." });
+        }
+
         [HttpGet("manager/vaccination-rounds/{roundId}/students")]
         [Authorize(Roles = "admin, manager, nurse")]
         public async Task<IActionResult> GetStudentsByVacciantionRoundId([FromQuery] PaginationRequest? pagination, Guid roundId)

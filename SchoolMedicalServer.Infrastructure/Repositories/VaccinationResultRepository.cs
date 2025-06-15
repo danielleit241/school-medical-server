@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 
@@ -58,9 +59,10 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
             return await _context.VaccinationResults.AnyAsync(vr => vr.RoundId == id);
         }
 
-        public void Update(VaccinationResult vaccinationResult)
+        public async Task UpdateAsync(VaccinationResult vaccinationResult)
         {
             _context.VaccinationResults.Update(vaccinationResult);
+            await _context.SaveChangesAsync();
         }
     }
 }

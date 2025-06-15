@@ -8,7 +8,7 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task CreateVaccinationRoundAsync(VaccinationRound request);
         Task<VaccinationRound?> GetVaccinationRoundByIdAsync(Guid id);
         Task<IEnumerable<VaccinationRound>> GetVaccinationRoundsAsync();
-        void UpdateVaccinationRound(VaccinationRound request);
+        Task UpdateVaccinationRound(VaccinationRound request);
         Task<IEnumerable<VaccinationRound>> GetVaccinationRoundsByScheduleIdAsync(Guid scheduleId);
         Task<int> CountByNurseIdAsync(Guid nurseId);
         Task<IEnumerable<VaccinationRound>> GetVaccinationRoundsByNurseIdAsync(Guid nurseId, string search, int skip, int pageSize);
