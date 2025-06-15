@@ -19,6 +19,7 @@ public partial class VaccinationDetail
     public DateOnly? ExpirationDate { get; set; }
 
     public string? ContraindicationNotes { get; set; }
+    public bool Status { get; set; } = true;
 
     public string? Description { get; set; }
 

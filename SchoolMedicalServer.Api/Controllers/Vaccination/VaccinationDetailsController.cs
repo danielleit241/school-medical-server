@@ -19,6 +19,14 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             return Ok(vaccineDetails);
         }
 
+        [HttpGet("vaccination-details/all")]
+        [Authorize(Roles = "admin, manager")]
+        public async Task<IActionResult> GetAllVaccineDetails()
+        {
+            var vaccineDetails = await service.GetAllVaccineDetailsAsync();
+            return Ok(vaccineDetails);
+        }
+
         [HttpPost("vaccination-details")]
         [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> CreateVaccineDetail([FromBody] VaccinationDetailsRequest vaccineDetail)
@@ -58,9 +66,9 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
 
         [HttpDelete("vaccination-details/{id:guid}")]
         [Authorize(Roles = "admin, manager")]
-        public async Task<IActionResult> DeleteVaccinationDetail(Guid id )
+        public async Task<IActionResult> DeleteVaccinationDetail(Guid id)
         {
-            var deletedDetail = await service.DeleteVaccineDetailAsync(id );
+            var deletedDetail = await service.DeleteVaccineDetailAsync(id);
             if (deletedDetail == null)
             {
                 return NotFound($"No vaccination detail found with id {id}");
