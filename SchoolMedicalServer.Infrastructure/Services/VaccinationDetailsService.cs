@@ -120,7 +120,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var vaccineDetail = await vacctionDetailsRepository.GetByIdAsync(id);
             if (vaccineDetail == null) return null!;
 
-            vacctionDetailsRepository.Delete(vaccineDetail);
+            vaccineDetail.Status = false;
+            vacctionDetailsRepository.Update(vaccineDetail);
             await baseRepository.SaveChangesAsync();
 
             return MapToResponse(vaccineDetail);
