@@ -42,14 +42,15 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             public async Task<MedicalInventoryResponse?> DeleteMedicalInventoryAsync(Guid itemId)
             {
-                var item = await medicalInventoryRepository.GetByIdAsync(itemId);
-                if (item == null) return null;
+            var item = await medicalInventoryRepository.GetByIdAsync(itemId);
+            if (item == null) return null;
 
-                medicalInventoryRepository.Delete(item);
-                await baseRepository.SaveChangesAsync();
+            item.Status = false;
+            medicalInventoryRepository.Update(item);
+            await baseRepository.SaveChangesAsync();
 
-                return ToMedicalInventoryResponse(item);
-            }
+            return ToMedicalInventoryResponse(item);
+        }
 
         public async Task<MedicalInventoryResponse?> GetMedicalInventoryByIdAsync(Guid itemId)
         {
