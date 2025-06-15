@@ -12,6 +12,7 @@
         public DateOnly? ExpirationDate { get; set; }
         public string? ContraindicationNotes { get; set; }
         public string? Description { get; set; }
+        public bool Status { get; set; }
         public DateTime? CreateAt { get; set; }
         public DateTime? UpdateAt { get; set; }
 

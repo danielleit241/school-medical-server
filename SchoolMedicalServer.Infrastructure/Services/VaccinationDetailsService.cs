@@ -39,8 +39,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return true;
         }
 
-
-
         public async Task<VaccinationDetailsResponse> GetVaccineDetailAsync(Guid id)
         {
             if (id == Guid.Empty)
@@ -90,6 +88,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             vaccineDetailToUpdate.Manufacturer = vaccineDetail.Manufacturer;
             vaccineDetailToUpdate.VaccineType = vaccineDetail.VaccineType;
             vaccineDetail.Description = vaccineDetail.Description;
+            vaccineDetailToUpdate.Status = vaccineDetail.Status;
             vaccineDetailToUpdate.UpdatedAt = DateTime.UtcNow;
             vacctionDetailsRepository.Update(vaccineDetailToUpdate);
             await baseRepository.SaveChangesAsync();
@@ -110,6 +109,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 BatchNumber = detail.BatchNumber,
                 ExpirationDate = detail.ExpirationDate,
                 ContraindicationNotes = detail.ContraindicationNotes,
+                Status = detail.Status,
                 CreateAt = detail.CreatedAt,
                 UpdateAt = detail.UpdatedAt
             };
@@ -124,6 +124,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
             await baseRepository.SaveChangesAsync();
 
             return MapToResponse(vaccineDetail);
+        }
+
+        public async Task<IEnumerable<VaccinationDetailsResponse>> GetAllVaccineDetailsAsync()
+        {
+            var details = await vacctionDetailsRepository.GetAllAsync();
+            details = details.ToList().Where(detail => detail.Status == true).ToList();
+            return details.Select(detail => MapToResponse(detail)).ToList();
         }
     }
 }

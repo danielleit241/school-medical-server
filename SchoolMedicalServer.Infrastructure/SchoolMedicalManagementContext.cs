@@ -690,6 +690,10 @@ public partial class SchoolMedicalManagementContext : DbContext
                 .HasColumnType("datetime");
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime");
+            entity.Property(e => e.Status)
+                .HasColumnType("bit")
+                .HasDefaultValue(true)
+                .HasColumnName("Status");
         });
 
         modelBuilder.Entity<Role>().HasData(
