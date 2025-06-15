@@ -60,7 +60,7 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
 
         [HttpPut("vaccinations/schedules/{scheduleId}")]
         [Authorize(Roles = "admin, manager")]
-        public async Task<IActionResult> UpdateVaccinationSchedule(Guid scheduleId, [FromBody] VaccinationScheduleRequest request)
+        public async Task<IActionResult> UpdateVaccinationSchedule(Guid scheduleId, [FromBody] VaccinationScheduleUpdateRequest request)
         {
             // Assuming there's an update method in the service
             var isUpdated = await service.UpdateScheduleAsync(scheduleId, request);

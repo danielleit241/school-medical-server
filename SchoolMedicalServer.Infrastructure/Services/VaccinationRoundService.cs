@@ -10,7 +10,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IVaccinationRoundRepository vaccinationRound,
         IVaccinationResultRepository vaccinationResultRepository,
         IStudentRepository studentRepository,
-        IUserRepository userRepository) : IVaccinationRoundService
+        IUserRepository userRepository,
+        IVaccinationScheduleRepository scheduleRepository) : IVaccinationRoundService
     {
         public async Task<PaginationResponse<VaccinationRoundStudentResponse>> GetStudentsByVacciantionRoundIdForManagerAsync(PaginationRequest? pagination, Guid roundId)
         {
@@ -184,6 +185,28 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 responses
             );
 
+        }
+
+        public async Task<bool> CreateVaccinationRoundByScheduleIdAsync(VaccinationRoundRequest request)
+        {
+            var schedule = await scheduleRepository.GetVaccinationScheduleByIdAsync(request.ScheduleId!.Value);
+            if (schedule == null)
+            {
+                return false;
+            }
+            var round = new VaccinationRound
+            {
+                RoundId = Guid.NewGuid(),
+                RoundName = request.RoundName,
+                TargetGrade = request.TargetGrade,
+                Description = request.Description,
+                StartTime = request.StartTime!.Value,
+                EndTime = request.EndTime!.Value,
+                NurseId = request.NurseId,
+                ScheduleId = schedule.ScheduleId
+            };
+            await vaccinationRound.CreateVaccinationRoundAsync(round);
+            return true;
         }
     }
 }

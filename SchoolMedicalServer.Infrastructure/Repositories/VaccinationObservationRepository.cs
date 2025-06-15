@@ -6,9 +6,10 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
 {
     public class VaccinationObservationRepository(SchoolMedicalManagementContext _context) : IVaccinationObservationRepository
     {
-        public void CreateVaccinationObservation(VaccinationObservation observation)
+        public async Task CreateVaccinationObservation(VaccinationObservation observation)
         {
             _context.VaccinationObservations.Add(observation);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<VaccinationObservation?> GetObservationsByResultIdAsync(Guid resultId)
@@ -29,9 +30,10 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .AnyAsync(o => o.VaccinationResultId == vaccinationResultId);
         }
 
-        public void UpdateVaccinationObservation(VaccinationObservation observation)
+        public async Task UpdateVaccinationObservation(VaccinationObservation observation)
         {
             _context.VaccinationObservations.Update(observation);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -13,8 +13,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IVaccinationScheduleRepository scheduleRepository,
         IVaccinationObservationRepository observationRepository,
         IHealthProfileRepository healthProfileRepository,
-        IStudentRepository studentRepository,
-        IBaseRepository baseRepository) : IVaccinationResultService
+        IStudentRepository studentRepository) : IVaccinationResultService
     {
         public async Task<bool?> ConfirmOrDeclineVaccination(Guid resultId, ParentVaccinationConfirmationRequest request)
         {
@@ -48,8 +47,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 result.Notes = "Parent declined vaccination.";
                 result.Status = "Declined";
             }
-            resultRepository.Update(result);
-            await baseRepository.SaveChangesAsync();
+            await resultRepository.UpdateAsync(result);
             return result.ParentConfirmed;
         }
 
@@ -85,8 +83,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             var healthProfile = await healthProfileRepository.GetHealthProfileById(result.HealthProfileId);
             var parentId = await studentRepository.GetParentUserIdAsync(healthProfile!.StudentId);
-            observationRepository.CreateVaccinationObservation(observation);
-            await baseRepository.SaveChangesAsync();
+            await observationRepository.CreateVaccinationObservation(observation);
 
             return new NotificationRequest
             {
@@ -110,8 +107,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             result.Notes = request.Notes;
             result.Status = request.Status ?? "Failed";
 
-            resultRepository.Update(result);
-            await baseRepository.SaveChangesAsync();
+            await resultRepository.UpdateAsync(result);
             return true;
         }
 
