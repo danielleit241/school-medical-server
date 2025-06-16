@@ -7,6 +7,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
     {
         Task<PaginationResponse<VaccinationRoundStudentResponse>> GetStudentsByVacciantionRoundIdForManagerAsync(PaginationRequest? pagination, Guid roundId);
         Task<PaginationResponse<VaccinationRoundStudentResponse>> GetStudentsByVacciantionRoundIdForNurseAsync(PaginationRequest? pagination, Guid roundId, Guid nurseId);
+        Task<IEnumerable<VaccinationRoundParentResponse>> GetVaccinationRoundsByUserIdAsync(Guid userId);
         Task<VaccinationRoundResponse> GetVaccinationRoundByIdAsync(Guid roundId);
         Task<IEnumerable<VaccinationRoundResponse>> GetVaccinationRoundsByScheduleIdAsync(Guid scheduleId);
         Task<PaginationResponse<VaccinationRoundResponse>> GetVaccinationRoundsByNurseIdAsync(Guid nurseId, PaginationRequest? pagination);

@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.InkML;
+﻿using System.Linq;
+using DocumentFormat.OpenXml.InkML;
 using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
@@ -35,6 +36,13 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         {
             return await _context.HealthProfiles
                 .Where(h => healthProfileIds.Contains(h.HealthProfileId))
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<HealthProfile>> GetByStudentIdsAsync(IEnumerable<Guid> students)
+        {
+            return await _context.HealthProfiles
+                .Where(h => students.Contains(h.StudentId ?? Guid.Empty))
                 .ToListAsync();
         }
     }

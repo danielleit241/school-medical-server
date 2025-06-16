@@ -30,6 +30,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         {
             return await _context.VaccinationResults
                 .Include(vr => vr.Round)
+                .Include(vr => vr.VaccinationObservation)
                 .FirstOrDefaultAsync(vr => vr.VaccinationResultId == id);
         }
 
@@ -80,6 +81,16 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .Include(vr => vr.HealthProfile)
                 .ThenInclude(hp => hp!.Student)
                 .Where(vr => vr.RoundId == roundId)
+                .ToListAsync() ?? [];
+        }
+
+        public async Task<IEnumerable<VaccinationResult?>> GetByHealthProfileIdsAsync(IEnumerable<Guid> enumerable)
+        {
+            return await _context.VaccinationResults
+                .Include(vr => vr.HealthProfile)
+                .ThenInclude(hp => hp!.Student)
+                .Include(vr => vr.Round)
+                .Where(vr => enumerable.Contains(vr.HealthProfileId))
                 .ToListAsync() ?? [];
         }
     }

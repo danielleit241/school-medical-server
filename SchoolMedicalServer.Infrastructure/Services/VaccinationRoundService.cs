@@ -11,7 +11,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IVaccinationResultRepository vaccinationResultRepository,
         IStudentRepository studentRepository,
         IUserRepository userRepository,
-        IVaccinationScheduleRepository scheduleRepository) : IVaccinationRoundService
+        IVaccinationScheduleRepository scheduleRepository,
+        IHealthProfileRepository healthProfile) : IVaccinationRoundService
     {
         public async Task<PaginationResponse<VaccinationRoundStudentResponse>> GetStudentsByVacciantionRoundIdForManagerAsync(PaginationRequest? pagination, Guid roundId)
         {
@@ -208,6 +209,63 @@ namespace SchoolMedicalServer.Infrastructure.Services
             };
             await vaccinationRound.CreateVaccinationRoundAsync(round);
             return true;
+        }
+
+        public async Task<IEnumerable<VaccinationRoundParentResponse>> GetVaccinationRoundsByUserIdAsync(Guid userId)
+        {
+            var students = await studentRepository.GetByParentIdAsync(userId);
+            var healthProfiles = await healthProfile.GetByStudentIdsAsync(students.Select(s => s.StudentId));
+            var vaccinationResults = await vaccinationResultRepository.GetByHealthProfileIdsAsync(healthProfiles.Select(h => h.HealthProfileId));
+
+            var today = DateTime.UtcNow.Date;
+            int diff = (7 + (today.DayOfWeek - DayOfWeek.Monday)) % 7;
+            var weekStart = today.AddDays(-1 * diff);
+            var weekEnd = weekStart.AddDays(7).AddTicks(-1);
+            List<VaccinationRoundParentResponse> responses = new();
+            foreach (var result in vaccinationResults)
+            {
+                var round = await vaccinationRound.GetVaccinationRoundByIdAsync(result!.Round!.RoundId);
+                if (round == null)
+                {
+                    continue;
+                }
+                if (round.StartTime >= weekStart && round.EndTime <= weekEnd)
+                {
+                    var nurse = await userRepository.GetByIdAsync(round.NurseId);
+                    if (nurse == null)
+                    {
+                        continue;
+                    }
+                    responses.Add(await MapToParentReponseAsync(round, nurse, result));
+                }
+            }
+            return responses;
+        }
+
+        private async Task<VaccinationRoundParentResponse> MapToParentReponseAsync(VaccinationRound round, User nurse, VaccinationResult vaccinationResults)
+        {
+            var res = new VaccinationRoundParentResponse();
+            res.VaccinationRoundInformation = new VaccinationRoundInformationResponse
+            {
+                RoundId = round.RoundId,
+                RoundName = round.RoundName!,
+                TargetGrade = round.TargetGrade!,
+                StartTime = round.StartTime,
+                EndTime = round.EndTime,
+                Description = round.Description!,
+                Status = round.Status
+            };
+            res.Nurse = new VaccinationRoundNurseInformationResponse
+            {
+                NurseId = nurse!.UserId,
+                NurseName = nurse.FullName!,
+                PhoneNumber = nurse.PhoneNumber,
+                AvatarUrl = nurse.AvatarUrl!
+            };
+            res.Student = await StudentsOfRoundResponse(vaccinationResults!);
+            res.Parent = await ParentOfStudentResponse(vaccinationResults!);
+
+            return res;
         }
     }
 }
