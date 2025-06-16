@@ -47,7 +47,6 @@ namespace SchoolMedicalServer.Test
             ["0000000000", "WrongPassword!"]
         ];
 
-
         [Theory]
         [MemberData(nameof(ValidLoginData))]
         public async Task AuthenticateUser_ShouldReturnToken_WhenCredentialsAreValid(string phoneNumber, string password)
@@ -90,12 +89,11 @@ namespace SchoolMedicalServer.Test
             roleClaim!.Value.Should().Be(user.Role!.RoleName);
         }
 
-
         [Theory]
-        [MemberData(nameof(InvalidLoginData))]
-        //[InlineData("1234567890", "WrongPassword!")]
-        //[InlineData("9817232134", "YourStr0ngPassw0rd!")]
-        //[InlineData("0000000000", "WrongPassword!")]
+        //[MemberData(nameof(InvalidLoginData))]
+        [InlineData("1234567890", "WrongPassword!")]
+        [InlineData("9817232134", "YourStr0ngPassw0rd!")]
+        [InlineData("0000000000", "WrongPassword!")]
         public async Task AuthenticateUser_ShouldReturnNull_WhenCredentialsAreInvalid(string phoneNumber, string password)
         {
             var context = CreateContext();

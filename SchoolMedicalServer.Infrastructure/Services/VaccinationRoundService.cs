@@ -47,6 +47,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return new StudentsOfRoundResponse
             {
                 StudentId = student?.StudentId,
+                VaccinationResultId = result.VaccinationResultId,
                 FullName = student?.FullName,
                 StudentCode = student?.StudentCode,
                 DayOfBirth = student?.DayOfBirth,
