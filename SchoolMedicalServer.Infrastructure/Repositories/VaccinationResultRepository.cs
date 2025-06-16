@@ -59,7 +59,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         {
             return await _context.VaccinationResults
                 .Where(vr => guids.Contains(vr.RoundId))
-                .Select(vr => vr.VaccinationResultId)
+                .Select(vr => vr.HealthProfileId)
                 .ToListAsync();
         }
 
@@ -72,6 +72,15 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         {
             _context.VaccinationResults.Update(vaccinationResult);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<VaccinationResult?>> GetAllStudentsInRound(Guid roundId)
+        {
+            return await _context.VaccinationResults
+                .Include(vr => vr.HealthProfile)
+                .ThenInclude(hp => hp!.Student)
+                .Where(vr => vr.RoundId == roundId)
+                .ToListAsync() ?? [];
         }
     }
 }
