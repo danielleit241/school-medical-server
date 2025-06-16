@@ -10,6 +10,8 @@
     {
         public Guid? StudentId { get; set; }
 
+        public Guid? VaccinationResultId { get; set; }
+
         public string? StudentCode { get; set; }
 
         public string? FullName { get; set; }

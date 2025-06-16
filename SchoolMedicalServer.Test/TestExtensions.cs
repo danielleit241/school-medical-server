@@ -29,6 +29,7 @@ namespace SchoolMedicalServer.Test
                 .Build();
             return config;
         }
+
         public AuthService CreateAuthService(SchoolMedicalManagementContext context)
         {
             var baseRepo = new BaseRepository(context);

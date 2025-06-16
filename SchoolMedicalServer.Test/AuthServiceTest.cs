@@ -32,6 +32,7 @@ namespace SchoolMedicalServer.Test
             };
             context.Users.Add(user);
             context.SaveChanges();
+
         }
 
         [Fact]
