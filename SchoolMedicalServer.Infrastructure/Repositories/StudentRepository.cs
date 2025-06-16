@@ -134,6 +134,13 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .Include(s => s.HealthProfile)
                 .FirstOrDefaultAsync(s => s.HealthProfile!.HealthProfileId == healthProfileId);
         }
+
+        public async Task<IEnumerable<Student>> GetByIdsAsync(List<Guid> studentIds)
+        {
+            return await _context.Students
+                .Where(s => studentIds.Contains(s.StudentId))
+                .ToListAsync();
+        }
     }
 }
 

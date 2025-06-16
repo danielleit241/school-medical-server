@@ -73,7 +73,7 @@ namespace SchoolMedicalServer.Api.Bootstrapping
                 options.UseSqlServer(configuration.GetConnectionString("DBDefault"),
                     sqlOptions => sqlOptions.MigrationsAssembly("SchoolMedicalServer.Infrastructure"));
             });
-            services.AddHostedService<WeeklyVaccinationReminderService>();
+            services.AddHostedService<DailyVaccinationReminderService>();
 
 
             services.AddCors(options =>
