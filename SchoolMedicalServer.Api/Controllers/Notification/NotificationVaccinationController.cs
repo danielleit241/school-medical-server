@@ -19,10 +19,10 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return BadRequest("Failed to send vaccination notification to parent.");
             }
-            notifications.ToList().ForEach(async notification =>
+            foreach (var notification in notifications)
             {
                 await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
-            });
+            }
             return Ok(notifications);
         }
 
@@ -48,10 +48,10 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             {
                 return BadRequest("Failed to send vaccination notification to nurse.");
             }
-            notifications.ToList().ForEach(async notification =>
+            foreach (var notification in notifications)
             {
                 await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
-            });
+            }
             return Ok(notifications);
         }
     }

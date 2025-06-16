@@ -1,10 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SchoolMedicalServer.Abstractions.Dtos.Helpers;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Helpers;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
-using SchoolMedicalServer.Abstractions.IServices;
 using SchoolMedicalServer.Api.Helpers;
-using SchoolMedicalServer.Infrastructure;
 
 namespace SchoolMedicalServer.Api.BackgroundServices
 {
