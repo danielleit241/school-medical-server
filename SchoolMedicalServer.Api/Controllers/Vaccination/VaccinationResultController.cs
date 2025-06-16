@@ -74,5 +74,12 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             }
             return Ok(new { Message = "Parent is confirm" });
         }
+
+        //[HttpGet("parents/{userId}/vaccination-results/students")]
+        //[Authorize(Roles = "parent")]
+        //public async Task<IActionResult> GetVaccinationResultStudents(Guid userId)
+        //{
+        //    var students = await service.GetVaccinationResultStudents(userId);
+        //}
     }
 }

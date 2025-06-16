@@ -116,24 +116,23 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var result = await resultRepository.GetByIdAsync(resultId);
             if (result == null) return null!;
             return MapToVaccinationResultResponse(result);
-
         }
 
 
         private static VaccinationResultInformationResponse MapToVaccinationResultResponse(VaccinationResult result) => new VaccinationResultInformationResponse
         {
-                VaccinationResultId = result.VaccinationResultId,
-                RoundId = result.RoundId,
-                HealthProfileId = result.HealthProfileId,
-                ParentConfirmed = result.ParentConfirmed,
-                Vaccinated = result.Vaccinated,
-                VaccinatedDate = result.VaccinatedDate,
-                InjectionSite = result.InjectionSite,
-                RecorderId = result.RecorderId,
-                Status = result.Status,
-                Notes = result.Notes,
-                Observation = MapToObservationResponse(result.VaccinationObservation)
-            };
+            VaccinationResultId = result.VaccinationResultId,
+            RoundId = result.RoundId,
+            HealthProfileId = result.HealthProfileId,
+            ParentConfirmed = result.ParentConfirmed,
+            Vaccinated = result.Vaccinated,
+            VaccinatedDate = result.VaccinatedDate,
+            InjectionSite = result.InjectionSite,
+            RecorderId = result.RecorderId,
+            Status = result.Status,
+            Notes = result.Notes,
+            Observation = MapToObservationResponse(result.VaccinationObservation)
+        };
 
         private static VaccinationObservationInformationResponse? MapToObservationResponse(VaccinationObservation? obs) =>
             obs == null ? null : new VaccinationObservationInformationResponse
@@ -148,7 +147,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 ObservedBy = obs.ObservedBy,
                 Notes = obs.Notes
             };
-
 
 
         public async Task<bool?> IsVaccinationConfirmed(Guid resultId)

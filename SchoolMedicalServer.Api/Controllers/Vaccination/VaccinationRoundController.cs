@@ -85,5 +85,16 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             }
             return Ok(vaccinationRounds);
         }
+
+        [HttpGet("parents/{userId}/vaccination-rounds/students")]
+        public async Task<IActionResult> GetStudentRoundByUserId(Guid userId)
+        {
+            var vaccinationRounds = await service.GetVaccinationRoundsByUserIdAsync(userId);
+            if (vaccinationRounds == null)
+            {
+                return NotFound(new { Message = "No vaccination rounds found for this user." });
+            }
+            return Ok(vaccinationRounds);
+        }
     }
 }

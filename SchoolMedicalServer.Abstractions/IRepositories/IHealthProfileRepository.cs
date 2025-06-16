@@ -11,5 +11,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task UpdateAsync(HealthProfile profile);
         Task AddVaccinationDeclarationAsync(VaccinationDeclaration declaration);
         Task<IEnumerable<HealthProfile>> GetByIdsAsync(List<Guid> healthProfileIds);
+        Task<IEnumerable<HealthProfile>> GetByStudentIdsAsync(IEnumerable<Guid> enumerable);
     }
 }
