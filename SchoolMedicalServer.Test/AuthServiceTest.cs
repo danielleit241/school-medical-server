@@ -2,9 +2,8 @@
 using SchoolMedicalServer.Abstractions.Dtos.Authentication;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Infrastructure;
-using SchoolMedicalServer.Test;
 
-namespace SchoolMedicalServer.Tests.Services
+namespace SchoolMedicalServer.Test
 {
     public class AuthServiceTest : TestExtensions
     {
@@ -53,8 +52,6 @@ namespace SchoolMedicalServer.Tests.Services
             Assert.NotNull(result);
             Assert.NotEmpty(result.AccessToken);
             Assert.NotEmpty(result.RefreshToken);
-
-            //Decode jwt
         }
 
         [Fact]
