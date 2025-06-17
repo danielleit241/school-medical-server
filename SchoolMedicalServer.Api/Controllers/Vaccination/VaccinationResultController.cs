@@ -15,10 +15,6 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
         public async Task<IActionResult> GetHealthQualifiedVaccinationResults(Guid resultId)
         {
             var result = await service.GetHealthQualifiedVaccinationResult(resultId);
-            if (!result)
-            {
-                return NotFound(new { Message = "No health qualified vaccination results found." });
-            }
             return Ok(result);
         }
 
