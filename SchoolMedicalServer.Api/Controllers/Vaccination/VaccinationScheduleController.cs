@@ -10,14 +10,14 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
     [ApiController]
     public class VaccinationScheduleController(IVaccinationScheduleService service) : ControllerBase
     {
-        [HttpPost("vaccinations/schedules/check")]
+        [HttpPost("vaccinations/schedules/is-valid")]
         [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> CheckVaccinationSchedule([FromBody] VaccinationScheduleRequest request)
         {
             var isValid = await service.CheckVaccinationSchedule(request);
             if (!isValid)
             {
-                return NotFound(new { Message = "Vaccination schedule is not valid." });
+                return NotFound(new { Message = "Students in this vaccination campaign have already been vaccinated." });
             }
             return Ok("Vaccination schedule valid.");
         }

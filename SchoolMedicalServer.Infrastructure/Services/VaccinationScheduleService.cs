@@ -221,7 +221,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
                     foreach (var result in vaccineResults)
                     {
-                        if (result!.VaccinatedDate.HasValue)
+                        if (result!.VaccinatedDate.HasValue && result.Vaccinated == true)
                         {
                             DateOnly roundDate = DateOnly.FromDateTime(round.StartTime!.Value);
                             DateOnly vaccinatedDate = result.VaccinatedDate.Value;
