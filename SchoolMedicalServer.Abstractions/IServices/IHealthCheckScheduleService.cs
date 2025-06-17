@@ -4,7 +4,7 @@ using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 
 namespace SchoolMedicalServer.Abstractions.IServices
 {
-    public interface IHealthCheckService
+    public interface IHealthCheckScheduleService
     {
         Task<bool> CreateScheduleAsync(HealthCheckScheduleRequest request);
         Task<NotificationScheduleResponse> CreateVaccinationResultsByRounds(Guid scheduleId);

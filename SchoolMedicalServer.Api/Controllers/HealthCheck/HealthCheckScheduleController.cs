@@ -8,7 +8,7 @@ namespace SchoolMedicalServer.Api.Controllers.HealthCheck
 {
     [Route("api")]
     [ApiController]
-    public class HealthCheckScheduleController(IHealthCheckService service) : ControllerBase
+    public class HealthCheckScheduleController(IHealthCheckScheduleService service) : ControllerBase
     {
         [HttpPost("health-checks/schedules")]
         [Authorize(Roles = "admin, manager")]

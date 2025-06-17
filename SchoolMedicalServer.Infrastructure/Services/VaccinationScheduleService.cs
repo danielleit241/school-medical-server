@@ -11,7 +11,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
     public class VaccinationScheduleService(
         IVaccinationScheduleRepository vaccinationScheduleRepository,
         IVaccinationRoundRepository vaccinationRoundRepository,
-        IVacctionDetailsRepository vacctionDetailsRepository,
+        IVaccinationDetailsRepository vacctionDetailsRepository,
         IVaccinationResultRepository resultRepository,
         IStudentRepository studentRepository,
         IHealthProfileRepository profileRepository) : IVaccinationScheduleService

@@ -6,7 +6,7 @@ using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class VaccinationDetailsService(IVacctionDetailsRepository vacctionDetailsRepository, IBaseRepository baseRepository) : IVaccinationDetailsService
+    public class VaccinationDetailsService(IVaccinationDetailsRepository vacctionDetailsRepository, IBaseRepository baseRepository) : IVaccinationDetailsService
     {
         public async Task<bool> CreateVaccineDetailAsync(VaccinationDetailsRequest vaccineDetail)
         {

@@ -5,7 +5,7 @@ using System.Linq.Dynamic.Core;
 
 namespace SchoolMedicalServer.Infrastructure.Repositories
 {
-    public class VaccinationDetailsRepository(SchoolMedicalManagementContext _context) : IVacctionDetailsRepository
+    public class VaccinationDetailsRepository(SchoolMedicalManagementContext _context) : IVaccinationDetailsRepository
     {
         public async Task AddAsync(VaccinationDetail vacctionDetails)
         {

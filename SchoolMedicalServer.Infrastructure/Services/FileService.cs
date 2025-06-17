@@ -12,7 +12,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IMedicalInventoryRepository medicalInventoryRepository,
         IHealthProfileRepository healthProfileRepository,
         IBaseRepository baseRepository,
-        IVacctionDetailsRepository vacctionDetailsRepository) : IFileService
+        IVaccinationDetailsRepository vacctionDetailsRepository) : IFileService
     {
         public async Task UploadMedicalInventoriesExcelFile(IFormFile file)
         {

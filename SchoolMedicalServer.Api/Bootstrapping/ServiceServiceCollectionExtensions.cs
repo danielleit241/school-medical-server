@@ -24,7 +24,9 @@ namespace SchoolMedicalServer.Api.Bootstrapping
             services.AddScoped<IVaccinationScheduleService, VaccinationScheduleService>();
             services.AddScoped<IVaccinationRoundService, VaccinationRoundService>();
             services.AddScoped<IVaccinationResultService, VaccinationResultService>();
-            services.AddScoped<IHealthCheckService, HealthCheckService>();
+            services.AddScoped<IHealthCheckScheduleService, HealthCheckScheduleService>();
+            services.AddScoped<IHealthCheckResultService, HealthCheckResultService>();
+            services.AddScoped<IHealthCheckRoundService, HealthCheckRoundService>();
             return services;
         }
     }

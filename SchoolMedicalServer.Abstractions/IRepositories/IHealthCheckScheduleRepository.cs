@@ -2,7 +2,7 @@
 
 namespace SchoolMedicalServer.Abstractions.IRepositories
 {
-    public interface IHealthCheckRepository
+    public interface IHealthCheckScheduleRepository
     {
         Task CreateHealthCheckSchedule(HealthCheckSchedule request);
         Task<IEnumerable<HealthCheckSchedule>> GetHealthCheckSchedulesAsync();

@@ -2,7 +2,7 @@
 
 namespace SchoolMedicalServer.Abstractions.IRepositories
 {
-    public interface IVacctionDetailsRepository
+    public interface IVaccinationDetailsRepository
     {
         Task<List<VaccinationDetail>> GetAllAsync();
         Task<VaccinationDetail?> GetByIdAsync(Guid? id);
