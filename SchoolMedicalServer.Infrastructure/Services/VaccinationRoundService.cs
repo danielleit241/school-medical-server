@@ -132,9 +132,16 @@ namespace SchoolMedicalServer.Infrastructure.Services
             );
         }
 
-        public Task<bool> UpdateVaccinationRoundAsync(Guid roundId, VaccinationRoundRequest request)
+        public async Task<bool> UpdateVaccinationRoundStatusAsync(Guid roundId, bool request)
         {
-            throw new NotImplementedException();
+            var round = await vaccinationRound.GetVaccinationRoundByIdAsync(roundId);
+            if (round == null)
+            {
+                return false;
+            }
+            round.Status = request;
+            await vaccinationRound.UpdateVaccinationRound(round);
+            return true;
         }
 
         public async Task<IEnumerable<VaccinationRoundResponse>> GetVaccinationRoundsByScheduleIdAsync(Guid scheduleId)
@@ -211,18 +218,18 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return true;
         }
 
-        public async Task<IEnumerable<VaccinationRoundParentResponse>> GetVaccinationRoundsByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<VaccinationRoundParentResponse>> GetVaccinationRoundsByUserIdAsync(Guid userId, DateOnly? start, DateOnly? end)
         {
             var students = await studentRepository.GetByParentIdAsync(userId);
             var healthProfiles = await healthProfile.GetByStudentIdsAsync(students.Select(s => s.StudentId));
             var vaccinationResults = await vaccinationResultRepository.GetByHealthProfileIdsAsync(healthProfiles.Select(h => h.HealthProfileId));
 
-            var today = DateTime.UtcNow.Date;
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
             int diff = (7 + (today.DayOfWeek - DayOfWeek.Monday)) % 7;
-            var weekStart = today.AddDays(-1 * diff);
-            var weekEnd = weekStart.AddDays(7).AddTicks(-1);
+            var weekStart = start ?? today.AddDays(-1 * diff);
+            var weekEnd = end ?? weekStart.AddDays(7);
 
-            List<VaccinationRoundParentResponse> responses = [];
+            List<VaccinationRoundParentResponse> responses = new();
             foreach (var result in vaccinationResults)
             {
                 var round = await vaccinationRound.GetVaccinationRoundByIdAsync(result!.Round!.RoundId);
@@ -230,7 +237,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     continue;
                 }
-                if (round.StartTime >= weekStart && round.EndTime <= weekEnd)
+                if (DateOnly.FromDateTime((DateTime)round.StartTime!) >= weekStart &&
+                    DateOnly.FromDateTime((DateTime)round.EndTime!) <= weekEnd)
                 {
                     var nurse = await userRepository.GetByIdAsync(round.NurseId);
                     if (nurse == null)

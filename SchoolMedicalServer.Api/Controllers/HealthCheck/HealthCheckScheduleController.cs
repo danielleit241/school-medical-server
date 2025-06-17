@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SchoolMedicalServer.Abstractions.Dtos.HealthCheck.Schedules;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules;
 using SchoolMedicalServer.Abstractions.IServices;
 
-namespace SchoolMedicalServer.Api.Controllers.Vaccination
+namespace SchoolMedicalServer.Api.Controllers.HealthCheck
 {
     [Route("api")]
     [ApiController]
-    public class VaccinationScheduleController(IVaccinationScheduleService service) : ControllerBase
+    public class HealthCheckScheduleController(IHealthCheckService service) : ControllerBase
     {
-        [HttpPost("vaccinations/schedules")]
+        [HttpPost("health-checks/schedules")]
         [Authorize(Roles = "admin, manager")]
-        public async Task<IActionResult> CreateVaccinationSchedule([FromBody] VaccinationScheduleRequest request)
+        public async Task<IActionResult> CreateHealthCheckScheduleSchedule([FromBody] HealthCheckScheduleRequest request)
         {
             var isCreated = await service.CreateScheduleAsync(request);
             if (!isCreated)
@@ -22,7 +22,7 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             return Ok("Create schedule successfully");
         }
 
-        [HttpPost("vaccination/schedules/add-students")]
+        [HttpPost("health-checks/schedules/add-students")]
         [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> AddStudentInRoundByScheduleId([FromBody] Guid scheduleId)
         {
@@ -34,38 +34,38 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             return Ok(notificationRequests);
         }
 
-        [HttpGet("vaccinations/schedules")]
+        [HttpGet("health-checks/schedules")]
         [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> GetVaccinationSchedules([FromQuery] PaginationRequest? pagination)
         {
-            var vaccinationSchedules = await service.GetPaginationVaccinationSchedule(pagination);
-            if (vaccinationSchedules == null)
+            var healthCheckSchedules = await service.GetPaginationHealthCheckSchedule(pagination);
+            if (healthCheckSchedules == null)
             {
-                return NotFound(new { Message = "No vaccination schedules found." });
+                return NotFound(new { Message = "No healthcheck schedules found." });
             }
-            return Ok(vaccinationSchedules);
+            return Ok(healthCheckSchedules);
         }
 
-        [HttpGet("vaccinations/schedules/{id}")]
+        [HttpGet("health-checks/schedules/{id}")]
         [Authorize(Roles = "admin, manager, nurse")]
         public async Task<IActionResult> GetVaccinationSchedule(Guid id)
         {
-            var vaccinationSchedule = await service.GetVaccinationSchedule(id);
-            if (vaccinationSchedule == null)
+            var healthCheckSchedule = await service.GetHealthCheckSchedule(id);
+            if (healthCheckSchedule == null)
             {
-                return NotFound(new { Message = "No vaccination schedules found." });
+                return NotFound(new { Message = "No healthcheck schedules found." });
             }
-            return Ok(vaccinationSchedule);
+            return Ok(healthCheckSchedule);
         }
 
-        [HttpPut("vaccinations/schedules/{scheduleId}")]
+        [HttpPut("health-check/schedules/{scheduleId}")]
         [Authorize(Roles = "admin, manager")]
-        public async Task<IActionResult> UpdateVaccinationSchedule(Guid scheduleId, [FromBody] VaccinationScheduleUpdateRequest request)
+        public async Task<IActionResult> UpdateHealthCheckSchedule(Guid scheduleId, [FromBody] HealthCheckScheduleUpdateRequest request)
         {
             var isUpdated = await service.UpdateScheduleAsync(scheduleId, request);
             if (!isUpdated)
             {
-                return BadRequest(new { Message = "Failed to update vaccination schedule." });
+                return BadRequest(new { Message = "Failed to update healthcheck schedule." });
             }
             return Ok("Update schedule successfully!");
         }

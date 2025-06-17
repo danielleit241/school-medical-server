@@ -3,7 +3,9 @@
 public partial class HealthCheckResult
 {
     public Guid ResultId { get; set; }
-    public Guid? ScheduleId { get; set; }
+    public Guid RoundId { get; set; }
+    public Guid HealthProfileId { get; set; }
+    public bool? ParentConfirmed { get; set; } = null;
     public DateOnly? DatePerformed { get; set; }
     public double? Height { get; set; }
     public double? Weight { get; set; }
@@ -12,11 +14,11 @@ public partial class HealthCheckResult
     public string? Hearing { get; set; }
     public string? Nose { get; set; }
     public string? BloodPressure { get; set; }
+    public bool? Status { get; set; }
     public string? Notes { get; set; }
     public Guid? RecordedId { get; set; }
     public DateTime? RecordedAt { get; set; }
 
-    public Guid HealthProfileId { get; set; }
-    public virtual HealthCheckSchedule? Schedule { get; set; }
+    public virtual HealthCheckRound? Round { get; set; }
     public virtual HealthProfile? HealthProfile { get; set; }
 }

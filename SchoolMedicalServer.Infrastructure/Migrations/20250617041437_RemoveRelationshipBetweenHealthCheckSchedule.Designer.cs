@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolMedicalServer.Infrastructure;
 
@@ -11,9 +12,11 @@ using SchoolMedicalServer.Infrastructure;
 namespace SchoolMedicalServer.Infrastructure.Migrations
 {
     [DbContext(typeof(SchoolMedicalManagementContext))]
-    partial class SchoolMedicalManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20250617041437_RemoveRelationshipBetweenHealthCheckSchedule")]
+    partial class RemoveRelationshipBetweenHealthCheckSchedule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -202,6 +205,9 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date");
 
+                    b.Property<Guid?>("HealthCheckRoundRoundId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("HealthCheckType")
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
@@ -226,6 +232,8 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("datetime");
 
                     b.HasKey("ScheduleId");
+
+                    b.HasIndex("HealthCheckRoundRoundId");
 
                     b.ToTable("HealthCheckSchedule", (string)null);
                 });
@@ -1085,9 +1093,9 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("SchoolMedicalServer.Abstractions.Entities.HealthCheckRound", "Round")
-                        .WithMany("HealthCheckResults")
+                        .WithMany()
                         .HasForeignKey("RoundId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("HealthProfile");
@@ -1104,6 +1112,13 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Schedule");
+                });
+
+            modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthCheckSchedule", b =>
+                {
+                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.HealthCheckRound", null)
+                        .WithMany("VaccinationResults")
+                        .HasForeignKey("HealthCheckRoundRoundId");
                 });
 
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthProfile", b =>
@@ -1277,7 +1292,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
 
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthCheckRound", b =>
                 {
-                    b.Navigation("HealthCheckResults");
+                    b.Navigation("VaccinationResults");
                 });
 
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthCheckSchedule", b =>
