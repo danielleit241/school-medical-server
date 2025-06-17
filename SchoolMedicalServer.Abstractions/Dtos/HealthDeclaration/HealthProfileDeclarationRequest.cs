@@ -33,6 +33,7 @@ namespace SchoolMedicalServer.Abstractions.Dtos.HealthDeclaration
 
     public class VaccinationDeclarationDtoRequest
     {
+        public Guid? VaccinationDeclarationId { get; set; }
         [Required(ErrorMessage = "Vaccine name is required.")]
         public string VaccineName { get; set; } = default!;
 
