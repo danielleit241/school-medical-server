@@ -4,6 +4,7 @@ using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
+using SchoolMedicalServer.Infrastructure.Repositories;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
@@ -41,9 +42,18 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return true;
         }
 
-        public Task<NotificationScheduleResponse> CreateVaccinationResultsByRounds(Guid scheduleId)
+        public async Task<NotificationScheduleResponse> CreateVaccinationResultsByRounds(Guid scheduleId)
         {
-            throw new NotImplementedException();
+            var schedule = await healthCheckRepository.GetHealthCheckScheduleByIdAsync(scheduleId);
+            if (schedule == null)
+                return null!;
+            var toParents = new List<NotificationRequest>();
+            var toNurses = new List<NotificationRequest>();
+            foreach (var round in schedule.Rounds)
+            {
+
+            }
+            return null;
         }
 
         public Task<HealthCheckScheduleDetailsResponse> GetHealthCheckSchedule(Guid id)
