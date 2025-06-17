@@ -1,5 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Entities;
+﻿using SchoolMedicalServer.Abstractions.Entities;
 
 namespace SchoolMedicalServer.Abstractions.IRepositories
 {

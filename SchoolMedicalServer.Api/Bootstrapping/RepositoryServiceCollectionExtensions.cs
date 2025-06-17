@@ -18,12 +18,14 @@ namespace SchoolMedicalServer.Api.Bootstrapping
             services.AddScoped<IMedicalEventRepository, MedicalEventRepository>();
             services.AddScoped<IMedicalRequestRepository, MedicalRequestRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
-            services.AddScoped<IVacctionDetailsRepository, VaccinationDetailsRepository>();
+            services.AddScoped<IVaccinationDetailsRepository, VaccinationDetailsRepository>();
             services.AddScoped<IVaccinationScheduleRepository, VaccinationScheduleRepository>();
             services.AddScoped<IVaccinationRoundRepository, VaccinationRoundRepository>();
             services.AddScoped<IVaccinationResultRepository, VaccinationResultRepository>();
             services.AddScoped<IVaccinationObservationRepository, VaccinationObservationRepository>();
-            services.AddScoped<IHealthCheckRepository, HealthCheckRepository>();
+            services.AddScoped<IHealthCheckScheduleRepository, HealthCheckScheduleRepository>();
+            services.AddScoped<IHealthCheckResultRepository, HealthCheckResultRepository>();
+            services.AddScoped<IHealthCheckRoundRepository, HealthCheckRoundRepository>();
             return services;
         }
     }

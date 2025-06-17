@@ -1,11 +1,10 @@
-﻿using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 
 namespace SchoolMedicalServer.Infrastructure.Repositories
 {
-    public class HealthCheckRepository(SchoolMedicalManagementContext _context) : IHealthCheckRepository
+    public class HealthCheckScheduleRepository(SchoolMedicalManagementContext _context) : IHealthCheckScheduleRepository
     {
         public async Task<int> CountAsync()
         {

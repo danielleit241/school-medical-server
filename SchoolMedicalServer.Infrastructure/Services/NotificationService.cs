@@ -18,7 +18,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IVaccinationResultRepository resultRepository,
         IVaccinationRoundRepository roundRepository,
         IVaccinationScheduleRepository scheduleRepository,
-        IVacctionDetailsRepository detailsRepository,
+        IVaccinationDetailsRepository detailsRepository,
         IVaccinationObservationRepository observationRepository,
         IHealthProfileRepository profileRepository) : INotificationService
     {
