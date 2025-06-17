@@ -39,5 +39,19 @@ namespace SchoolMedicalServer.Api.Controllers.HealthDeclaration
             }
             return StatusCode(201, "Create successfully");
         }
+
+
+
+        [HttpPut("students/health-declarations")]
+        [Authorize(Roles = "parent")]
+        public async Task<IActionResult> UpdateHealthProfileDeclaration([FromBody] HealthProfileDeclarationRequest request)
+        {
+            var isUpdated = await service.UpdateHealthDeclarationAsync(request);
+            if (!isUpdated)
+            {
+                return BadRequest("Update failed.");
+            }
+            return Ok("Update successfully");
+        }
     }
 }
