@@ -23,6 +23,7 @@ namespace SchoolMedicalServer.Api.Bootstrapping
             services.AddScoped<IVaccinationRoundRepository, VaccinationRoundRepository>();
             services.AddScoped<IVaccinationResultRepository, VaccinationResultRepository>();
             services.AddScoped<IVaccinationObservationRepository, VaccinationObservationRepository>();
+            services.AddScoped<IHealthCheckRepository, HealthCheckRepository>();
             return services;
         }
     }

@@ -86,10 +86,26 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             return Ok(vaccinationRounds);
         }
 
-        [HttpGet("parents/{userId}/vaccination-rounds/students")]
-        public async Task<IActionResult> GetStudentRoundByUserId(Guid userId)
+        [HttpPut("vaccination-rounds/{roundId}")]
+        [Authorize(Roles = "admin, manager, nurse")]
+        public async Task<IActionResult> UpdateVaccinationRoundStatus(Guid roundId, [FromBody] bool request)
         {
-            var vaccinationRounds = await service.GetVaccinationRoundsByUserIdAsync(userId);
+            if (roundId == Guid.Empty)
+            {
+                return BadRequest(new { Message = "Invalid round ID." });
+            }
+            var result = await service.UpdateVaccinationRoundStatusAsync(roundId, request);
+            if (!result)
+            {
+                return NotFound(new { Message = "Vaccination round not found or update failed." });
+            }
+            return Ok(new { Message = "Vaccination round status updated successfully." });
+        }
+
+        [HttpGet("parents/{userId}/vaccination-rounds/students")]
+        public async Task<IActionResult> GetStudentRoundByUserId(Guid userId, [FromQuery] DateOnly? start, [FromQuery] DateOnly? end)
+        {
+            var vaccinationRounds = await service.GetVaccinationRoundsByUserIdAsync(userId, start, end);
             if (vaccinationRounds == null)
             {
                 return NotFound(new { Message = "No vaccination rounds found for this user." });

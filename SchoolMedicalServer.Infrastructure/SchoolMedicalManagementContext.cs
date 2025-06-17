@@ -54,6 +54,8 @@ public partial class SchoolMedicalManagementContext : DbContext
 
     public virtual DbSet<VaccinationRound> VaccinationRounds { get; set; }
 
+    public virtual DbSet<HealthCheckRound> HealthCheckRounds { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Appointment>(entity =>
@@ -107,78 +109,90 @@ public partial class SchoolMedicalManagementContext : DbContext
 
         modelBuilder.Entity<HealthCheckResult>(entity =>
         {
-            entity.HasKey(e => e.ResultId).HasName("PK__HealthCh__976902283B65C17C");
-
+            entity.HasKey(e => e.ResultId);
             entity.ToTable("HealthCheckResult");
 
-            entity.Property(e => e.ResultId)
-                .ValueGeneratedNever()
-                .HasColumnName("ResultID");
-            entity.Property(e => e.ScheduleId)
-                .HasColumnName("ScheduleID");
-            entity.Property(e => e.HealthProfileId)
-                .HasColumnName("HealthProfileID");
+            entity.Property(e => e.ResultId).ValueGeneratedNever();
+            entity.Property(e => e.RoundId);
+            entity.Property(e => e.HealthProfileId);
+            entity.Property(e => e.ParentConfirmed);
+            entity.Property(e => e.DatePerformed).HasColumnType("date");
+            entity.Property(e => e.Height).HasColumnType("float");
+            entity.Property(e => e.Weight).HasColumnType("float");
+            entity.Property(e => e.VisionLeft).HasColumnType("float");
+            entity.Property(e => e.VisionRight).HasColumnType("float");
+            entity.Property(e => e.Hearing).HasMaxLength(50);
+            entity.Property(e => e.Nose).HasMaxLength(50);
+            entity.Property(e => e.BloodPressure).HasMaxLength(50);
+            entity.Property(e => e.Status).HasColumnType("bit");
+            entity.Property(e => e.Notes).HasMaxLength(255);
+            entity.Property(e => e.RecordedId);
+            entity.Property(e => e.RecordedAt).HasColumnType("datetime");
 
-            entity.Property(e => e.DatePerformed)
-                .HasColumnName("DatePerformed")
-                .HasColumnType("date");
-            entity.Property(e => e.Height)
-                .HasColumnType("float");
-            entity.Property(e => e.Weight)
-                .HasColumnType("float");
-            entity.Property(e => e.VisionLeft)
-                .HasColumnType("float");
-            entity.Property(e => e.VisionRight)
-                .HasColumnType("float");
-            entity.Property(e => e.BloodPressure)
-                .HasMaxLength(50);
-            entity.Property(e => e.Hearing)
-                .HasMaxLength(50);
-            entity.Property(e => e.Nose)
-                .HasMaxLength(50);
-            entity.Property(e => e.Notes)
-                .HasMaxLength(255);
-            entity.Property(e => e.RecordedId)
-                .HasColumnName("RecordedID");
-            entity.Property(e => e.RecordedAt)
-                .HasColumnType("datetime");
+            entity.HasOne(e => e.Round)
+                .WithMany(r => r.HealthCheckResults)
+                .HasForeignKey(e => e.RoundId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            entity.HasOne(d => d.Schedule)
-                .WithMany(p => p.HealthCheckResults)
-                .HasForeignKey(d => d.ScheduleId)
-                .HasConstraintName("FK__HealthChe__Sched__74AE54BC");
-
-            entity.HasOne(hcr => hcr.HealthProfile)
+            entity.HasOne(e => e.HealthProfile)
                 .WithMany(hp => hp.HealthCheckResults)
-                .HasForeignKey(hcr => hcr.HealthProfileId)
+                .HasForeignKey(e => e.HealthProfileId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+
 
         modelBuilder.Entity<HealthCheckSchedule>(entity =>
         {
-            entity.HasKey(e => e.ScheduleId).HasName("PK__HealthCh__9C8A5B69BE2ABA03");
-
+            entity.HasKey(e => e.ScheduleId);
             entity.ToTable("HealthCheckSchedule");
 
-            entity.Property(e => e.ScheduleId)
-                .ValueGeneratedNever()
-                .HasColumnName("ScheduleID");
-            entity.Property(e => e.Description).HasMaxLength(255);
-            entity.Property(e => e.HealthCheckType).HasMaxLength(30);
-            entity.Property(e => e.StudentId).HasColumnName("StudentID");
-            entity.Property(e => e.TargetGrade).HasMaxLength(12);
+            entity.Property(e => e.ScheduleId).ValueGeneratedNever();
             entity.Property(e => e.Title).HasMaxLength(100);
+            entity.Property(e => e.HealthCheckType).HasMaxLength(30);
+            entity.Property(e => e.Description).HasMaxLength(255);
+            entity.Property(e => e.StartDate).HasColumnType("date");
+            entity.Property(e => e.EndDate).HasColumnType("date");
+            entity.Property(e => e.ParentNotificationStartDate).HasColumnType("date");
+            entity.Property(e => e.ParentNotificationEndDate).HasColumnType("date");
+            entity.Property(e => e.Status).HasColumnType("bit");
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+            entity.Property(e => e.CreatedBy);
 
-            entity.HasOne(d => d.Student)
-                .WithMany(p => p.HealthCheckSchedules)
-                .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK__HealthChe__Stude__6FE99F9F");
-
-            entity.HasMany(s => s.HealthCheckResults)
-                .WithOne(r => r.Schedule)
-                .HasForeignKey(r => r.ScheduleId)
+            entity.HasMany(e => e.Rounds)
+                .WithOne(e => e.Schedule)
+                .HasForeignKey(e => e.ScheduleId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+
+
+        modelBuilder.Entity<HealthCheckRound>(entity =>
+        {
+            entity.HasKey(e => e.RoundId);
+            entity.ToTable("HealthCheckRound");
+
+            entity.Property(e => e.RoundId).ValueGeneratedNever();
+            entity.Property(e => e.ScheduleId);
+            entity.Property(e => e.RoundName).HasMaxLength(100);
+            entity.Property(e => e.TargetGrade).HasMaxLength(12);
+            entity.Property(e => e.Description).HasMaxLength(255);
+            entity.Property(e => e.StartTime).HasColumnType("datetime");
+            entity.Property(e => e.EndTime).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasColumnType("bit");
+            entity.Property(e => e.NurseId);
+
+            entity.HasMany(r => r.HealthCheckResults)
+                .WithOne(res => res.Round)
+                .HasForeignKey(res => res.RoundId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // n-1: Round - Schedule
+            entity.HasOne(e => e.Schedule)
+                .WithMany(e => e.Rounds)
+                .HasForeignKey(e => e.ScheduleId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
 
         modelBuilder.Entity<HealthProfile>(entity =>
         {

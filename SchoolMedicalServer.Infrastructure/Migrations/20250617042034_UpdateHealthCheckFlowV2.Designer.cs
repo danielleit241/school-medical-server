@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolMedicalServer.Infrastructure;
 
@@ -11,9 +12,11 @@ using SchoolMedicalServer.Infrastructure;
 namespace SchoolMedicalServer.Infrastructure.Migrations
 {
     [DbContext(typeof(SchoolMedicalManagementContext))]
-    partial class SchoolMedicalManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20250617042034_UpdateHealthCheckFlowV2")]
+    partial class UpdateHealthCheckFlowV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,6 +97,9 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.Property<DateOnly?>("DatePerformed")
                         .HasColumnType("date");
 
+                    b.Property<Guid?>("HealthCheckRoundRoundId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("HealthProfileId")
                         .HasColumnType("uniqueidentifier");
 
@@ -137,6 +143,8 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("ResultId");
+
+                    b.HasIndex("HealthCheckRoundRoundId");
 
                     b.HasIndex("HealthProfileId");
 
@@ -1078,6 +1086,10 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
 
             modelBuilder.Entity("SchoolMedicalServer.Abstractions.Entities.HealthCheckResult", b =>
                 {
+                    b.HasOne("SchoolMedicalServer.Abstractions.Entities.HealthCheckRound", null)
+                        .WithMany("HealthCheckResults")
+                        .HasForeignKey("HealthCheckRoundRoundId");
+
                     b.HasOne("SchoolMedicalServer.Abstractions.Entities.HealthProfile", "HealthProfile")
                         .WithMany("HealthCheckResults")
                         .HasForeignKey("HealthProfileId")
@@ -1085,9 +1097,9 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("SchoolMedicalServer.Abstractions.Entities.HealthCheckRound", "Round")
-                        .WithMany("HealthCheckResults")
+                        .WithMany()
                         .HasForeignKey("RoundId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("HealthProfile");

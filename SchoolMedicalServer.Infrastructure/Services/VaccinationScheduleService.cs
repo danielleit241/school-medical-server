@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Drawing;
-using SchoolMedicalServer.Abstractions.Dtos.Notification;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Vaccines;
@@ -53,7 +52,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return true;
         }
 
-        public async Task<NotificationVaccinationResponse> CreateVaccinationResultsByRounds(Guid scheduleId)
+        public async Task<NotificationScheduleResponse> CreateVaccinationResultsByRounds(Guid scheduleId)
         {
             var schedule = await vaccinationScheduleRepository.GetVaccinationScheduleByIdAsync(scheduleId);
             if (schedule == null)
@@ -94,7 +93,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     ReceiverId = round.NurseId,
                 });
             }
-            return new NotificationVaccinationResponse(toParents, toNurses);
+            return new NotificationScheduleResponse(toParents, toNurses);
         }
 
         public async Task<PaginationResponse<VaccinationScheduleResponse?>?> GetPaginationVaccinationSchedule(PaginationRequest? pagination)
