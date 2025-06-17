@@ -17,7 +17,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<HealthCheckSchedule?> GetHealthCheckScheduleByIdAsync(Guid id)
+        public async Task<HealthCheckSchedule?> GetHealthCheckScheduleByIdAsync(Guid? id)
         {
             return await _context.HealthCheckSchedules.Include(s => s.Rounds).Where(s => s.ScheduleId == id).FirstOrDefaultAsync();
         }

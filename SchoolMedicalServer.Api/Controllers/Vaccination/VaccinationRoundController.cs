@@ -64,7 +64,7 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
 
         [HttpGet("nurses/{nurseId}/vaccination-rounds")]
         [Authorize(Roles = "nurse")]
-        public async Task<IActionResult> GetVaccinationRoundsByUserId(Guid nurseId, [FromQuery] PaginationRequest? pagination)
+        public async Task<IActionResult> GetVaccinationRoundsByNurseId(Guid nurseId, [FromQuery] PaginationRequest? pagination)
         {
             var vaccinationRounds = await service.GetVaccinationRoundsByNurseIdAsync(nurseId, pagination);
             if (vaccinationRounds == null || !vaccinationRounds.Items.Any())
@@ -103,6 +103,7 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
         }
 
         [HttpGet("parents/{userId}/vaccination-rounds/students")]
+        [Authorize(Roles = "parent")]
         public async Task<IActionResult> GetStudentRoundByUserId(Guid userId, [FromQuery] DateOnly? start, [FromQuery] DateOnly? end)
         {
             var vaccinationRounds = await service.GetVaccinationRoundsByUserIdAsync(userId, start, end);

@@ -6,8 +6,10 @@ namespace SchoolMedicalServer.Abstractions.IServices
     public interface IHealthCheckRoundService
     {
         Task<bool> CreateHealthCheckRoundByScheduleIdAsync(HealthCheckRoundRequest request);
-        Task<PaginationResponse<HealthCheckRoundStudentResponse>> GetHealthCheckRoundsByNurseIdAsync(Guid nurseId, PaginationRequest? pagination);
+        Task<PaginationResponse<HealthCheckRoundResponse>> GetHealthCheckRoundsByNurseIdAsync(Guid nurseId, PaginationRequest? pagination);
+        Task<IEnumerable<HealthCheckRoundParentResponse>> GetHealthCheckRoundsByUserIdAsync(Guid userId, DateOnly? start, DateOnly? end);
         Task<PaginationResponse<HealthCheckRoundStudentResponse>> GetStudentsByHealthCheckRoundIdForManagerAsync(PaginationRequest? pagination, Guid roundId);
         Task<PaginationResponse<HealthCheckRoundStudentResponse>> GetStudentsByHealthCheckRoundIdForNurseAsync(PaginationRequest? pagination, Guid roundId, Guid nurseId);
+        Task<bool> UpdateHealthCheckRoundStatusAsync(Guid roundId, bool request);
     }
 }
