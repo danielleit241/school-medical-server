@@ -63,7 +63,7 @@ namespace SchoolMedicalServer.Api.Controllers.HealthCheck
         }
 
 
-        [HttpPut("health-check-rounds/{roundId}")]
+        [HttpPut("health-check-rounds/{roundId}/finished")]
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> UpdateHealthCheckRoundStatus(Guid roundId, [FromBody] bool request)
         {
@@ -77,6 +77,22 @@ namespace SchoolMedicalServer.Api.Controllers.HealthCheck
                 return NotFound(new { Message = "Health check round not found or update failed." });
             }
             return Ok(new { Message = "Health check round status updated successfully." });
+        }
+
+        [HttpPut("health-check-rounds/{roundId}")]
+        [Authorize(Roles = "admin, manager")]
+        public async Task<IActionResult> UpdateHealthCheckRound(Guid roundId, [FromBody] HealthCheckRoundUpdateRequest request)
+        {
+            if (roundId == Guid.Empty || request == null)
+            {
+                return BadRequest(new { Message = "Invalid request data." });
+            }
+            var result = await service.UpdateHealthCheckRoundAsync(roundId, request);
+            if (!result)
+            {
+                return NotFound(new { Message = "Health check round not found or update failed." });
+            }
+            return Ok(new { Message = "Health check round updated successfully." });
         }
 
 

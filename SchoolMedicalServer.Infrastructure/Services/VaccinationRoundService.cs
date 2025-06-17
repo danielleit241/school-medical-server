@@ -3,6 +3,7 @@ using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Rounds;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
+using SchoolMedicalServer.Infrastructure.Repositories;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
@@ -275,6 +276,23 @@ namespace SchoolMedicalServer.Infrastructure.Services
             res.Parent = await ParentOfStudentResponse(result!);
 
             return res;
+        }
+
+        public async Task<bool> UpdateVaccinationRoundAsync(Guid roundId, VaccinationRoundUpdateRequest request)
+        {
+            var updateRound = await vaccinationRound.GetVaccinationRoundByIdAsync(roundId);
+            if (updateRound == null)
+            {
+                return false;
+            }
+            updateRound.RoundName = request.RoundName;
+            updateRound.TargetGrade = request.TargetGrade;
+            updateRound.Description = request.Description;
+            updateRound.StartTime = request.StartTime;
+            updateRound.EndTime = request.EndTime;
+            updateRound.NurseId = request.NurseId;
+            await vaccinationRound.UpdateVaccinationRound(updateRound);
+            return true;
         }
     }
 }
