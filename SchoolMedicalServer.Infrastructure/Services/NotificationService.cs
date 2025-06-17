@@ -1,3 +1,5 @@
+using DocumentFormat.OpenXml.Drawing;
+using System.Reflection.PortableExecutable;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -20,7 +22,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IVaccinationScheduleRepository scheduleRepository,
         IVaccinationDetailsRepository detailsRepository,
         IVaccinationObservationRepository observationRepository,
-        IHealthProfileRepository profileRepository) : INotificationService
+        IHealthProfileRepository profileRepository,
+        IHealthCheckScheduleRepository healthCheckScheduleRepository,
+        IHealthCheckRoundRepository healthCheckRoundRepository,
+        IHealthCheckResultRepository healthCheckResultRepository) : INotificationService
     {
         public async Task<PaginationResponse<NotificationResponse>> GetUserNotificationsAsync(PaginationRequest? pagination, Guid userId)
         {
@@ -442,14 +447,73 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return GetResponse(notiInfo, sender, receiver);
         }
 
-        public Task<IEnumerable<NotificationResponse>> SendHealthCheckNotificationToParents(IEnumerable<NotificationRequest> requests)
+        public async Task<IEnumerable<NotificationResponse>> SendHealthCheckNotificationToParents(IEnumerable<NotificationRequest> requests)
         {
-            throw new NotImplementedException();
+            List<NotificationResponse> responses = [];
+            foreach (var request in requests)
+            {
+                var result = await healthCheckResultRepository.GetByIdAsync(request.NotificationTypeId);
+                var round = await healthCheckRoundRepository.GetHealthCheckRoundByIdAsync(result!.RoundId);
+                var schedule = await healthCheckScheduleRepository.GetHealthCheckScheduleByIdAsync(round!.ScheduleId);
+
+                var sender = await SenderInformation(request);
+                var receiver = await ReceiverInformation(request);
+                var student = await studentRepository.GetStudentByUserId(request.ReceiverId);
+                if (schedule == null || sender == null || receiver == null)
+                {
+                    continue;
+                }
+                var notification = new Notification
+                {
+                    NotificationId = Guid.NewGuid(),
+                    UserId = receiver.UserId,
+                    SenderId = sender.UserId,
+                    Title = schedule.Title,
+                    Content = $"Your child {student!.FullName} has received the health check: {schedule!.HealthCheckType} on {round.StartTime?.ToString("d")}.",
+                    SendDate = DateTime.UtcNow,
+                    IsRead = false,
+                    Type = NotificationTypes.HealthCheckUp,
+                    SourceId = result.ResultId
+                };
+                await notificationRepository.AddAsync(notification);
+                await baseRepository.SaveChangesAsync();
+                var notiInfo = NotificationInformation(notification);
+                responses.Add(GetResponse(notiInfo, sender, receiver));
+            }
+            return responses;
         }
 
-        public Task<IEnumerable<NotificationResponse>> SendHealthCheckNotificationToNurses(IEnumerable<NotificationRequest> requests)
+        public async Task<IEnumerable<NotificationResponse>> SendHealthCheckNotificationToNurses(IEnumerable<NotificationRequest> requests)
         {
-            throw new NotImplementedException();
+            List<NotificationResponse> responses = [];
+            foreach (var request in requests)
+            {
+                var schedule = await healthCheckScheduleRepository.GetHealthCheckScheduleByIdAsync(request.NotificationTypeId);
+                var sender = await SenderInformation(request);
+                var receiver = await ReceiverInformation(request);
+                if (schedule == null || sender == null || receiver == null)
+                {
+                    continue;
+                }
+                var nurseRounds = schedule.Rounds.ToList().Where(r => r.NurseId == request.ReceiverId).ToList();
+                var notification = new Notification
+                {
+                    NotificationId = Guid.NewGuid(),
+                    UserId = receiver.UserId,
+                    SenderId = sender.UserId,
+                    Title = schedule.Title,
+                    Content = $"You have been assigned to the health check schedule: {schedule.HealthCheckType} with {nurseRounds.Count} rounds.",
+                    SendDate = DateTime.UtcNow,
+                    IsRead = false,
+                    Type = NotificationTypes.HealthCheckUp,
+                    SourceId = schedule.ScheduleId
+                };
+                await notificationRepository.AddAsync(notification);
+                await baseRepository.SaveChangesAsync();
+                var notiInfo = NotificationInformation(notification);
+                responses.Add(GetResponse(notiInfo, sender, receiver));
+            }
+            return responses;
         }
     }
 }

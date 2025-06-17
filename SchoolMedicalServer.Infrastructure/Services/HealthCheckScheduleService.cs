@@ -12,8 +12,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IHealthCheckResultRepository resultRepository,
         IStudentRepository studentRepository,
         IHealthProfileRepository profileRepository,
-        IHealthCheckRoundRepository roundRepository
-        ) : IHealthCheckScheduleService
+        IHealthCheckRoundRepository roundRepository,
+        IUserRepository userRepository) : IHealthCheckScheduleService
     {
         public async Task<bool> CreateScheduleAsync(HealthCheckScheduleRequest request)
         {
@@ -100,7 +100,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return new NotificationScheduleResponse(toParents, toNurses); ;
         }
 
-        public async Task<HealthCheckScheduleDetailsResponse> GetHealthCheckSchedule(Guid id)
+        public async Task<IEnumerable<HealthCheckScheduleDetailsResponse>> GetHealthCheckSchedule(Guid id)
         {
             var schedule = await healthCheckRepository.GetHealthCheckScheduleByIdAsync(id);
             if (schedule == null)
@@ -112,21 +112,37 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return null!;
             }
-            var res = new HealthCheckScheduleDetailsResponse
+            var res = new List<HealthCheckScheduleDetailsResponse>();
+            foreach (var round in heathCheckRounds)
             {
-                HealthCheckRounds = [.. heathCheckRounds.Select(round => new HealthCheckRoundResponseDto
-                    {
-                        RoundId = round.RoundId,
-                        RoundName = round.RoundName,
-                        TargetGrade = round.TargetGrade,
-                        Description = round.Description,
-                        StartTime = round.StartTime,
-                        EndTime = round.EndTime,
-                        NurseId = round.NurseId,
-                        Status = round.Status
-                    })],
-            };
+                var detailsResponse = await MapToDetailsResponse(round);
+                res.Add(detailsResponse);
+            }
             return res;
+        }
+
+        private async Task<HealthCheckScheduleDetailsResponse> MapToDetailsResponse(HealthCheckRound round)
+        {
+            var nurseInfor = await userRepository.GetByIdAsync(round.NurseId);
+            return new HealthCheckScheduleDetailsResponse
+            {
+                HealthCheckRoundInformation = new HealthCheckRoundInformationResponse
+                {
+                    RoundId = round.RoundId,
+                    RoundName = round.RoundName ?? "",
+                    TargetGrade = round.TargetGrade ?? "",
+                    Description = round.Description ?? "",
+                    StartTime = round.StartTime,
+                    EndTime = round.EndTime,
+                },
+                Nurse = new HealthCheckRoundNurseInformationResponse
+                {
+                    NurseId = round.NurseId,
+                    NurseName = nurseInfor!.FullName ?? "",
+                    PhoneNumber = nurseInfor.PhoneNumber ?? "",
+                    AvatarUrl = nurseInfor.AvatarUrl ?? string.Empty
+                }
+            };
         }
 
         public async Task<bool> UpdateScheduleAsync(Guid scheduleId, HealthCheckScheduleUpdateRequest request)
