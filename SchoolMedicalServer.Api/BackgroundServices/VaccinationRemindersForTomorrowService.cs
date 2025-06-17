@@ -5,17 +5,17 @@ using SchoolMedicalServer.Api.Helpers;
 
 namespace SchoolMedicalServer.Api.BackgroundServices
 {
-    public class DailyVaccinationReminderService : BackgroundService
+    public class VaccinationRemindersForTomorrowService : BackgroundService
     {
-        private readonly ILogger<DailyVaccinationReminderService> _logger;
+        private readonly ILogger<VaccinationRemindersForTomorrowService> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
+        private readonly IWebHostEnvironment _env;
 
-        public DailyVaccinationReminderService(
-            ILogger<DailyVaccinationReminderService> logger,
-            IServiceScopeFactory scopeFactory)
+        public VaccinationRemindersForTomorrowService(ILogger<VaccinationRemindersForTomorrowService> logger, IServiceScopeFactory scopeFactory, IWebHostEnvironment env)
         {
             _logger = logger;
             _scopeFactory = scopeFactory;
+            _env = env;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -23,11 +23,18 @@ namespace SchoolMedicalServer.Api.BackgroundServices
             while (!stoppingToken.IsCancellationRequested)
             {
                 var now = DateTime.Now;
+                var nextRun = now.Date.AddDays(1);
+                var delay = nextRun - now;
+
                 _logger.LogCritical($"Vaccination Reminder Service running at {now}.");
                 await SendVaccinationRemindersForTomorrow(stoppingToken);
-                _logger.LogInformation("Waiting for the next execution at {NextExecutionTime}.",
-                   DateTime.Now.AddHours(24));
-                await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
+
+                _logger.LogInformation("Waiting for the next execution at {NextExecutionTime}.", nextRun);
+
+                if (delay < TimeSpan.Zero)
+                    delay = TimeSpan.FromMinutes(1);
+
+                await Task.Delay(delay, stoppingToken);
             }
         }
 
@@ -38,10 +45,8 @@ namespace SchoolMedicalServer.Api.BackgroundServices
             var scheduleRepo = scope.ServiceProvider.GetRequiredService<IVaccinationScheduleRepository>();
             var studentRepo = scope.ServiceProvider.GetRequiredService<IStudentRepository>();
             var userRepo = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-
             var resultRepo = scope.ServiceProvider.GetRequiredService<IVaccinationResultRepository>();
             var healthProfileRepo = scope.ServiceProvider.GetRequiredService<IHealthProfileRepository>();
-
             var tomorrow = DateOnly.FromDateTime(DateTime.Today.AddDays(1));
             var schedules = await scheduleRepo.GetVaccinationSchedulesAsync();
 
@@ -85,32 +90,24 @@ namespace SchoolMedicalServer.Api.BackgroundServices
             {
                 var parentId = group.Key!.Value;
                 if (!parentDict.TryGetValue(parentId, out var parent) || string.IsNullOrWhiteSpace(parent.EmailAddress))
-                    continue; // Bỏ qua nếu parent không có email
+                    continue;
 
                 var studentsOfParent = group.ToList();
 
-                string subject = "Nhắc lịch tiêm chủng ngày mai";
-                string studentList = string.Join("\n", studentsOfParent.Select(s => $"- {s.FullName}"));
-
-                string body = $"""
-                        Kính gửi phụ huynh {parent.FullName},
-
-                        Con của bạn có lịch tiêm chủng vào ngày mai ({tomorrow:dd/MM/yyyy}).
-
-                        Danh sách học sinh:
-                        {studentList}
-
-                        Vui lòng kiểm tra hệ thống để biết chi tiết và đảm bảo con em bạn đến đúng giờ.
-
-                        Trân trọng,
-                        Trường học
-                    """;
+                string subject = "Vaccination Reminder for Tomorrow";
+                string templatePath = Path.Combine(_env.WebRootPath, "templates", "vaccination-reminder-template.html");
+                var studentHtmlList = string.Join("<br>", studentsOfParent.Select(s => $"- {s.FullName} (<b>{s.StudentCode}</b>)"));
+                string emailTemplate = await File.ReadAllTextAsync(templatePath);
+                string htmlBody = emailTemplate
+                    .Replace("{ParentName}", parent.FullName ?? "Parent")
+                    .Replace("{DateStr}", tomorrow.ToString("MM/dd/yyyy"))
+                    .Replace("{StudentsList}", studentHtmlList);
 
                 var request = new EmailFrom
                 {
                     Subject = subject,
                     To = parent.EmailAddress!,
-                    Body = body
+                    Body = htmlBody
                 };
                 await emailHelper.SendEmailAsync(request);
             }

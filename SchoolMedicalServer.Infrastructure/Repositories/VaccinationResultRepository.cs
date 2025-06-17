@@ -58,6 +58,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task<List<Guid>> GetHealthProfileIdsByRoundIdsAsync(List<Guid> guids)
         {
             return await _context.VaccinationResults
+                .Where(vr => vr.ParentConfirmed == true)
                 .Where(vr => guids.Contains(vr.RoundId))
                 .Select(vr => vr.HealthProfileId)
                 .ToListAsync();

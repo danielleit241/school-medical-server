@@ -441,5 +441,15 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var notiInfo = NotificationInformation(notification);
             return GetResponse(notiInfo, sender, receiver);
         }
+
+        public Task<IEnumerable<NotificationResponse>> SendHealthCheckNotificationToParents(IEnumerable<NotificationRequest> requests)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<NotificationResponse>> SendHealthCheckNotificationToNurses(IEnumerable<NotificationRequest> requests)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

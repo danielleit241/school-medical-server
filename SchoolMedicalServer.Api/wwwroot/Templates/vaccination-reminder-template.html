@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>MEDICARE – School Medical Station of dh2TT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body {
+            background: #0d253f;
+            color: #222;
+            font-family: Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: #3c8de3;
+            padding: 48px 36px 24px 36px;
+            color: #222;
+            box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.1), 0 1.5px 6px 0 rgba(34, 41, 47, 0.08);
+            border-radius: 16px;
+        }
+
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 28px;
+            width: 100%;
+            height: 120px;
+            border-radius: 20px;
+            overflow: hidden;
+            background-color: #3c8de3;
+        }
+
+            .logo img {
+                width: 40%;
+                height: 100%;
+                object-fit: cover;
+                object-position: right;
+            }
+
+        .underline {
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: #2bd7f1;
+            margin-bottom: 18px;
+            border-radius: 2px;
+        }
+
+        .email-intro {
+            font-size: 1.1em;
+            margin-bottom: 1.2em;
+            color: #000;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .vaccination-info {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px 16px 16px 16px;
+            margin: 28px 0;
+            box-shadow: 0 2px 5px #e3eaf3;
+        }
+
+        .vaccination-info-title {
+            font-size: 1.05em;
+            font-weight: bold;
+            color: #0c273f;
+            margin-bottom: 8px;
+        }
+
+        .vaccination-info-list {
+            color: #2bd7f1;
+            font-size: 1em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .footer-bottom-box {
+            background: #f8fafd;
+            border-radius: 0 0 12px 12px;
+            margin-top: 28px;
+            padding: 22px 0 12px 0;
+            border-top: 1px solid #e3eaf3;
+            box-shadow: 0 2px 5px #e3eaf3;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .footer-bottom-content {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .footer-bottom-copy {
+            color: #8a99a8;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .footer-bottom-links {
+            margin-bottom: 6px;
+        }
+
+            .footer-bottom-links a {
+                color: #3b5bdb;
+                text-decoration: none;
+                font-weight: 500;
+                margin: 0 8px;
+                font-size: 15px;
+                transition: color 0.2s;
+            }
+
+                .footer-bottom-links a:hover {
+                    color: #1976d2;
+                    text-decoration: underline;
+                }
+
+        .footer-bottom-address {
+            color: #8a99a8;
+            font-size: 14px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px dashed #4e4e4e;
+            margin: 20px 0 10px 0;
+            height: 0;
+            background: none;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 20px 5vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="https://res.cloudinary.com/darnrlpag/image/upload/v1749307550/dir5m6mwiu8l9zzvhgnl.png"
+                 alt="Medicare Logo" />
+        </div>
+        <span class="underline"></span>
+        <div class="email-intro">Dear <b>{ParentName}</b>,</div>
+        <div class="vaccination-info">
+            <div class="vaccination-info-title">
+                Your child(ren) have a vaccination appointment scheduled for tomorrow
+                (<span style="color: #e53935">{DateStr}</span>).
+            </div>
+            <div class="vaccination-info-list">
+                Student(s):<br />
+                {StudentsList}
+            </div>
+            <p style="color: #222">
+                Please bring your child's health record (if available) and ensure
+                punctual attendance.<br />
+                For questions, contact the school medical station.
+            </p>
+            <p style="margin-top: 12px">
+                Best regards,<br />
+                School Medical Station – Medicare
+            </p>
+        </div>
+        <hr style="color: #ccc" />
+        <p style="margin-top: 16px; color: #000000">
+            This is an automated email. Please do not reply.
+        </p>
+        <div class="footer-bottom-box">
+            <div class="footer-bottom-content">
+                <div class="footer-bottom-copy">
+                    © 2025 MEDICARE – School Medical Station of dh2TT. All rights
+                    reserved.
+                </div>
+                <div class="footer-bottom-links">
+                    <a href="https://www.facebook.com/gcfootball2024">Website</a> |
+                    <a href="https://www.facebook.com/gcfootball2024">Facebook</a>
+                </div>
+                <div class="footer-bottom-address">Ho Chi Minh City, Vietnam</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
