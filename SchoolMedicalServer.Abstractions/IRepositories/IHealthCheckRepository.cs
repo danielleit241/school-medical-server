@@ -6,7 +6,7 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
     {
         Task CreateHealthCheckSchedule(HealthCheckSchedule request);
         Task<IEnumerable<HealthCheckSchedule>> GetHealthCheckSchedulesAsync();
-        Task<VaccinationSchedule?> GetHealthCheckScheduleByIdAsync(Guid id);
+        Task<HealthCheckSchedule?> GetHealthCheckScheduleByIdAsync(Guid id);
         Task UpdateHealthCheckSchedule(HealthCheckSchedule request);
         Task<int> CountAsync();
         Task<IEnumerable<HealthCheckSchedule>> GetPagedHealthCheckSchedule(int skip, int take);
