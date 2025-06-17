@@ -96,5 +96,49 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return response;
         }
 
+        public async  Task<bool> UpdateHealthDeclarationAsync(HealthProfileDeclarationRequest request)
+        {
+            var studentId = request.HealthDeclaration.StudentId;
+            if (studentId == Guid.Empty)
+            {
+                return false;
+            }
+
+            
+            var healthProfile = await healthProfileRepository.GetByStudentIdWithVaccinationsAsync(studentId);
+            if (healthProfile == null)
+            {
+                return false;
+            }
+
+          
+            healthProfile.DeclarationDate = request.HealthDeclaration.DeclarationDate ?? healthProfile.DeclarationDate;
+            healthProfile.ChronicDiseases = request.HealthDeclaration.ChronicDiseases ?? healthProfile.ChronicDiseases;
+            healthProfile.DrugAllergies = request.HealthDeclaration.DrugAllergies ?? healthProfile.DrugAllergies;
+            healthProfile.FoodAllergies = request.HealthDeclaration.FoodAllergies ?? healthProfile.FoodAllergies;
+            healthProfile.Notes = request.HealthDeclaration.Notes ?? healthProfile.Notes;
+
+           
+            if (request.Vaccinations != null)
+            {
+                healthProfile.VaccinationDeclarations.Clear();
+                foreach (var vaccination in request.Vaccinations)
+                {
+                    var vaccinationDeclaration = new VaccinationDeclaration
+                    {
+                        HealthProfileId = healthProfile.HealthProfileId,
+                        VaccinationDeclarationId = Guid.NewGuid(),
+                        VaccineName = vaccination.VaccineName,
+                        DoseNumber = vaccination.DoseNumber,
+                        VaccinatedDate = vaccination.VaccinatedDate
+               
+                    };
+                    healthProfile.VaccinationDeclarations.Add(vaccinationDeclaration);
+                }
+            }
+
+            await baseRepository.SaveChangesAsync();
+            return true;
+        }
     }
 }
