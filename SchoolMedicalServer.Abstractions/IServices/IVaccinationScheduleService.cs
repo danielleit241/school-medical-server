@@ -11,5 +11,6 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task<VaccinationScheduleDetailsResponse?> GetVaccinationSchedule(Guid id);
         Task<NotificationScheduleResponse> CreateVaccinationResultsByRounds(Guid scheduleId);
         Task<bool> UpdateScheduleAsync(Guid scheduleId, VaccinationScheduleUpdateRequest request);
+        Task<bool> CheckVaccinationSchedule(VaccinationScheduleRequest request);
     }
 }

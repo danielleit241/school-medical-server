@@ -93,5 +93,16 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .Where(vr => enumerable.Contains(vr.HealthProfileId))
                 .ToListAsync() ?? [];
         }
+
+        public async Task<IEnumerable<VaccinationResult?>> GetVaccinationResultsByStudentAndVaccineAsync(Guid studentId, Guid? vaccineId)
+        {
+            return await _context.VaccinationResults
+                .Include(vr => vr.Round).ThenInclude(r => r.Schedule).ThenInclude(s => s!.Vaccine)
+                .Include(vr => vr.HealthProfile)
+                .ThenInclude(hp => hp!.Student)
+                .Where(vr => vr.HealthProfile!.StudentId == studentId &&
+                             (vaccineId == null || vr.Round!.Schedule!.Vaccine!.VaccineId == vaccineId))
+                .ToListAsync() ?? [];
+        }
     }
 }
