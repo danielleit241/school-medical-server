@@ -21,9 +21,9 @@ namespace SchoolMedicalServer.Api.Controllers.HealthCheck
             var result = await service.CreateHealthCheckRoundByScheduleIdAsync(request);
             if (!result)
             {
-                return NotFound(new { Message = "Vaccination round not found or update failed." });
+                return NotFound(new { Message = "Health check round not found or update failed." });
             }
-            return Ok(new { Message = "Vaccination round updated successfully." });
+            return Ok(new { Message = "Health check round updated successfully." });
         }
 
         [HttpGet("managers/health-check-rounds/{roundId}/students")]
@@ -52,14 +52,44 @@ namespace SchoolMedicalServer.Api.Controllers.HealthCheck
 
         [HttpGet("nurses/{nurseId}/health-check-rounds")]
         [Authorize(Roles = "nurse")]
-        public async Task<IActionResult> GetVaccinationRoundsByUserId(Guid nurseId, [FromQuery] PaginationRequest? pagination)
+        public async Task<IActionResult> GetHealthCheckRoundsByNurseId(Guid nurseId, [FromQuery] PaginationRequest? pagination)
         {
             var vaccinationRounds = await service.GetHealthCheckRoundsByNurseIdAsync(nurseId, pagination);
             if (vaccinationRounds == null || !vaccinationRounds.Items.Any())
             {
-                return NotFound(new { Message = "No vaccination rounds found for this user." });
+                return NotFound(new { Message = "No Health check rounds found for this user." });
             }
             return Ok(vaccinationRounds);
+        }
+
+
+        [HttpPut("health-check-rounds/{roundId}")]
+        [Authorize(Roles = "nurse")]
+        public async Task<IActionResult> UpdateHealthCheckRoundStatus(Guid roundId, [FromBody] bool request)
+        {
+            if (roundId == Guid.Empty)
+            {
+                return BadRequest(new { Message = "Invalid round ID." });
+            }
+            var result = await service.UpdateHealthCheckRoundStatusAsync(roundId, request);
+            if (!result)
+            {
+                return NotFound(new { Message = "Health check round not found or update failed." });
+            }
+            return Ok(new { Message = "Health check round status updated successfully." });
+        }
+
+
+        [HttpGet("parents/{userId}/health-check-rounds/students")]
+        [Authorize(Roles = "parent")]
+        public async Task<IActionResult> GetStudentRoundByUserId(Guid userId, [FromQuery] DateOnly? start, [FromQuery] DateOnly? end)
+        {
+            var healthCheckRounds = await service.GetHealthCheckRoundsByUserIdAsync(userId, start, end);
+            if (healthCheckRounds == null)
+            {
+                return NotFound(new { Message = "No Health check rounds found for this user." });
+            }
+            return Ok(healthCheckRounds);
         }
     }
 }

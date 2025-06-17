@@ -251,7 +251,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return responses;
         }
 
-        private async Task<VaccinationRoundParentResponse> MapToParentReponseAsync(VaccinationRound round, User nurse, VaccinationResult vaccinationResults)
+        private async Task<VaccinationRoundParentResponse> MapToParentReponseAsync(VaccinationRound round, User nurse, VaccinationResult result)
         {
             var res = new VaccinationRoundParentResponse();
             res.VaccinationRoundInformation = new VaccinationRoundInformationResponse
@@ -271,8 +271,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 PhoneNumber = nurse.PhoneNumber,
                 AvatarUrl = nurse.AvatarUrl!
             };
-            res.Student = await StudentsOfRoundResponse(vaccinationResults!);
-            res.Parent = await ParentOfStudentResponse(vaccinationResults!);
+            res.Student = await StudentsOfRoundResponse(result!);
+            res.Parent = await ParentOfStudentResponse(result!);
 
             return res;
         }
