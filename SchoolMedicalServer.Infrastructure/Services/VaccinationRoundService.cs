@@ -221,7 +221,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             int diff = (7 + (today.DayOfWeek - DayOfWeek.Monday)) % 7;
             var weekStart = today.AddDays(-1 * diff);
             var weekEnd = weekStart.AddDays(7).AddTicks(-1);
-            List<VaccinationRoundParentResponse> responses = new();
+
+            List<VaccinationRoundParentResponse> responses = [];
             foreach (var result in vaccinationResults)
             {
                 var round = await vaccinationRound.GetVaccinationRoundByIdAsync(result!.Round!.RoundId);

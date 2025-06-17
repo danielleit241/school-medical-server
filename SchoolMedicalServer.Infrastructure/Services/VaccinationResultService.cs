@@ -96,7 +96,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         public async Task<bool> CreateVaccinationResult(VaccinationResultRequest request)
         {
             var result = await resultRepository.GetByIdAsync(request.VaccinationResultId);
-            if (result == null)
+            if (result == null || result!.HealthQualified == false)
             {
                 return false;
             }
@@ -117,7 +117,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             if (result == null) return null!;
             return MapToVaccinationResultResponse(result);
         }
-
 
         private static VaccinationResultInformationResponse MapToVaccinationResultResponse(VaccinationResult result) => new VaccinationResultInformationResponse
         {
@@ -148,7 +147,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Notes = obs.Notes
             };
 
-
         public async Task<bool?> IsVaccinationConfirmed(Guid resultId)
         {
             var result = await resultRepository.GetByIdAsync(resultId);
@@ -157,6 +155,28 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return false;
             }
             return result.ParentConfirmed;
+        }
+
+        public async Task<bool> GetHealthQualifiedVaccinationResult(Guid resultId)
+        {
+            var result = await resultRepository.GetByIdAsync(resultId);
+            if (result == null)
+            {
+                return false;
+            }
+            return result.HealthQualified ?? false;
+        }
+
+        public async Task<bool> UpdateHealthQualifiedVaccinationResult(Guid resultId, bool status)
+        {
+            var result = await resultRepository.GetByIdAsync(resultId);
+            if (result == null)
+            {
+                return false;
+            }
+            result.HealthQualified = status;
+            await resultRepository.UpdateAsync(result);
+            return true;
         }
     }
 }

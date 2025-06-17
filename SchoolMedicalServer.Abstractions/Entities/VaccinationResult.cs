@@ -7,6 +7,7 @@
         public Guid HealthProfileId { get; set; }
 
         public bool? ParentConfirmed { get; set; } = null;
+        public bool? HealthQualified { get; set; }
         public bool Vaccinated { get; set; }
         public DateOnly? VaccinatedDate { get; set; }
         public DateTime? VaccinatedTime { get; set; }
