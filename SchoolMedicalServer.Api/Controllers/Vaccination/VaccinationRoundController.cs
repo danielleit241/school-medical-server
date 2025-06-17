@@ -26,8 +26,8 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             return Ok(new { Message = "Vaccination round updated successfully." });
         }
 
-        [HttpGet("manager/vaccination-rounds/{roundId}/students")]
-        [Authorize(Roles = "admin, manager, nurse")]
+        [HttpGet("managers/vaccination-rounds/{roundId}/students")]
+        [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> GetStudentsByVacciantionRoundId([FromQuery] PaginationRequest? pagination, Guid roundId)
         {
             var vaccinationRound = await service.GetStudentsByVacciantionRoundIdForManagerAsync(pagination, roundId);

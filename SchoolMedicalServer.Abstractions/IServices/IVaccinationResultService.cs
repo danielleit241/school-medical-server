@@ -9,7 +9,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task<bool?> ConfirmOrDeclineVaccination(Guid resultId, ParentVaccinationConfirmationRequest request);
         Task<NotificationRequest> CreateVaccinationObservation(VaccinationObservationRequest request);
         Task<bool> CreateVaccinationResult(VaccinationResultRequest request);
-        Task<bool> GetHealthQualifiedVaccinationResult(Guid resultId);
+        Task<bool?> GetHealthQualifiedVaccinationResult(Guid resultId);
         Task<VaccinationResultInformationResponse> GetVaccinationResult(Guid resultId);
         Task<bool?> IsVaccinationConfirmed(Guid resultId);
         Task<bool> UpdateHealthQualifiedVaccinationResult(Guid resultId, bool status);

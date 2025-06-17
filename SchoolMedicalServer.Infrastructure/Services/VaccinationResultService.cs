@@ -157,14 +157,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return result.ParentConfirmed;
         }
 
-        public async Task<bool> GetHealthQualifiedVaccinationResult(Guid resultId)
+        public async Task<bool?> GetHealthQualifiedVaccinationResult(Guid resultId)
         {
             var result = await resultRepository.GetByIdAsync(resultId);
             if (result == null)
             {
                 return false;
             }
-            return result.HealthQualified ?? false;
+            return result.HealthQualified;
         }
 
         public async Task<bool> UpdateHealthQualifiedVaccinationResult(Guid resultId, bool status)
