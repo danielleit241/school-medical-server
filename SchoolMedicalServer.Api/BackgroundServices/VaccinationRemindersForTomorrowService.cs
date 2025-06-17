@@ -26,15 +26,15 @@ namespace SchoolMedicalServer.Api.BackgroundServices
                 var nextRun = now.Date.AddDays(1);
                 var delay = nextRun - now;
 
-                _logger.LogCritical($"Vaccination Reminder Service running at {now}.");
-                await SendVaccinationRemindersForTomorrow(stoppingToken);
-
                 _logger.LogInformation("Waiting for the next execution at {NextExecutionTime}.", nextRun);
 
                 if (delay < TimeSpan.Zero)
                     delay = TimeSpan.FromMinutes(1);
 
                 await Task.Delay(delay, stoppingToken);
+
+                _logger.LogCritical($"Vaccination Reminder Service running at {now}.");
+                await SendVaccinationRemindersForTomorrow(stoppingToken);
             }
         }
 
