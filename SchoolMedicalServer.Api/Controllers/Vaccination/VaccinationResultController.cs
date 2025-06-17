@@ -10,6 +10,30 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
     [ApiController]
     public class VaccinationResultController(IVaccinationResultService service) : ControllerBase
     {
+        [HttpGet("vaccination-results/{resultId}/health-quilified")]
+        [Authorize(Roles = "admin, manager, nurse")]
+        public async Task<IActionResult> GetHealthQualifiedVaccinationResults(Guid resultId)
+        {
+            var result = await service.GetHealthQualifiedVaccinationResult(resultId);
+            if (!result)
+            {
+                return NotFound(new { Message = "No health qualified vaccination results found." });
+            }
+            return Ok(result);
+        }
+
+        [HttpPut("vaccination-results/{resultId}/health-qualified")]
+        [Authorize(Roles = "admin, manager, nurse")]
+        public async Task<IActionResult> UpdateHealthQualifiedVaccinationResult(Guid resultId, [FromBody] bool status)
+        {
+            var result = await service.UpdateHealthQualifiedVaccinationResult(resultId, status);
+            if (!result)
+            {
+                return NotFound(new { Message = "Vaccination result not found or update failed." });
+            }
+            return Ok();
+        }
+
         [HttpPost("vaccination-results")]
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> CreateVaccinationResult([FromBody] VaccinationResultRequest request)
