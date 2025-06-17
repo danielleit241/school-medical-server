@@ -134,6 +134,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     Description = round.Description ?? "",
                     StartTime = round.StartTime,
                     EndTime = round.EndTime,
+                    Status = round.Status
                 },
                 Nurse = new HealthCheckRoundNurseInformationResponse
                 {
@@ -201,7 +202,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     EndDate = schedule.EndDate,
                     ParentNotificationStartDate = schedule.ParentNotificationStartDate,
                     ParentNotificationEndDate = schedule.ParentNotificationEndDate,
-                    Status = schedule.Status
+                    Status = schedule.Status,
+                    CreatedAt = schedule.CreatedAt,
+                    UpdatedAt = schedule.UpdatedAt
                 }
             };
         }

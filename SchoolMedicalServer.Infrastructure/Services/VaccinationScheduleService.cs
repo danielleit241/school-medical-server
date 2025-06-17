@@ -206,5 +206,35 @@ namespace SchoolMedicalServer.Infrastructure.Services
             vaccinationScheduleRepository.UpdateVaccinationSchedule(schedule);
             return true;
         }
+
+        public async Task<bool> CheckVaccinationSchedule(VaccinationScheduleRequest request)
+        {
+            if (request == null || request.VaccineId == Guid.Empty || request.VaccinationRounds == null || !request.VaccinationRounds.Any())
+                return false;
+
+            foreach (var round in request.VaccinationRounds)
+            {
+                var students = await studentRepository.GetStudentsByGradeAsync(round.TargetGrade);
+                foreach (var student in students)
+                {
+                    var vaccineResults = await resultRepository.GetVaccinationResultsByStudentAndVaccineAsync(student.StudentId, request.VaccineId);
+
+                    foreach (var result in vaccineResults)
+                    {
+                        if (result!.VaccinatedDate.HasValue)
+                        {
+                            DateOnly roundDate = DateOnly.FromDateTime(round.StartTime!.Value);
+                            DateOnly vaccinatedDate = result.VaccinatedDate.Value;
+                            var days = Math.Abs((roundDate.DayNumber - vaccinatedDate.DayNumber));
+                            if (days <= 30)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
     }
 }
