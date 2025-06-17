@@ -161,24 +161,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             schedule.CreatedBy = request.CreatedBy;
             schedule.UpdatedAt = DateTime.UtcNow;
 
-            foreach (var round in schedule.Rounds)
-            {
-                var requestRound = request.HealthCheckRounds.FirstOrDefault(r => r.RoundId == round.RoundId);
-                if (requestRound == null)
-                    continue;
-
-                var updateRound = await roundRepository.GetHealthCheckRoundByIdAsync(round.RoundId);
-                if (updateRound != null)
-                {
-                    updateRound.RoundName = requestRound.RoundName;
-                    updateRound.TargetGrade = requestRound.TargetGrade;
-                    updateRound.Description = requestRound.Description;
-                    updateRound.StartTime = requestRound.StartTime;
-                    updateRound.EndTime = requestRound.EndTime;
-                    updateRound.NurseId = requestRound.NurseId;
-                    await roundRepository.UpdateHealthCheckRound(updateRound);
-                }
-            }
             await healthCheckRepository.UpdateHealthCheckSchedule(schedule);
             return true;
         }

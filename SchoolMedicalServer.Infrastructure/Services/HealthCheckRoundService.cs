@@ -243,5 +243,22 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 ParentConfirm = result.ParentConfirmed
             };
         }
+
+        public async Task<bool> UpdateHealthCheckRoundAsync(Guid roundId, HealthCheckRoundUpdateRequest request)
+        {
+            var round = await healthCheckRoundRepository.GetHealthCheckRoundByIdAsync(roundId);
+            if (round == null || request == null)
+            {
+                return false;
+            }
+            round.RoundName = request.RoundName;
+            round.TargetGrade = request.TargetGrade;
+            round.Description = request.Description;
+            round.StartTime = request.StartTime;
+            round.EndTime = request.EndTime;
+            round.NurseId = request.NurseId;
+            await healthCheckRoundRepository.UpdateHealthCheckRound(round);
+            return true;
+        }
     }
 }

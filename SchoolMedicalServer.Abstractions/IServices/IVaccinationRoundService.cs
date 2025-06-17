@@ -13,5 +13,6 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task<PaginationResponse<VaccinationRoundResponse>> GetVaccinationRoundsByNurseIdAsync(Guid nurseId, PaginationRequest? pagination);
         Task<bool> UpdateVaccinationRoundStatusAsync(Guid roundId, bool request);
         Task<bool> CreateVaccinationRoundByScheduleIdAsync(VaccinationRoundRequest request);
+        Task<bool> UpdateVaccinationRoundAsync(Guid roundId, VaccinationRoundUpdateRequest request);
     }
 }
