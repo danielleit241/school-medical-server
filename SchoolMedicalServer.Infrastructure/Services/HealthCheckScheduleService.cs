@@ -80,7 +80,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         BloodPressure = null,
                         Status = false,
                         Notes = null,
-                        RecordedId = schedule.CreatedBy
+                        RecordedId = round.NurseId
                     };
                     await resultRepository.Create(result);
                     toParents.Add(new NotificationRequest
