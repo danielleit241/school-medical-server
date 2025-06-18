@@ -6,258 +6,343 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         body {
-            background: #0d253f;
-            color: #222;
-            font-family: Helvetica, sans-serif;
+            background: #f5f5f5;
+            color: #202124;
+            font-family: "Google Sans", Roboto, Arial, sans-serif;
             margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 850px;
-            margin: 0 auto;
-            background: #3c8de3;
-            padding: 48px 36px 24px 36px;
-            color: #222;
-            box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.1), 0 1.5px 6px 0 rgba(34, 41, 47, 0.08);
-            border-radius: 16px;
-        }
-
-        .logo {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 28px;
-            width: 100%;
-            height: 150px;
-            border-radius: 20px;
-            overflow: hidden;
-            background-color: #3c8de3;
-        }
-
-            .logo img {
-                width: 50%;
-                height: 100%;
-                object-fit: cover;
-                object-position: right;
-            }
-
-        h1,
-        h2 {
-            font-weight: 700;
-            margin-bottom: 0.4em;
-            color: #fff;
-            letter-spacing: 1px;
-        }
-
-        .welcome {
-            font-size: 1.75em;
-            margin-bottom: 0.3em;
-            color: #000000;
-        }
-
-        .underline {
-            display: block;
-            width: 100px;
-            height: 4px;
-            background: #2bd7f1;
-            margin-bottom: 18px;
-            border-radius: 2px;
-        }
-
-        p {
-            font-size: 1.1rem;
-            margin: 0 0 16px 0;
+            padding: 20px 0;
             line-height: 1.6;
         }
 
-        a {
-            color: #2bd7f1;
-            text-decoration: underline;
-        }
-
-        .footer-bottom-box {
-            background: #f8fafd;
-            border-radius: 0 0 12px 12px;
-            margin-top: 32px;
-            padding: 32px 0 18px 0;
-            border-top: 1px solid #e3eaf3;
-            box-shadow: 0 2px 5px #e3eaf3;
-            text-align: center;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .footer-bottom-content {
-            max-width: 100%;
+        .gmail-container {
+            max-width: 600px;
             margin: 0 auto;
-        }
-
-        .footer-bottom-copy {
-            color: #8a99a8;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .footer-bottom-links {
-            margin-bottom: 8px;
-        }
-
-            .footer-bottom-links a {
-                color: #3b5bdb;
-                text-decoration: none;
-                font-weight: 500;
-                margin: 0 10px;
-                font-size: 15px;
-                transition: color 0.2s;
-            }
-
-                .footer-bottom-links a:hover {
-                    color: #1976d2;
-                    text-decoration: underline;
-                }
-
-        .footer-bottom-address {
-            color: #8a99a8;
-            font-size: 14px;
-        }
-
-        .securityNote {
-            margin: 20px 0;
-            padding: 14px 18px;
-            border-left: 4px solid #2bd7f1;
             background: #ffffff;
-            color: rgb(252, 55, 21);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+            overflow: hidden;
+        }
+
+        .gmail-header {
+            background: #ffffff;
+            padding: 24px 40px 0;
+            border-bottom: 1px solid #e8eaed;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+            .logo-section img {
+                width: 200px;
+                height: 50px;
+                border-radius: 8px;
+                margin-right: 16px;
+                object-fit: cover;
+            }
+
+        .company-info {
+            flex: 1;
+        }
+
+        .company-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #202124;
+            margin: 0;
+        }
+
+        .company-subtitle {
+            font-size: 12px;
+            color: #5f6368;
+            margin: 2px 0 0 0;
+        }
+
+        .gmail-body {
+            padding: 32px 40px;
+        }
+
+        .welcome-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #e8f5e8;
+            color: #137333;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .welcome-title {
+            font-size: 20px;
+            font-weight: 400;
+            color: #202124;
+            margin-bottom: 24px;
+        }
+
+        .welcome-name {
+            color: #1a73e8;
+            font-weight: 500;
+        }
+
+        .main-message {
             font-size: 14px;
-            line-height: 1.6;
-            width: 100%;
-            box-sizing: border-box;
+            color: #3c4043;
+            margin-bottom: 32px;
+            line-height: 1.5;
         }
 
-        hr {
-            border: none;
-            border-top: 1px dashed #4e4e4e;
-            margin: 28px 0 18px 0;
-            height: 0;
-            background: none;
+        .account-card {
+            background: #f8f9fa;
+            border: 1px solid #e8eaed;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 32px 0;
         }
 
-        /* Account info responsive */
-        .account-info {
-            margin: 40px 60px;
-            text-align: center;
+        .account-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #202124;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
         }
 
-        .account-box {
-            width: 100%;
-            min-height: 110px;
-            display: block;
-            background: #fff;
-            border-radius: 12px;
-            padding: 20px 16px;
-            box-shadow: 0 0px 8px #a8a8a8;
-            box-sizing: border-box;
+        .account-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 25px;
+            border-bottom: 1px solid #e8eaed;
         }
+
+            .account-item:last-child {
+                border-bottom: none;
+            }
 
         .account-label {
-            color: #0c273f;
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 2px;
+            font-size: 16px;
+            color: #1a73e8;
+            font-weight: 400;
         }
 
         .account-value {
-            color: #2bd7f1;
-            font-size: 1.25rem;
-            font-weight: bold;
+            font-size: 18px;
+            color: #5f6368;
+            font-weight: 500;
+            font-family: "Google Sans Mono", monospace;
         }
 
-        @media (max-width: 700px) {
-            .container {
-                padding: 20px 5vw;
+        .security-notice {
+            background: #fef7e0;
+            border: 1px solid #fdd663;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+        }
+
+        .security-notice-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #b06000;
+            margin-bottom: 4px;
+        }
+
+        .security-notice-text {
+            font-size: 13px;
+            color: #b06000;
+            line-height: 1.4;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #e8eaed;
+            margin: 32px 0;
+        }
+
+        .automated-message {
+            font-size: 13px;
+            color: #5f6368;
+            margin-bottom: 32px;
+        }
+
+        .gmail-footer {
+            background: #f8f9fa;
+            padding: 24px 40px;
+            border-top: 1px solid #e8eaed;
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        .footer-copyright {
+            font-size: 12px;
+            color: #5f6368;
+            margin-bottom: 12px;
+        }
+
+        .footer-links {
+            margin-bottom: 8px;
+        }
+
+            .footer-links a {
+                color: #1a73e8;
+                text-decoration: none;
+                font-size: 12px;
+                margin: 0 8px;
+                font-weight: 400;
             }
 
-            .account-info {
-                margin: 18px 2vw;
+                .footer-links a:hover {
+                    text-decoration: underline;
+                }
+
+        .footer-address {
+            font-size: 12px;
+            color: #5f6368;
+        }
+
+        .feature-list {
+            background: #ffffff;
+            border: 1px solid #e8eaed;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #3c4043;
+        }
+
+            .feature-item:last-child {
+                margin-bottom: 0;
             }
 
-            .account-box {
-                padding: 10px 4vw;
+        .feature-icon {
+            margin-right: 8px;
+            margin-top: 2px;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 10px;
             }
 
-            .account-label {
-                font-size: 1.02rem;
+            .gmail-header,
+            .gmail-body,
+            .gmail-footer {
+                padding-left: 24px;
+                padding-right: 24px;
             }
 
-            .account-value {
-                font-size: 1.07rem;
+            .welcome-title {
+                font-size: 20px;
             }
 
-            .welcome {
-                font-size: 1.08em;
+            .account-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .logo-section img {
+                width: 40px;
+                height: 40px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">
-            <img src="https://res.cloudinary.com/darnrlpag/image/upload/v1749307550/dir5m6mwiu8l9zzvhgnl.png?fbclid=IwY2xjawKyjtFleHRuA2FlbQIxMABicmlkETFUeTlWNDFMdmV3STRSeFU0AR6iVwk-vgjS9jy_4Wy7uNuplOI6lw-HaVFJXoPkvEpmJJBFoTG4ZtoNhRccDA_aem_AfcpWrE3_YtkE63D1HnJ3w"
-                 alt="Medicare Logo" />
-        </div>
-        <div class="welcome"><b>{FULLNAME}, welcome to Medicare!</b></div>
-        <span class="underline"></span>
-        <p>
-            To enhance student health care and streamline school medical operations,
-            the school has officially launched the
-            <strong>MEDICARE – School Medical Station of dh2TT</strong> — a modern platform
-            designed to support school staff and healthcare personnel with:
-            Receiving and responding to health-related information from parents,
-            Monitoring students' health during vaccination programs
-        </p>
-
-        <div class="account-info">
-            <div class="account-box">
-                <div style="margin-bottom: 18px">
-                    <div class="account-label">
-                        Phone number
-                    </div>
-                    <div class="account-value">
-                        {PHONENUMBER}
-                    </div>
-                </div>
-                <div>
-                    <div class="account-label">
-                        Password
-                    </div>
-                    <div class="account-value">
-                        {PASSWORD}
-                    </div>
+    <div class="gmail-container">
+        <div class="gmail-header">
+            <div class="logo-section">
+                <img src="https://res.cloudinary.com/darnrlpag/image/upload/v1749307550/dir5m6mwiu8l9zzvhgnl.png?fbclid=IwY2xjawKyjtFleHRuA2FlbQIxMABicmlkETFUeTlWNDFMdmV3STRSeFU0AR6iVwk-vgjS9jy_4Wy7uNuplOI6lw-HaVFJXoPkvEpmJJBFoTG4ZtoNhRccDA_aem_AfcpWrE3_YtkE63D1HnJ3w"
+                     alt="Medicare Logo" />
+                <div class="company-info">
+                    <h1 class="company-name">MEDICARE</h1>
+                    <p class="company-subtitle">School Medical Station of dh2TT</p>
                 </div>
             </div>
         </div>
 
-        <div class="securityNote">
-            <strong>Security Note:</strong> Please change your password after your
-            first login to keep your account secure.
-        </div>
-        <hr style="color: #ccc" />
-        <p style="margin-top: 20px; color: #000000">
-            This is an automated email, please do not reply to this message.
-        </p>
-        <div class="footer-bottom-box">
-            <div class="footer-bottom-content">
-                <div class="footer-bottom-copy">
-                    © 2025 MEDICARE – School Medical Station of dh2TT. All rights reserved.
+        <div class="gmail-body">
+            <div class="welcome-badge">🎉 Welcome to Medicare</div>
+
+            <div class="welcome-title">
+                <span class="welcome-name">{FULLNAME}</span>, welcome to Medicare!
+            </div>
+
+            <div class="main-message">
+                To enhance student health care and streamline school medical
+                operations, the school has officially launched the
+                <strong>MEDICARE – School Medical Station of dh2TT</strong> — a modern
+                platform designed to support school staff and healthcare personnel.
+            </div>
+
+            <div class="feature-list">
+                <div class="feature-item">
+                    <span class="feature-icon">📋</span>
+                    <span>
+                        Receiving and responding to health-related information from
+                        parents
+                    </span>
                 </div>
-                <div class="footer-bottom-links">
-                    <a href="https://www.facebook.com/gcfootball2024">Website</a> | <a href="https://www.facebook.com/gcfootball2024">Facebook</a> |
-                    <a href="https://www.facebook.com/gcfootball2024">Instagram</a> |
+                <div class="feature-item">
+                    <span class="feature-icon">💉</span>
+                    <span>Monitoring students' health during vaccination programs</span>
+                </div>
+            </div>
+
+            <div class="account-card">
+                <div class="account-title">🔑 Your Account Information</div>
+                <div class="account-item">
+                    <span class="account-label">Phone number</span>
+                    <span class="account-value">{PHONENUMBER}</span>
+                </div>
+                <div class="account-item">
+                    <span class="account-label">Password</span>
+                    <span class="account-value">{PASSWORD}</span>
+                </div>
+            </div>
+
+            <div class="security-notice">
+                <div class="security-notice-title">🛡️ Security Note</div>
+                <div class="security-notice-text">
+                    Please change your password after your first login to keep your
+                    account secure. We recommend using a strong, unique password.
+                </div>
+            </div>
+
+            <hr class="divider" />
+
+            <div class="automated-message">
+                This is an automated message from MEDICARE system. Please do not reply
+                to this email.
+            </div>
+        </div>
+
+        <div class="gmail-footer">
+            <div class="footer-content">
+                <div class="footer-copyright">
+                    © 2025 MEDICARE – School Medical Station of dh2TT. All rights
+                    reserved.
+                </div>
+                <div class="footer-links">
+                    <a href="https://www.facebook.com/gcfootball2024">Website</a>
+                    <a href="https://www.facebook.com/gcfootball2024">Facebook</a>
+                    <a href="https://www.facebook.com/gcfootball2024">Instagram</a>
                     <a href="https://www.facebook.com/gcfootball2024">LinkedIn</a>
                 </div>
-                <div class="footer-bottom-address">
-                    Address: Ho Chi Minh City, Vietnam
-                </div>
+                <div class="footer-address">📍 Ho Chi Minh City, Vietnam</div>
             </div>
         </div>
     </div>
