@@ -1,4 +1,4 @@
-﻿namespace SchoolMedicalServer.Abstractions.Dtos.Vaccination
+﻿namespace SchoolMedicalServer.Abstractions.Dtos.Vaccination.Results
 {
     public class ParentVaccinationConfirmationRequest
     {

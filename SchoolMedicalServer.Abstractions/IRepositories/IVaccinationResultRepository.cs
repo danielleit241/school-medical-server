@@ -16,5 +16,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<IEnumerable<VaccinationResult?>> GetAllStudentsInRound(Guid roundId);
         Task<IEnumerable<VaccinationResult?>> GetByHealthProfileIdsAsync(IEnumerable<Guid> enumerable);
         Task<IEnumerable<VaccinationResult?>> GetVaccinationResultsByStudentAndVaccineAsync(Guid studentId, Guid? vaccineId);
+        Task<IEnumerable<VaccinationResult?>> GetByHealthProfileId(Guid healthProfileId);
     }
 }
