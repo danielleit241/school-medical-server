@@ -140,6 +140,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return false;
             }
+            var results = await vaccinationResultRepository.GetAllStudentsInRound(roundId);
+            if (results.Any(r => r!.Vaccinated == false))
+            {
+                return false;
+            }
             round.Status = request;
             await vaccinationRound.UpdateVaccinationRound(round);
             return true;
