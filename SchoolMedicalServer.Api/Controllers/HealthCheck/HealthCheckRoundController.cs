@@ -107,5 +107,17 @@ namespace SchoolMedicalServer.Api.Controllers.HealthCheck
             }
             return Ok(healthCheckRounds);
         }
+
+        [HttpGet("health-check-rounds/{roundId}")]
+        [Authorize(Roles = "admin, manager, nurse")]
+        public async Task<IActionResult> GetHealthCheckRoundById(Guid roundId)
+        {
+            var healthCheckRound = await service.GetHealthCheckRoundByIdAsync(roundId);
+            if (healthCheckRound == null)
+            {
+                return NotFound(new { Message = "Health check round not found." });
+            }
+            return Ok(healthCheckRound);
+        }
     }
 }

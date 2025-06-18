@@ -265,5 +265,16 @@ namespace SchoolMedicalServer.Infrastructure.Services
             await healthCheckRoundRepository.UpdateHealthCheckRound(round);
             return true;
         }
+
+        public async Task<HealthCheckRoundResponse> GetHealthCheckRoundByIdAsync(Guid roundId)
+        {
+            if (roundId == Guid.Empty)
+                return null!;
+            var round = await healthCheckRoundRepository.GetHealthCheckRoundByIdAsync(roundId);
+            if (round is null)
+                return null!;
+            var res = await MapToDetailsResponse(round);
+            return res;
+        }
     }
 }
