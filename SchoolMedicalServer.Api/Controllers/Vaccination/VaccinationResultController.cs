@@ -10,7 +10,7 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
     [ApiController]
     public class VaccinationResultController(IVaccinationResultService service) : ControllerBase
     {
-        [HttpGet("vaccination-results/{resultId}/health-quilified")]
+        [HttpGet("vaccination-results/{resultId}/health-qualified")]
         [Authorize(Roles = "admin, manager, nurse")]
         public async Task<IActionResult> GetHealthQualifiedVaccinationResults(Guid resultId)
         {
@@ -27,7 +27,7 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             {
                 return NotFound(new { Message = "Vaccination result not found or update failed." });
             }
-            return Ok();
+            return Ok(result);
         }
 
         [HttpPost("vaccination-results")]
@@ -79,7 +79,7 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             return Ok(result);
         }
 
-        [HttpPut("vaccination-results/{resultId}/comfirm")]
+        [HttpPut("vaccination-results/{resultId}/confirm")]
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> ConfirmOrDeclineVaccination(Guid resultId, [FromBody] ParentVaccinationConfirmationRequest request)
         {

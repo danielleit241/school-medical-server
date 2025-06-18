@@ -175,6 +175,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return false;
             }
             result.HealthQualified = status;
+            if (result.HealthQualified == false)
+            {
+                result.InjectionSite = null;
+                result.Vaccinated = false;
+                result.VaccinatedDate = null;
+                result.VaccinatedTime = null;
+                result.Status = "Failed";
+            }
             await resultRepository.UpdateAsync(result);
             return true;
         }

@@ -7,14 +7,10 @@ namespace SchoolMedicalServer.Abstractions.Dtos.Vaccination.Results
         public VaccinationResultResponse VaccinationResult { get; set; } = default!;
         public VaccinationRoundResponseDto Round { get; set; } = default!;
         public VaccinationObservationInformationResponse? VaccinationObservation { get; set; }
-
-
-
     }
 
     public class VaccinationResultInformationResponse
     {
-        
         public Guid VaccinationResultId { get; set; }
         public Guid RecorderId { get; set; }
         public DateOnly? VaccinatedDate { get; set; }
