@@ -1,9 +1,7 @@
-﻿using DocumentFormat.OpenXml.InkML;
-using DocumentFormat.OpenXml.Spreadsheet;
+﻿using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
-using System.Linq.Dynamic.Core;
 
 namespace SchoolMedicalServer.Infrastructure.Repositories
 {
@@ -102,13 +100,8 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
             return await query.Skip(skip).Take(take).ToListAsync();
         }
 
-        public async Task<bool> StaffHasAppointmentAsync(Guid? staffNurseId, DateOnly? date, TimeOnly? start, TimeOnly? end)
-            => await _context.Appointments.AnyAsync(a =>
-                    a.StaffNurseId == staffNurseId &&
-                    a.AppointmentDate == date &&
-                    a.AppointmentStartTime < end &&
-                    a.AppointmentEndTime > start
-        );
+        public async Task<bool> StaffHasAppointmentAsync(DateOnly? date)
+            => await _context.Appointments.AnyAsync(a => a.AppointmentDate == date);
 
         public async Task AddAsync(Appointment appointment)
             => await _context.Appointments.AddAsync(appointment);

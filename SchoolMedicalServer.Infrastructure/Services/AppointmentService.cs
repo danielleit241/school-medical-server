@@ -1,10 +1,10 @@
+using Azure.Core;
 using SchoolMedicalServer.Abstractions.Dtos.Appointment;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
-using SchoolMedicalServer.Infrastructure.Repositories;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
@@ -75,8 +75,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             var userId = user.UserId;
 
-            var hasAppointment = await appointmentRepository.StaffHasAppointmentAsync(
-               request.StaffNurseId, request.AppointmentDate, request.AppointmentStartTime, request.AppointmentEndTime);
+            var hasAppointment = await appointmentRepository.StaffHasAppointmentAsync(request.AppointmentDate);
 
             if (hasAppointment)
                 return null!;
@@ -269,6 +268,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 SenderId = appointment.StaffNurseId,
                 ReceiverId = appointment.UserId
             };
+        }
+
+        public async Task<bool> HasBookedAppointment(Guid parentId)
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow.Date);
+            var hasAppointment = await appointmentRepository.StaffHasAppointmentAsync(today);
+
+            return hasAppointment;
         }
     }
 }

@@ -22,6 +22,26 @@ namespace SchoolMedicalServer.Api.Controllers.Appointment
             return StatusCode(201, appointment);
         }
 
+        [HttpGet("parents/{parentId}/appointments/has-booked")]
+        [Authorize(Roles = "parent")]
+        public async Task<IActionResult> HasBookedAppointment(Guid parentId)
+        {
+            if (parentId == Guid.Empty)
+            {
+                return BadRequest("User ID cannot be empty.");
+            }
+            var hasBooked = await service.HasBookedAppointment(parentId);
+            if (!hasBooked)
+            {
+                return Ok("User has not booked any appointments.");
+            }
+            else
+            {
+                return BadRequest("User has booked appointments.");
+            }
+        }
+
+
         [HttpGet("parents/{userId}/appointments")]
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> GetUserAppointments(Guid userId, [FromQuery] PaginationRequest? paginationRequest)
