@@ -16,5 +16,6 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task<AppointmentResponse> GetUserAppointment(Guid userId, Guid appointmentId);
         Task<PaginationResponse<AppointmentResponse>> GetUserAppointments(Guid userId, PaginationRequest? paginationRequest);
         Task<NotificationRequest> ApproveAppointment(Guid appointmentId, AppoinmentNurseApprovedRequest request);
+        Task<bool> HasBookedAppointment(Guid userId);
     }
 }
