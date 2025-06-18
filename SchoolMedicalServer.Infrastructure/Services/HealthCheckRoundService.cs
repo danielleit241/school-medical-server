@@ -211,6 +211,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return false;
             }
+            var results = await healthCheckResultRepository.GetAllStudentsInRound(roundId);
+            if (results.Any(r => r!.Status == false))
+            {
+                return false;
+            }
             round.Status = request;
             await healthCheckRoundRepository.UpdateHealthCheckRound(round);
             return true;

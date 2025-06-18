@@ -38,6 +38,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task<IEnumerable<HealthCheckResult?>> GetByHealthProfileIdsAsync(IEnumerable<Guid> enumerable)
         {
             return await _context.HealthCheckResults
+                .Include(r => r.Round)
                 .Include(hcr => hcr.HealthProfile)
                 .ThenInclude(hp => hp!.Student)
                 .Where(hcr => enumerable.Contains(hcr.HealthProfileId))
