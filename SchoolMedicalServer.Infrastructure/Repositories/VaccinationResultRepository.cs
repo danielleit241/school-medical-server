@@ -29,6 +29,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         {
             return await _context.VaccinationResults
                 .Include(vr => vr.Round)
+                .ThenInclude(r => r!.Schedule).ThenInclude(s => s!.Vaccine)
                 .Include(vr => vr.VaccinationObservation)
                 .FirstOrDefaultAsync(vr => vr.VaccinationResultId == id);
         }
@@ -102,6 +103,16 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .ThenInclude(hp => hp!.Student)
                 .Where(vr => vr.HealthProfile!.StudentId == studentId &&
                              (vaccineId == null || vr.Round!.Schedule!.Vaccine!.VaccineId == vaccineId))
+                .ToListAsync() ?? [];
+        }
+
+        public async Task<IEnumerable<VaccinationResult?>> GetByHealthProfileId(Guid healthProfileId)
+        {
+            return await _context.VaccinationResults
+                .Include(vr => vr.HealthProfile)
+                .ThenInclude(hp => hp!.Student)
+                .Where(vr => vr.HealthProfileId == healthProfileId)
+                .Include(vr => vr.Round).ThenInclude(r => r!.Schedule).ThenInclude(s => s!.Vaccine)
                 .ToListAsync() ?? [];
         }
     }

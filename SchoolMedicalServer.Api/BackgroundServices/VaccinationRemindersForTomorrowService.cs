@@ -10,12 +10,18 @@ namespace SchoolMedicalServer.Api.BackgroundServices
         private readonly ILogger<VaccinationRemindersForTomorrowService> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IWebHostEnvironment _env;
+        private readonly IEmailHelper _emailHelper;
 
-        public VaccinationRemindersForTomorrowService(ILogger<VaccinationRemindersForTomorrowService> logger, IServiceScopeFactory scopeFactory, IWebHostEnvironment env)
+        public VaccinationRemindersForTomorrowService(
+            ILogger<VaccinationRemindersForTomorrowService> logger,
+            IServiceScopeFactory scopeFactory,
+            IWebHostEnvironment env,
+            IEmailHelper emailHelper)
         {
             _logger = logger;
             _scopeFactory = scopeFactory;
             _env = env;
+            _emailHelper = emailHelper;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -32,16 +38,20 @@ namespace SchoolMedicalServer.Api.BackgroundServices
                     delay = TimeSpan.FromMinutes(1);
 
                 await Task.Delay(delay, stoppingToken);
+                _logger.LogInformation($"Vaccination Reminder Service running at {DateTime.Now}.");
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    var reminders = await GetVaccinationReminderDataForTomorrowAsync(scope);
+                    _logger.LogInformation("Found {Count} parents with students needing vaccination reminders for tomorrow.", reminders.Count);
+                    await SendVaccinationRemindersAsync(reminders);
+                    _logger.LogInformation("Sent vaccination reminders for tomorrow to {Count} parents.", reminders.Count);
+                }
 
-                _logger.LogCritical($"Vaccination Reminder Service running at {now}.");
-                await SendVaccinationRemindersForTomorrow(stoppingToken);
             }
         }
 
-        private async Task SendVaccinationRemindersForTomorrow(CancellationToken stoppingToken)
+        private async Task<List<(User Parent, List<Student> Students)>> GetVaccinationReminderDataForTomorrowAsync(IServiceScope scope)
         {
-            using var scope = _scopeFactory.CreateScope();
-            var emailHelper = scope.ServiceProvider.GetRequiredService<IEmailHelper>();
             var scheduleRepo = scope.ServiceProvider.GetRequiredService<IVaccinationScheduleRepository>();
             var studentRepo = scope.ServiceProvider.GetRequiredService<IStudentRepository>();
             var userRepo = scope.ServiceProvider.GetRequiredService<IUserRepository>();
@@ -82,10 +92,12 @@ namespace SchoolMedicalServer.Api.BackgroundServices
                 if (parent != null && !string.IsNullOrWhiteSpace(parent.EmailAddress))
                     parents.Add(parent);
             }
+
             var parentDict = parents
                 .Where(p => p != null && !string.IsNullOrWhiteSpace(p.EmailAddress))
                 .ToDictionary(p => p!.UserId, p => p!);
 
+            var result = new List<(User Parent, List<Student> Students)>();
             foreach (var group in studentsGroupedByParent)
             {
                 var parentId = group.Key!.Value;
@@ -93,14 +105,23 @@ namespace SchoolMedicalServer.Api.BackgroundServices
                     continue;
 
                 var studentsOfParent = group.ToList();
+                result.Add((parent, studentsOfParent));
+            }
 
+            return result;
+        }
+
+        private async Task SendVaccinationRemindersAsync(List<(User Parent, List<Student> Students)> reminders)
+        {
+            foreach (var (parent, studentsOfParent) in reminders)
+            {
                 string subject = "Vaccination Reminder for Tomorrow";
                 string templatePath = Path.Combine(_env.WebRootPath, "templates", "vaccination-reminder-template.html");
                 var studentHtmlList = string.Join("<br>", studentsOfParent.Select(s => $"- {s.FullName} (<b>{s.StudentCode}</b>)"));
                 string emailTemplate = await File.ReadAllTextAsync(templatePath);
                 string htmlBody = emailTemplate
                     .Replace("{ParentName}", parent.FullName ?? "Parent")
-                    .Replace("{DateStr}", tomorrow.ToString("MM/dd/yyyy"))
+                    .Replace("{DateStr}", DateOnly.FromDateTime(DateTime.Today.AddDays(1)).ToString("MM/dd/yyyy"))
                     .Replace("{StudentsList}", studentHtmlList);
 
                 var request = new EmailFrom
@@ -109,7 +130,8 @@ namespace SchoolMedicalServer.Api.BackgroundServices
                     To = parent.EmailAddress!,
                     Body = htmlBody
                 };
-                await emailHelper.SendEmailAsync(request);
+
+                await _emailHelper.SendEmailAsync(request);
             }
         }
     }

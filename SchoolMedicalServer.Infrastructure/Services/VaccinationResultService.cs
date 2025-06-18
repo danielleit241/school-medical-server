@@ -1,5 +1,4 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos.Notification;
-using SchoolMedicalServer.Abstractions.Dtos.Vaccination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Results;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
@@ -111,41 +110,47 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return true;
         }
 
-        public async Task<VaccinationResultInformationResponse> GetVaccinationResult(Guid resultId)
+        public async Task<VaccinationResultResponse> GetVaccinationResult(Guid resultId)
         {
             var result = await resultRepository.GetByIdAsync(resultId);
             if (result == null) return null!;
-            return MapToVaccinationResultResponse(result);
+            var res = new VaccinationResultResponse
+            {
+                ResultResponse = new VaccinationResultInformationResponse
+                {
+                    VaccinationResultId = result.VaccinationResultId,
+                    HealthProfileId = result.HealthProfileId,
+                    RecorderId = result.RecorderId,
+                    VaccineId = result.Round?.Schedule?.Vaccine?.VaccineId ?? Guid.Empty,
+                    Vaccinated = result.Vaccinated,
+                    VaccinatedDate = result.VaccinatedDate,
+                    VaccinatedTime = result.VaccinatedTime,
+                    InjectionSite = result.InjectionSite,
+                    Notes = result.Notes,
+                    Status = result.Status,
+                    ParentConfirmed = result.ParentConfirmed,
+                    HealthQualified = result.HealthQualified,
+                },
+                VaccinationObservation = result.VaccinationObservation != null
+                    ? new VaccinationObservationInformationResponse
+                    {
+                        ObservationStartTime = result.VaccinationObservation.ObservationStartTime,
+                        ObservationEndTime = result.VaccinationObservation.ObservationEndTime,
+                        ReactionStartTime = result.VaccinationObservation.ReactionStartTime,
+                        ReactionType = result.VaccinationObservation.ReactionType,
+                        SeverityLevel = result.VaccinationObservation.SeverityLevel,
+                        ImmediateReaction = result.VaccinationObservation.ImmediateReaction,
+                        Intervention = result.VaccinationObservation.Intervention,
+                        ObservedBy = result.VaccinationObservation.ObservedBy,
+                        Notes = result.VaccinationObservation.Notes
+                    }
+                    : null
+            };
+            return res;
         }
 
-        private static VaccinationResultInformationResponse MapToVaccinationResultResponse(VaccinationResult result) => new VaccinationResultInformationResponse
-        {
-            VaccinationResultId = result.VaccinationResultId,
-            RoundId = result.RoundId,
-            HealthProfileId = result.HealthProfileId,
-            ParentConfirmed = result.ParentConfirmed,
-            Vaccinated = result.Vaccinated,
-            VaccinatedDate = result.VaccinatedDate,
-            InjectionSite = result.InjectionSite,
-            RecorderId = result.RecorderId,
-            Status = result.Status,
-            Notes = result.Notes,
-            Observation = MapToObservationResponse(result.VaccinationObservation)
-        };
 
-        private static VaccinationObservationInformationResponse? MapToObservationResponse(VaccinationObservation? obs) =>
-            obs == null ? null : new VaccinationObservationInformationResponse
-            {
-                ObservationStartTime = obs.ObservationStartTime,
-                ObservationEndTime = obs.ObservationEndTime,
-                ReactionStartTime = obs.ReactionStartTime,
-                ReactionType = obs.ReactionType,
-                SeverityLevel = obs.SeverityLevel,
-                ImmediateReaction = obs.ImmediateReaction,
-                Intervention = obs.Intervention,
-                ObservedBy = obs.ObservedBy,
-                Notes = obs.Notes
-            };
+
 
         public async Task<bool?> IsVaccinationConfirmed(Guid resultId)
         {
@@ -185,6 +190,50 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             await resultRepository.UpdateAsync(result);
             return true;
+        }
+
+        public async Task<IEnumerable<VaccinationResultParentResponse>> GetVaccinationResultStudentAsync(Guid studentId)
+        {
+            var healthProfile = await healthProfileRepository.GetByStudentIdAsync(studentId);
+            var results = await resultRepository.GetByHealthProfileId(healthProfile!.HealthProfileId);
+            if (results == null || !results.Any())
+            {
+                return [];
+            }
+            results = [.. results.OrderByDescending(vr => vr!.VaccinatedDate).ThenByDescending(vr => vr!.VaccinatedTime)];
+
+            var vaccineSummaries = results
+                .Where(vr => vr?.Vaccinated == true && vr?.Round?.Schedule?.Vaccine != null)
+                .GroupBy(vr => vr!.Round!.Schedule!.Vaccine!.VaccineName)
+                .Select(g =>
+                {
+                    var orderedDetails = g
+                        .OrderBy(vr => vr!.VaccinatedDate)
+                        .ThenBy(vr => vr!.VaccinatedTime)
+                        .Select((vr, idx) => new VaccineResultDetailResponse
+                        {
+                            VaccinationResultId = vr!.VaccinationResultId,
+                            VaccinatedDate = vr.VaccinatedDate,
+                            InjectionSite = vr.InjectionSite,
+                            Manufacturer = vr.Round!.Schedule!.Vaccine!.Manufacturer,
+                            BatchNumber = vr.Round!.Schedule!.Vaccine!.BatchNumber,
+                            DoseNumber = idx + 1
+                        })
+                        .ToList();
+
+                    return new VaccinationResultParentResponse
+                    {
+                        VaccineDoseSummary = new VaccineDoseSummary
+                        {
+                            VaccineName = g.Key,
+                            TotalDoseByVaccineName = g.Count().ToString(),
+                            VaccineResultDetails = orderedDetails
+                        }
+                    };
+                })
+                .ToList();
+
+            return vaccineSummaries;
         }
     }
 }

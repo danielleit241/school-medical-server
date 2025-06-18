@@ -40,7 +40,7 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
         }
 
         [HttpGet("vaccination-details/{id}")]
-        [Authorize(Roles = "admin, manager")]
+        [Authorize(Roles = "admin, manager, parent")]
         public async Task<IActionResult> GetVaccineDetail(Guid id)
         {
             var vaccineDetail = await service.GetVaccineDetailAsync(id);
@@ -62,7 +62,6 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             }
             return BadRequest("Failed to update vaccine detail.");
         }
-
 
         [HttpDelete("vaccination-details/{id:guid}")]
         [Authorize(Roles = "admin, manager")]

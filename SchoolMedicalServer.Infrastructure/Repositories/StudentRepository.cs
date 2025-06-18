@@ -124,6 +124,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task<IEnumerable<Student>> GetStudentsByGradeAsync(string? targetGrade)
         {
             return await _context.Students
+                .Include(s => s.HealthProfile)
                 .Where(s => s.Grade == targetGrade)
                 .ToListAsync();
         }

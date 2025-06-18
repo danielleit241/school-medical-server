@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SchoolMedicalServer.Abstractions.Dtos.Vaccination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Results;
 using SchoolMedicalServer.Abstractions.IServices;
 
@@ -55,7 +54,7 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
         }
 
         [HttpGet("vaccination-results/{resultId}")]
-        [Authorize(Roles = "admin, manager, nurse")]
+        [Authorize(Roles = "admin, manager, nurse, parent")]
         public async Task<IActionResult> GetVaccinationResult(Guid resultId)
         {
             var result = await service.GetVaccinationResult(resultId);
@@ -65,7 +64,6 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             }
             return Ok(result);
         }
-
 
         [HttpGet("vaccination-results/{resultId}/is-confirmed")]
         [Authorize(Roles = "parent")]
@@ -95,11 +93,16 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             return Ok(new { Message = "Parent is confirm" });
         }
 
-        //[HttpGet("parents/{userId}/vaccination-results/students")]
-        //[Authorize(Roles = "parent")]
-        //public async Task<IActionResult> GetVaccinationResultStudents(Guid userId)
-        //{
-        //    var students = await service.GetVaccinationResultStudents(userId);
-        //}
+        [HttpGet("vaccination-results/students/{studentId}")]
+        [Authorize(Roles = "parent")]
+        public async Task<IActionResult> GetVaccinationResultStudent(Guid studentId)
+        {
+            var result = await service.GetVaccinationResultStudentAsync(studentId);
+            if (result == null)
+            {
+                return NotFound(new { Message = "Student vaccination results not found." });
+            }
+            return Ok(result);
+        }
     }
 }
