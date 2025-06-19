@@ -79,7 +79,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         Hearing = null,
                         Nose = null,
                         BloodPressure = null,
-                        Status = false,
+                        Status = "Pending",
                         Notes = null,
                         RecordedId = round.NurseId
                     };

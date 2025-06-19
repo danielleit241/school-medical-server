@@ -124,7 +124,7 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.Hearing).HasMaxLength(50);
             entity.Property(e => e.Nose).HasMaxLength(50);
             entity.Property(e => e.BloodPressure).HasMaxLength(50);
-            entity.Property(e => e.Status).HasColumnType("bit");
+            entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.Notes).HasMaxLength(255);
             entity.Property(e => e.RecordedId);
             entity.Property(e => e.RecordedAt).HasColumnType("datetime");
