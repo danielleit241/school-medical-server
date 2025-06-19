@@ -26,6 +26,19 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             return Ok(notifications);
         }
 
+        [HttpPost("notifcations/health-checks/results/to-parent")]
+        [Authorize(Roles = "admin, manager, nurses")]
+        public async Task<IActionResult> SendHealthCheckResultNotificationToParent([FromBody] NotificationRequest request)
+        {
+            var notification = await service.SendHealthCheckResultNotificationToParent(request);
+            if (notification == null)
+            {
+                return BadRequest("Failed to send health-check result notification to parent.");
+            }
+            await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
+            return Ok(notification);
+        }
+
 
         [HttpPost("notifications/health-checks/to-nurse")]
         [Authorize(Roles = "admin, manager")]

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Results;
 using SchoolMedicalServer.Abstractions.IServices;
 
@@ -95,9 +96,9 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
 
         [HttpGet("vaccination-results/students/{studentId}")]
         [Authorize(Roles = "parent")]
-        public async Task<IActionResult> GetVaccinationResultStudent(Guid studentId)
+        public async Task<IActionResult> GetVaccinationResultStudent([FromQuery] PaginationRequest? pagination, Guid studentId)
         {
-            var result = await service.GetVaccinationResultStudentAsync(studentId);
+            var result = await service.GetVaccinationResultStudentAsync(pagination, studentId);
             if (result == null)
             {
                 return NotFound(new { Message = "Student vaccination results not found." });

@@ -1,5 +1,3 @@
-using DocumentFormat.OpenXml.Drawing;
-using System.Reflection.PortableExecutable;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -514,6 +512,33 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 responses.Add(GetResponse(notiInfo, sender, receiver));
             }
             return responses;
+        }
+
+        public async Task<NotificationResponse> SendHealthCheckResultNotificationToParent(NotificationRequest request)
+        {
+            var result = await healthCheckResultRepository.GetByIdAsync(request.NotificationTypeId);
+            if (result == null)
+            {
+                return null!;
+            }
+            var notification = new Notification
+            {
+                NotificationId = Guid.NewGuid(),
+                UserId = request.ReceiverId,
+                SenderId = request.SenderId,
+                Title = "Health Check Result Notification",
+                Content = $"The health check result for your child {result.HealthProfile!.Student!.FullName} is now available.",
+                SendDate = DateTime.UtcNow,
+                IsRead = false,
+                Type = NotificationTypes.HealthCheckUp,
+                SourceId = result.ResultId
+            };
+            await notificationRepository.AddAsync(notification);
+            await baseRepository.SaveChangesAsync();
+            var notiInfo = NotificationInformation(notification);
+            var sender = await SenderInformation(request);
+            var receiver = await ReceiverInformation(request);
+            return GetResponse(notiInfo, sender, receiver);
         }
     }
 }

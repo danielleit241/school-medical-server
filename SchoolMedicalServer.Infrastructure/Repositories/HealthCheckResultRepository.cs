@@ -12,6 +12,13 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .CountAsync(hcr => hcr.RoundId == roundId);
         }
 
+        public async Task<int> CountByStudentIdAsync(Guid studentId)
+        {
+            return await _context.HealthCheckResults
+                .Include(hcr => hcr.HealthProfile)
+                .CountAsync(hcr => hcr.HealthProfile!.StudentId == studentId);
+        }
+
         public async Task Create(HealthCheckResult healthCheckResult)
         {
             await _context.HealthCheckResults.AddAsync(healthCheckResult);
@@ -60,8 +67,22 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         {
             return await _context.HealthCheckResults
                 .Include(hcr => hcr.Round)
-                .Include(hcr => hcr.HealthProfile)
+                .Include(hcr => hcr.HealthProfile).ThenInclude(hp => hp!.Student)
                 .FirstOrDefaultAsync(hcr => hcr.ResultId == id);
+        }
+
+        public async Task<IEnumerable<HealthCheckResult?>> GetHealthCheckRoundsByStudentIdAsync(Guid studentId, string? search, int skip, int pageSize)
+        {
+            return await _context.HealthCheckResults
+                .Include(hcr => hcr.Round)
+                .Include(hcr => hcr.HealthProfile)
+                .ThenInclude(hp => hp!.Student)
+                .Where(hcr => hcr.HealthProfile!.StudentId == studentId &&
+                              (string.IsNullOrEmpty(search) ||
+                               hcr.HealthProfile.Student.FullName.Contains(search)))
+                .Skip(skip)
+                .Take(pageSize)
+                .ToListAsync();
         }
 
         public async Task<List<Guid>> GetHealthProfileIdsByRoundIdsAsync(List<Guid> guids)
