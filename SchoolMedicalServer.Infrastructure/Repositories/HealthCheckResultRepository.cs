@@ -67,7 +67,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         {
             return await _context.HealthCheckResults
                 .Include(hcr => hcr.Round)
-                .Include(hcr => hcr.HealthProfile)
+                .Include(hcr => hcr.HealthProfile).ThenInclude(hp => hp!.Student)
                 .FirstOrDefaultAsync(hcr => hcr.ResultId == id);
         }
 
