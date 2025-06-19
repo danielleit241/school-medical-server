@@ -1,4 +1,9 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.Notification;
+﻿using System.Linq;
+using Azure.Core;
+using Azure;
+using SchoolMedicalServer.Abstractions.Dtos.HealthCheck.Results;
+using SchoolMedicalServer.Abstractions.Dtos.Notification;
+using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Results;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
@@ -191,13 +196,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return true;
         }
 
-        public async Task<IEnumerable<VaccinationResultParentResponse>> GetVaccinationResultStudentAsync(Guid studentId)
+        public async Task<PaginationResponse<VaccinationResultParentResponse>> GetVaccinationResultStudentAsync(PaginationRequest? pagination, Guid studentId)
         {
             var healthProfile = await healthProfileRepository.GetByStudentIdAsync(studentId);
             var results = await resultRepository.GetByHealthProfileId(healthProfile!.HealthProfileId);
             if (results == null || !results.Any())
             {
-                return [];
+                return null!;
             }
             results = [.. results.OrderByDescending(vr => vr!.VaccinatedDate).ThenByDescending(vr => vr!.VaccinatedTime)];
 
@@ -232,7 +237,20 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 })
                 .ToList();
 
-            return vaccineSummaries;
+
+            int totalCount = vaccineSummaries.Count;
+            int skip = pagination!.PageSize * (pagination!.PageIndex - 1);
+            var responses = vaccineSummaries
+                                .Skip(skip)
+                                .Take(pagination!.PageSize)
+                                .ToList();
+            return new PaginationResponse<VaccinationResultParentResponse>
+            (
+                totalCount,
+                pagination!.PageIndex,
+                pagination.PageSize,
+                responses
+            );
         }
     }
 }

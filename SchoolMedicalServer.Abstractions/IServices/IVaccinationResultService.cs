@@ -1,4 +1,5 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos.Notification;
+using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Results;
 
 namespace SchoolMedicalServer.Abstractions.IServices
@@ -10,7 +11,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task<bool> CreateVaccinationResult(VaccinationResultRequest request);
         Task<bool?> GetHealthQualifiedVaccinationResult(Guid resultId);
         Task<VaccinationResultResponse> GetVaccinationResult(Guid resultId);
-        Task<IEnumerable<VaccinationResultParentResponse>> GetVaccinationResultStudentAsync(Guid studentId);
+        Task<PaginationResponse<VaccinationResultParentResponse>> GetVaccinationResultStudentAsync(PaginationRequest? pagination, Guid studentId);
         Task<bool?> IsVaccinationConfirmed(Guid resultId);
         Task<bool> UpdateHealthQualifiedVaccinationResult(Guid resultId, bool status);
     }

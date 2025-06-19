@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos.HealthCheck.Results;
+using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Api.Controllers.HealthCheck
@@ -41,12 +42,12 @@ namespace SchoolMedicalServer.Api.Controllers.HealthCheck
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> CreateHealthCheckResult([FromBody] HealthCheckResultRequest request)
         {
-            var result = await service.CreateHealthCheckResultAsync(request);
-            if (!result)
+            var notification = await service.CreateHealthCheckResultAsync(request);
+            if (notification == null)
             {
                 return BadRequest(new { Message = "Failed to create health check result." });
             }
-            return Ok();
+            return Ok(notification);
         }
 
         [HttpGet("health-check-results/{resultId}")]
@@ -59,6 +60,18 @@ namespace SchoolMedicalServer.Api.Controllers.HealthCheck
                 return NotFound(new { Message = "Health check result not found." });
             }
             return Ok(result);
+        }
+
+        [HttpGet("health-check-results/students/{studentId}")]
+        [Authorize(Roles = "parent")]
+        public async Task<IActionResult> GetHealthCheckResultsByStudentId([FromQuery] PaginationRequest? request, Guid studentId)
+        {
+            var results = await service.GetHealthCheckResultsByStudentIdAsync(request, studentId);
+            if (results == null)
+            {
+                return NotFound(new { Message = "No health check results found for this student." });
+            }
+            return Ok(results);
         }
     }
 }

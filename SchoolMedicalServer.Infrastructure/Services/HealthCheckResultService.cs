@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
-using SchoolMedicalServer.Abstractions.Dtos.HealthCheck.Results;
+﻿using SchoolMedicalServer.Abstractions.Dtos.HealthCheck.Results;
+using SchoolMedicalServer.Abstractions.Dtos.HealthCheck.Rounds;
+using SchoolMedicalServer.Abstractions.Dtos.Notification;
+using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
@@ -44,21 +46,21 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return result.ParentConfirmed;
         }
 
-        public async Task<bool> CreateHealthCheckResultAsync(HealthCheckResultRequest request)
+        public async Task<NotificationRequest> CreateHealthCheckResultAsync(HealthCheckResultRequest request)
         {
             if (request == null)
             {
-                return false!;
+                return null!;
             }
             var result = await healthCheckResultRepository.GetByIdAsync(request.HealthCheckResultId);
-            if (result == null)
+            if (result == null || result.DatePerformed.HasValue)
             {
-                return false;
+                return null!;
             }
             var round = await healthCheckRoundRepository.GetHealthCheckRoundByIdAsync(result.RoundId);
             if (round == null)
             {
-                return false;
+                return null!;
             }
             result.DatePerformed = request.DatePerformed ?? DateOnly.FromDateTime(DateTime.UtcNow);
             result.Notes = request.Notes;
@@ -73,7 +75,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
             result.RecordedId = round.NurseId;
             result.RecordedAt = DateTime.UtcNow;
             await healthCheckResultRepository.UpdateAsync(result);
-            return true;
+            var notification = new NotificationRequest
+            {
+                NotificationTypeId = result.ResultId,
+                SenderId = result.RecordedId,
+                ReceiverId = result!.HealthProfile!.Student.UserId,
+            };
+            return notification;
         }
 
         public async Task<HealthCheckResultResponse> GetHealthCheckResultAsync(Guid resultId)
@@ -130,6 +138,31 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return null;
             }
             return result.ParentConfirmed;
+        }
+
+        public async Task<PaginationResponse<HealthCheckResultResponse>> GetHealthCheckResultsByStudentIdAsync(PaginationRequest? request, Guid studentId)
+        {
+            var totalCount = await healthCheckResultRepository.CountByStudentIdAsync(studentId);
+            var skip = (request!.PageIndex - 1) * request.PageSize;
+            var results = await healthCheckResultRepository.GetHealthCheckRoundsByStudentIdAsync(studentId, request?.Search, skip, request!.PageSize);
+
+            var responses = new List<HealthCheckResultResponse>();
+            foreach (var result in results)
+            {
+                if (result == null)
+                {
+                    continue;
+                }
+                var res = await MapToResultRespone(result);
+                responses.Add(res);
+            }
+            return new PaginationResponse<HealthCheckResultResponse>
+            (
+                totalCount,
+                request!.PageIndex,
+                request.PageSize,
+                responses
+            );
         }
     }
 }
