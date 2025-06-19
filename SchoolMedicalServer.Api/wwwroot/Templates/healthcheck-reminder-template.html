@@ -1,0 +1,334 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>MEDICARE – School Medical Station of dh2TT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body {
+            background: #f5f5f5;
+            color: #202124;
+            font-family: "Google Sans", Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 20px 0;
+            line-height: 1.6;
+        }
+
+        .gmail-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+            overflow: hidden;
+        }
+
+        .gmail-header {
+            background: #ffffff;
+            padding: 24px 40px 0;
+            border-bottom: 1px solid #e8eaed;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+            .logo-section img {
+                width: 200px;
+                height: 50px;
+                border-radius: 8px;
+                margin-right: 16px;
+                object-fit: cover;
+            }
+
+        .company-info {
+            flex: 1;
+        }
+
+        .company-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #202124;
+            margin: 0;
+        }
+
+        .company-subtitle {
+            font-size: 12px;
+            color: #5f6368;
+            margin: 2px 0 0 0;
+        }
+
+        .gmail-body {
+            padding: 32px 40px;
+        }
+
+        .notification-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .greeting {
+            font-size: 16px;
+            color: #202124;
+            margin-bottom: 24px;
+        }
+
+        .parent-name {
+            color: #1a73e8;
+            font-weight: 500;
+        }
+
+        .health-check-card {
+            background: #f8f9fa;
+            border: 1px solid #e8eaed;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .health-check-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #202124;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .health-check-date {
+            background: #fce8e6;
+            color: #d93025;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .students-section {
+            margin: 16px 0;
+        }
+
+        .students-label {
+            font-size: 14px;
+            color: #5f6368;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .students-list {
+            background: #e8f0fe;
+            border: 1px solid #dadce0;
+            border-radius: 6px;
+            padding: 12px;
+            color: #1a73e8;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .instructions {
+            background: #ffffff;
+            border: 1px solid #e8eaed;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+        }
+
+        .instructions-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #202124;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .instructions-text {
+            font-size: 14px;
+            color: #3c4043;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .signature {
+            font-size: 14px;
+            color: #5f6368;
+            font-style: italic;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #e8eaed;
+            margin: 32px 0;
+        }
+
+        .automated-message {
+            font-size: 13px;
+            color: #5f6368;
+            margin-bottom: 32px;
+        }
+
+        .gmail-footer {
+            background: #f8f9fa;
+            padding: 24px 40px;
+            border-top: 1px solid #e8eaed;
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        .footer-copyright {
+            font-size: 12px;
+            color: #5f6368;
+            margin-bottom: 12px;
+        }
+
+        .footer-links {
+            margin-bottom: 8px;
+        }
+
+            .footer-links a {
+                color: #1a73e8;
+                text-decoration: none;
+                font-size: 12px;
+                margin: 0 8px;
+                font-weight: 400;
+            }
+
+                .footer-links a:hover {
+                    text-decoration: underline;
+                }
+
+        .footer-address {
+            font-size: 12px;
+            color: #5f6368;
+        }
+
+        .highlight-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 16px 0;
+        }
+
+        .highlight-text {
+            font-size: 13px;
+            color: #856404;
+            font-weight: 500;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 10px;
+            }
+
+            .gmail-header,
+            .gmail-body,
+            .gmail-footer {
+                padding-left: 24px;
+                padding-right: 24px;
+            }
+
+            .health-check-card,
+            .instructions {
+                padding: 16px;
+            }
+
+            .logo-section img {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gmail-container">
+        <div class="gmail-header">
+            <div class="logo-section">
+                <img src="https://res.cloudinary.com/darnrlpag/image/upload/v1749307550/dir5m6mwiu8l9zzvhgnl.png"
+                     alt="Medicare Logo" />
+                <div class="company-info">
+                    <h1 class="company-name">MEDICARE</h1>
+                    <p class="company-subtitle">School Medical Station of dh2TT</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="gmail-body">
+            <div class="notification-badge">📋 Health Check Reminder</div>
+
+            <div class="greeting">
+                Dear <span class="parent-name">{ParentName}</span>,
+            </div>
+
+            <div class="health-check-card">
+                <div class="health-check-title">
+                    📅 Health Check Appointment Scheduled
+                </div>
+
+                <div style="margin-bottom: 16px">
+                    Your child(ren) have a health check appointment scheduled for
+                    tomorrow (<span class="health-check-date">{DateStr}</span>).
+                </div>
+
+                <div class="students-section">
+                    <div class="students-label">👨‍🎓 Student(s):</div>
+                    <div class="students-list">{StudentsList}</div>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <div class="instructions-title">📋 Important Instructions</div>
+                <div class="instructions-text">
+                    Please remind your child to bring necessary documents (if available) and ensure
+                    punctual attendance.<br />
+                    For questions, contact the school medical station.
+                </div>
+
+                <div class="highlight-box">
+                    <div class="highlight-text">
+                        ⚠️ Please arrive 10 minutes early for check-in procedures.
+                    </div>
+                </div>
+
+                <div class="signature">
+                    Best regards,<br />
+                    School Medical Station – Medicare
+                </div>
+            </div>
+
+            <hr class="divider" />
+
+            <div class="automated-message">
+                This is an automated email from the MEDICARE health check system. Please do
+                not reply to this message.
+            </div>
+        </div>
+
+        <div class="gmail-footer">
+            <div class="footer-content">
+                <div class="footer-copyright">
+                    © 2025 MEDICARE – School Medical Station of dh2TT. All rights
+                    reserved.
+                </div>
+                <div class="footer-links">
+                    <a href="https://www.facebook.com/gcfootball2024">Website</a>
+                    <a href="https://www.facebook.com/gcfootball2024">Facebook</a>
+                </div>
+                <div class="footer-address">📍 Ho Chi Minh City, Vietnam</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
