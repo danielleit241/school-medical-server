@@ -1,5 +1,4 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos.HealthCheck.Results;
-using SchoolMedicalServer.Abstractions.Dtos.HealthCheck.Rounds;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -158,9 +157,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             return new PaginationResponse<HealthCheckResultResponse>
             (
-                totalCount,
                 request!.PageIndex,
                 request.PageSize,
+                totalCount,
                 responses
             );
         }

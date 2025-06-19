@@ -1,4 +1,3 @@
-using Azure.Core;
 using SchoolMedicalServer.Abstractions.Dtos.Appointment;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;

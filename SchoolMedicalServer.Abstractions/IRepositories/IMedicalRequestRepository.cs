@@ -7,5 +7,7 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
     {
         Task<List<MedicalRequestDtoResponse>> GetByEventIdAsync(Guid eventId);
         Task AddRangeAsync(List<MedicalRequest> requests);
+        Task<int> CountAsync();
+        Task<IEnumerable<MedicalRequest>> GetMedicalRequestsAsync(int pageSize, int skip, string? search);
     }
 }

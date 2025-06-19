@@ -3,7 +3,6 @@ using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Rounds;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
-using SchoolMedicalServer.Infrastructure.Repositories;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
@@ -36,9 +35,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 });
             }
             return new PaginationResponse<VaccinationRoundStudentResponse>(
-                totalCount,
                 pagination.PageIndex,
                 pagination.PageSize,
+                totalCount,
                 responses
             );
         }
@@ -126,9 +125,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 response.Add(MapToRoundResponse(round, nurse!));
             }
             return new PaginationResponse<VaccinationRoundResponse>(
-                totalCount,
                 pagination.PageIndex,
                 pagination.PageSize,
+                totalCount,
                 response
             );
         }
@@ -194,9 +193,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 });
             }
             return new PaginationResponse<VaccinationRoundStudentResponse>(
-                totalCount,
                 pagination.PageIndex,
                 pagination.PageSize,
+                totalCount,
                 responses
             );
 
