@@ -38,7 +38,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             if (result.ParentConfirmed == false)
             {
                 result.Notes = "Parent declined health check.";
-                result.Status = false;
+                result.Status = "Failed";
             }
             await healthCheckResultRepository.UpdateAsync(result);
             return result.ParentConfirmed;

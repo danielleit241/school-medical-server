@@ -12,7 +12,7 @@
         public string? Hearing { get; set; }
         public string? Nose { get; set; }
         public string? BloodPressure { get; set; }
-        public bool? Status { get; set; }
+        public string? Status { get; set; }
         public string? Notes { get; set; }
         public NurseInformationResponse? RecordedBy { get; set; }
     }

@@ -14,7 +14,7 @@ public partial class HealthCheckResult
     public string? Hearing { get; set; }
     public string? Nose { get; set; }
     public string? BloodPressure { get; set; }
-    public bool? Status { get; set; }
+    public string? Status { get; set; }
     public string? Notes { get; set; }
     public Guid? RecordedId { get; set; }
     public DateTime? RecordedAt { get; set; }
