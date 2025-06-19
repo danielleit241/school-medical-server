@@ -22,6 +22,18 @@ namespace SchoolMedicalServer.Api.Controllers.Student
             return Ok(students);
         }
 
+        [HttpGet("students/classes")]
+        [Authorize(Roles = "admin, manager")]
+        public async Task<IActionResult> GetAllClassesAsync()
+        {
+            var classes = await service.GetAllClassesAsync();
+            if (classes == null || !classes.Any())
+            {
+                return NotFound("No classes found.");
+            }
+            return Ok(classes);
+        }
+
         [HttpGet("students/no-paged")]
         [Authorize(Roles = "admin, manager, nurse")]
         public async Task<IActionResult> GetAllStudentsNoPagination()

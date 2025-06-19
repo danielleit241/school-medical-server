@@ -115,5 +115,16 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .Include(vr => vr.Round).ThenInclude(r => r!.Schedule).ThenInclude(s => s!.Vaccine)
                 .ToListAsync() ?? [];
         }
+
+        public async Task<List<VaccinationResult>> GetAllStudentsInSchedule(Guid scheduleId)
+        {
+            return await _context.VaccinationResults
+                .Include(r => r.Round).ThenInclude(r => r!.Schedule)
+                .Where(r => r.Round!.ScheduleId == scheduleId)
+                .Include(vr => vr.HealthProfile)
+                .ThenInclude(hp => hp!.Student)
+                .Where(vr => vr.Round!.ScheduleId == scheduleId)
+                .ToListAsync() ?? [];
+        }
     }
 }

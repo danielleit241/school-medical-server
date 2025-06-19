@@ -10,6 +10,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task<StudentInformationResponse?> UpdateStudentInformationAsync(Guid studentId, StudentInformationRequest request);
         Task<StudentInformationResponse?> GetStudentByIdAsync(Guid studentId);
         Task<IEnumerable<StudentInfo>> GetAllStudentsNoPaginationAsync();
+        Task<IEnumerable<string?>> GetAllClassesAsync();
     }
 
 }

@@ -59,12 +59,55 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var toNurses = new List<NotificationRequest>();
             foreach (var round in schedule.Rounds)
             {
+                if (round.TargetGrade!.Trim().Contains("supplement", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    List<HealthCheckResult> results = await resultRepository.GetAllStudentsInSchedule(scheduleId);
+                    results = [.. results.Where(r => r.ParentConfirmed == true && r.Status!.Equals("Failed"))];
+                    var healthProfileIds = results.Select(r => r!.HealthProfileId).ToList();
+                    var healthProfiles = await profileRepository.GetByIdsAsync(healthProfileIds);
+                    foreach (var hp in healthProfiles)
+                    {
+                        var HealthCheckResult = new HealthCheckResult
+                        {
+                            ResultId = Guid.NewGuid(),
+                            HealthProfileId = hp!.HealthProfileId!,
+                            RoundId = round.RoundId,
+                            ParentConfirmed = null,
+                            DatePerformed = null,
+                            Height = null,
+                            Weight = null,
+                            VisionLeft = null,
+                            VisionRight = null,
+                            Hearing = null,
+                            Nose = null,
+                            BloodPressure = null,
+                            Status = "Pending - (Supplement round)",
+                            Notes = null,
+                            RecordedId = round.NurseId
+                        };
+                        toParents.Add(new NotificationRequest
+                        {
+                            NotificationTypeId = HealthCheckResult.ResultId,
+                            SenderId = schedule.CreatedBy,
+                            ReceiverId = hp.Student!.UserId,
+                        });
+                        await resultRepository.Create(HealthCheckResult);
+                    }
+                    toNurses.Add(new NotificationRequest
+                    {
+                        NotificationTypeId = scheduleId,
+                        SenderId = schedule.CreatedBy,
+                        ReceiverId = round.NurseId,
+                    });
+                    return new NotificationScheduleResponse(toParents, toNurses);
+                }
                 if (await resultRepository.IsExistStudentByRoundId(round.RoundId))
                     continue;
                 var students = await studentRepository.GetStudentsByGradeAsync(round.TargetGrade);
                 foreach (var student in students)
                 {
                     var healthProfile = await profileRepository.GetByStudentIdAsync(student.StudentId);
+                    if (healthProfile == null || healthProfile.DeclarationDate == null) continue;
                     var result = new HealthCheckResult
                     {
                         ResultId = Guid.NewGuid(),
