@@ -51,7 +51,7 @@ namespace SchoolMedicalServer.Api.Controllers.HealthCheck
         }
 
         [HttpGet("health-check-results/{resultId}")]
-        [Authorize(Roles = "admin, manager, nurse")]
+        [Authorize(Roles = "admin, manager, nurse, parent")]
         public async Task<IActionResult> GetHealthCheckResult(Guid resultId)
         {
             var result = await service.GetHealthCheckResultAsync(resultId);
