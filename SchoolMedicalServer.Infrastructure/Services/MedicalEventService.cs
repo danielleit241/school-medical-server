@@ -45,6 +45,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 var inventoryItem = await inventoryRepo.GetByIdAsync(item.ItemId);
                 if (inventoryItem == null) return null!;
                 inventoryItem.QuantityInStock -= item.RequestQuantity ?? 0;
+                inventoryItem.LastExportDate = DateTime.UtcNow;
                 if (inventoryItem.QuantityInStock == inventoryItem.MinimumStockLevel)
                 {
                     inventoryItem.Status = false;

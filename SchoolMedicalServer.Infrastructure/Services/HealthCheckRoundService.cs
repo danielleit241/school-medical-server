@@ -58,9 +58,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 responses.Add(await MapToDetailsResponse(round));
             }
             return new PaginationResponse<HealthCheckRoundResponse>(
-                totalCount,
                 pagination.PageIndex,
                 pagination.PageSize,
+                totalCount,
                 responses
             );
         }
@@ -170,9 +170,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 });
             }
             return new PaginationResponse<HealthCheckRoundStudentResponse>(
-                totalCount,
                 pagination.PageIndex,
                 pagination.PageSize,
+                totalCount,
                 responses
             );
         }
@@ -200,9 +200,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 });
             }
             return new PaginationResponse<HealthCheckRoundStudentResponse>(
-                totalCount,
                 pagination.PageIndex,
                 pagination.PageSize,
+                totalCount,
                 responses
             );
         }

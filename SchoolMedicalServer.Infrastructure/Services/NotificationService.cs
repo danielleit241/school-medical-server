@@ -56,8 +56,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return new PaginationResponse<NotificationResponse>(
                    pagination!.PageIndex,
                    pagination.PageSize,
-                    totalCount,
-                    result
+                   totalCount,
+                   result
              );
         }
         public async Task<NotificationResponse> SendAppoimentNotificationToNurseAsync(NotificationRequest request)

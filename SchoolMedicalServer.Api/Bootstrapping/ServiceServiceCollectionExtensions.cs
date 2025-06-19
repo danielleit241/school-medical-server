@@ -8,16 +8,16 @@ namespace SchoolMedicalServer.Api.Bootstrapping
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddScoped<IAuthService, AuthService>();
-            services.AddTransient<IAccountService, AccountService>();
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IUserProfileService, UserProfileService>();
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserProfileService, UserProfileService>();
             services.AddScoped<IHealthProfileDeclarationService, HealthProfileDeclarationService>();
             services.AddScoped<IAppointmentService, AppointmentService>();
             services.AddScoped<IParentStudentService, ParentStudentService>();
-            services.AddTransient<IFileService, FileService>();
+            services.AddScoped<IFileService, FileService>();
             services.AddScoped<IStudentService, StudentService>();
-            services.AddTransient<IMedicalRegistrationService, MedicalRegistrationService>();
-            services.AddTransient<IMedicalEventService, MedicalEventService>();
+            services.AddScoped<IMedicalRegistrationService, MedicalRegistrationService>();
+            services.AddScoped<IMedicalEventService, MedicalEventService>();
             services.AddScoped<IMedicalInventoryService, MedicalInventoryService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IVaccinationDetailsService, VaccinationDetailsService>();
@@ -27,6 +27,7 @@ namespace SchoolMedicalServer.Api.Bootstrapping
             services.AddScoped<IHealthCheckScheduleService, HealthCheckScheduleService>();
             services.AddScoped<IHealthCheckResultService, HealthCheckResultService>();
             services.AddScoped<IHealthCheckRoundService, HealthCheckRoundService>();
+            services.AddScoped<IMedicalRequestService, MedicalRequestService>();
             return services;
         }
     }

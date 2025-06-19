@@ -1,8 +1,4 @@
-﻿using System.Linq;
-using Azure.Core;
-using Azure;
-using SchoolMedicalServer.Abstractions.Dtos.HealthCheck.Results;
-using SchoolMedicalServer.Abstractions.Dtos.Notification;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Results;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -246,9 +242,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
                                 .ToList();
             return new PaginationResponse<VaccinationResultParentResponse>
             (
-                totalCount,
                 pagination!.PageIndex,
                 pagination.PageSize,
+                totalCount,
                 responses
             );
         }

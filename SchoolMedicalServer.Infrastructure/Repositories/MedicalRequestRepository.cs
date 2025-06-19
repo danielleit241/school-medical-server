@@ -27,5 +27,27 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
 
         public async Task AddRangeAsync(List<MedicalRequest> requests)
             => await context.MedicalRequests.AddRangeAsync(requests);
+
+        public async Task<int> CountAsync()
+        {
+            return await context.MedicalRequests
+                .AsNoTracking()
+                .CountAsync();
+        }
+
+        public async Task<IEnumerable<MedicalRequest>> GetMedicalRequestsAsync(int pageSize, int skip, string? search)
+        {
+            return await context.MedicalRequests
+                .Include(r => r.Item)
+                .Include(r => r.Event)
+                .Where(r => string.IsNullOrEmpty(search) ||
+                            r.Item!.ItemName!.Contains(search) ||
+                            r.Purpose!.Contains(search))
+                .OrderByDescending(r => r.RequestDate)
+                .Skip(skip)
+                .Take(pageSize)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }
