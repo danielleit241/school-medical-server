@@ -107,7 +107,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 foreach (var student in students)
                 {
                     var healthProfile = await profileRepository.GetByStudentIdAsync(student.StudentId);
-                    if (healthProfile == null || healthProfile.DeclarationDate == null) continue;
+                    //if (healthProfile == null || healthProfile.DeclarationDate == null) continue;
                     var result = new HealthCheckResult
                     {
                         ResultId = Guid.NewGuid(),

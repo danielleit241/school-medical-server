@@ -453,10 +453,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 var result = await healthCheckResultRepository.GetByIdAsync(request.NotificationTypeId);
                 var round = await healthCheckRoundRepository.GetHealthCheckRoundByIdAsync(result!.RoundId);
                 var schedule = await healthCheckScheduleRepository.GetHealthCheckScheduleByIdAsync(round!.ScheduleId);
+                var student = await studentRepository.GetStudentByHealthProfileId(result.HealthProfileId);
 
                 var sender = await SenderInformation(request);
                 var receiver = await ReceiverInformation(request);
-                var student = await studentRepository.GetStudentByUserId(request.ReceiverId);
                 if (schedule == null || sender == null || receiver == null)
                 {
                     continue;
