@@ -223,6 +223,11 @@ namespace SchoolMedicalServer.Api.BackgroundServices
 
         private async Task SendRemindersAsync(List<(User Parent, List<Student> Students)> reminders, ReminderType type)
         {
+            if (reminders is null)
+            {
+                _logger.LogWarning("No reminders to send for type {Type}.", type);
+                return;
+            }
             string subject = type switch
             {
                 ReminderType.Vaccination => "Vaccination Reminder for Tomorrow",

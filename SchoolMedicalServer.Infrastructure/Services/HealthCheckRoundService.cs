@@ -211,8 +211,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return false;
             }
-            var results = await healthCheckResultRepository.GetAllStudentsInRound(roundId);
-            if (results.Any(r => r!.Status == false))
+            var today = DateTime.UtcNow;
+            if (round.EndTime < today)
             {
                 return false;
             }

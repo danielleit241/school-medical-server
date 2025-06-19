@@ -1,4 +1,5 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.Notification;
+﻿using SchoolMedicalServer.Abstractions.Dtos;
+using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Vaccines;
@@ -235,6 +236,26 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     }
                 }
             }
+            return true;
+        }
+
+        public async Task<bool> UpdateStatusSchedulesAsync(ScheduleUpdateStatusRequest request)
+        {
+            var schedule = await vaccinationScheduleRepository.GetVaccinationScheduleByIdAsync(request.ScheduleId);
+            if (schedule == null)
+                return false;
+            if (schedule.Rounds.Any(r => r.Status == false))
+            {
+                return false;
+            }
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            if (schedule.EndDate < today)
+            {
+                return false;
+            }
+            schedule.Status = true;
+            schedule.UpdatedAt = DateTime.UtcNow;
+            vaccinationScheduleRepository.UpdateVaccinationSchedule(schedule);
             return true;
         }
     }

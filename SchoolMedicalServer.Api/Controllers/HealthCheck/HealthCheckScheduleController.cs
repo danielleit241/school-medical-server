@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.Dtos.HealthCheck.Schedules;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.IServices;
@@ -20,6 +21,17 @@ namespace SchoolMedicalServer.Api.Controllers.HealthCheck
                 return BadRequest("Create schedule failed");
             }
             return Ok("Create schedule successfully");
+        }
+
+        [HttpPut("health-checks/schedules/finished")]
+        public async Task<IActionResult> UpdateStatusScheduleAsync([FromBody] ScheduleUpdateStatusRequest request)
+        {
+            var isUpdated = await service.UpdateStatusSchedulesAsync(request);
+            if (isUpdated == false)
+            {
+                return BadRequest(new { Message = "Update schedule status failed" });
+            }
+            return Ok(new { Status = isUpdated });
         }
 
         [HttpPost("health-checks/schedules/add-students")]
