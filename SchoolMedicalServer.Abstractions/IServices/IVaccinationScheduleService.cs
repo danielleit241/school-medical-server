@@ -1,4 +1,5 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.Notification;
+﻿using SchoolMedicalServer.Abstractions.Dtos;
+using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules;
 
@@ -12,5 +13,6 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task<NotificationScheduleResponse> CreateVaccinationResultsByRounds(Guid scheduleId);
         Task<bool> UpdateScheduleAsync(Guid scheduleId, VaccinationScheduleUpdateRequest request);
         Task<bool> CheckVaccinationSchedule(VaccinationScheduleRequest request);
+        Task<bool> UpdateStatusSchedulesAsync(ScheduleUpdateStatusRequest request);
     }
 }

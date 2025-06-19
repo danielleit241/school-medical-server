@@ -43,8 +43,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
             result.ParentConfirmed = request.Status;
             if (result.ParentConfirmed == false)
             {
+                result.HealthQualified = false;
                 result.Notes = "Parent declined vaccination.";
-                result.Status = "Declined";
+                result.Status = "Falied";
             }
             await resultRepository.UpdateAsync(result);
             return result.ParentConfirmed;
@@ -149,9 +150,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return res;
         }
 
-
-
-
         public async Task<bool?> IsVaccinationConfirmed(Guid resultId)
         {
             var result = await resultRepository.GetByIdAsync(resultId);
@@ -187,6 +185,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 result.VaccinatedDate = null;
                 result.VaccinatedTime = null;
                 result.Status = "Failed";
+                result.Notes = "Health not qualified";
             }
             await resultRepository.UpdateAsync(result);
             return true;

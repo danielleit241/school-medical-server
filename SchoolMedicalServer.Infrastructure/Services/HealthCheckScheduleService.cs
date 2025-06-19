@@ -1,4 +1,5 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.HealthCheck.Schedules;
+﻿using SchoolMedicalServer.Abstractions.Dtos;
+using SchoolMedicalServer.Abstractions.Dtos.HealthCheck.Schedules;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -207,6 +208,26 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     UpdatedAt = schedule.UpdatedAt
                 }
             };
+        }
+
+        public async Task<bool> UpdateStatusSchedulesAsync(ScheduleUpdateStatusRequest request)
+        {
+            var schedule = await healthCheckRepository.GetHealthCheckScheduleByIdAsync(request.ScheduleId);
+            if (schedule == null)
+                return false;
+            if (schedule.Rounds.Any(r => r.Status == false))
+            {
+                return false;
+            }
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            if (schedule.EndDate < today)
+            {
+                return false;
+            }
+            schedule.Status = true;
+            schedule.UpdatedAt = DateTime.UtcNow;
+            await healthCheckRepository.UpdateHealthCheckSchedule(schedule);
+            return true;
         }
     }
 }

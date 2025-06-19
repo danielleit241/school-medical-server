@@ -140,8 +140,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return false;
             }
-            var results = await vaccinationResultRepository.GetAllStudentsInRound(roundId);
-            if (results.Any(r => r!.Vaccinated == false))
+            var today = DateTime.UtcNow;
+            if (round.EndTime < today)
             {
                 return false;
             }
