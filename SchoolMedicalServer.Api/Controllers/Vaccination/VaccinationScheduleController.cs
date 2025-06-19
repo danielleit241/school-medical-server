@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules;
+using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Vaccines;
 using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Api.Controllers.Vaccination
@@ -13,7 +14,7 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
     {
         [HttpPost("vaccinations/schedules/is-valid")]
         [Authorize(Roles = "admin, manager")]
-        public async Task<IActionResult> CheckVaccinationSchedule([FromBody] VaccinationScheduleRequest request)
+        public async Task<IActionResult> CheckVaccinationSchedule([FromBody] VaccinationScheduleCheckRequest request)
         {
             var isValid = await service.CheckVaccinationSchedule(request);
             if (!isValid)

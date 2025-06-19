@@ -209,6 +209,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return false;
             }
+            if (schedule.Rounds.Any(r => r.TargetGrade!.Equals(request.TargetGrade!)))
+                return false;
+
             var round = new VaccinationRound
             {
                 RoundId = Guid.NewGuid(),

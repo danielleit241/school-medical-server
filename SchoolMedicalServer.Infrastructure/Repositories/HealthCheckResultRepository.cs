@@ -35,6 +35,17 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<HealthCheckResult>> GetAllStudentsInSchedule(Guid scheduleId)
+        {
+            return await _context.HealthCheckResults
+                .Include(r => r.Round).ThenInclude(r => r!.Schedule)
+                .Where(r => r.Round!.ScheduleId == scheduleId)
+                .Include(vr => vr.HealthProfile)
+                .ThenInclude(hp => hp!.Student)
+                .Where(vr => vr.Round!.ScheduleId == scheduleId)
+                .ToListAsync() ?? [];
+        }
+
         public async Task<IEnumerable<HealthCheckResult?>> GetByHealthProfileIdsAsync(IEnumerable<Guid> enumerable)
         {
             return await _context.HealthCheckResults

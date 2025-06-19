@@ -15,5 +15,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<List<Guid>> GetHealthProfileIdsByRoundIdsAsync(List<Guid> guids);
         Task<IEnumerable<HealthCheckResult?>> GetAllStudentsInRound(Guid roundId);
         Task<IEnumerable<HealthCheckResult?>> GetByHealthProfileIdsAsync(IEnumerable<Guid> enumerable);
+        Task<List<HealthCheckResult>> GetAllStudentsInSchedule(Guid scheduleId);
     }
 }

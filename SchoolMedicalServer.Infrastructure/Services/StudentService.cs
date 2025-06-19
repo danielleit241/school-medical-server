@@ -101,5 +101,16 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             return result;
         }
+
+        public async Task<IEnumerable<string?>> GetAllClassesAsync()
+        {
+            var students = await studentRepository.GetAllAsync();
+            if (students == null || !students.Any())
+            {
+                return null!;
+            }
+            var classes = students.Select(s => s.Grade).Distinct().ToList();
+            return classes;
+        }
     }
 }
