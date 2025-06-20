@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos.User;
 using SchoolMedicalServer.Abstractions.IServices;
-using SchoolMedicalServer.Infrastructure.Services;
 
 namespace SchoolMedicalServer.Api.Controllers.User
 {

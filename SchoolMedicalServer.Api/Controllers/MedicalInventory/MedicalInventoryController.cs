@@ -21,10 +21,10 @@ namespace SchoolMedicalServer.Api.Controllers.MedicalInventory
             }
             return Ok(inventories);
         }
-    
 
 
-     [HttpGet("medical-inventories/{itemId:guid}")]
+
+        [HttpGet("medical-inventories/{itemId:guid}")]
         [Authorize(Roles = "admin, nurse, manager")]
         public async Task<IActionResult> GetMedicalInventoryById(Guid itemId)
         {

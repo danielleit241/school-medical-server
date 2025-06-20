@@ -21,9 +21,8 @@ namespace SchoolMedicalServer.Api.BackgroundServices
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("DailyCheckParentConfirmedService started at: {time}", DateTimeOffset.Now);
             var sendMailTask = RunDailyJobAtHourAsync(7, SendParentReminderEmailsAsync, stoppingToken);
-            var ConfirmTask = RunDailyJobAtHourAsync(0, CloseParentConfirmationAsync, stoppingToken);
+            var ConfirmTask = RunDailyJobAtHourAsync(24, CloseParentConfirmationAsync, stoppingToken);
 
             //var sendMailTask = TestRunDailyJobAtHourAsync(7, SendParentReminderEmailsAsync, stoppingToken);
             //var ConfirmTask = TestRunDailyJobAtHourAsync(0, CloseParentConfirmationAsync, stoppingToken);
@@ -56,7 +55,8 @@ namespace SchoolMedicalServer.Api.BackgroundServices
             while (!stoppingToken.IsCancellationRequested)
             {
                 DateTime now = DateTime.Now;
-                DateTime nextRun = now.Date.AddHours(hour);
+                DateTime nextRun = now.Date.AddHours(hour).AddMinutes(-1);
+                _logger.LogInformation("Next run for job at {Hour}h is scheduled for {NextRun}", hour, nextRun);
                 if (now > nextRun)
                     nextRun = nextRun.AddDays(1);
 

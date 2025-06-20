@@ -40,8 +40,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return ToMedicalInventoryResponse(entity);
         }
 
-            public async Task<MedicalInventoryResponse?> DeleteMedicalInventoryAsync(Guid itemId)
-            {
+        public async Task<MedicalInventoryResponse?> DeleteMedicalInventoryAsync(Guid itemId)
+        {
             var item = await medicalInventoryRepository.GetByIdAsync(itemId);
             if (item == null) return null;
 
