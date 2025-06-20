@@ -28,6 +28,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task<VaccinationResult?> GetByIdAsync(Guid? id)
         {
             return await _context.VaccinationResults
+                .Include(vr => vr.HealthProfile).ThenInclude(hp => hp!.Student).ThenInclude(s => s!.User)
                 .Include(vr => vr.Round)
                 .ThenInclude(r => r!.Schedule).ThenInclude(s => s!.Vaccine)
                 .Include(vr => vr.VaccinationObservation)
