@@ -36,6 +36,14 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
             return await _context.VaccinationSchedules.Include(s => s.Rounds).Include(s => s.Vaccine).ToListAsync();
         }
 
+        public async Task<IEnumerable<VaccinationSchedule>> GetVaccinationSchedulesByDateRange(DateTime monday, DateTime sunday)
+        {
+            return await _context.VaccinationSchedules
+                .Include(s => s.Rounds).ThenInclude(r => r.VaccinationResults)
+                .Where(s => s.ParentNotificationStartDate >= DateOnly.FromDateTime(monday) && s.ParentNotificationStartDate <= DateOnly.FromDateTime(sunday))
+                .ToListAsync();
+        }
+
         public void UpdateVaccinationSchedule(VaccinationSchedule request)
         {
             _context.VaccinationSchedules.Update(request);

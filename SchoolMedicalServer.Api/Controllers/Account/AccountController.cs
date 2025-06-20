@@ -66,10 +66,21 @@ namespace SchoolMedicalServer.Api.Controllers.Account
             string templatePath = Path.Combine(_env.WebRootPath, "templates", "register_email_template.html");
             if (!System.IO.File.Exists(templatePath))
                 return NotFound("Email template not found");
-            foreach (var account in accounts)
+
+            var semaphore = new SemaphoreSlim(5);
+            var tasks = accounts.Select(async account =>
             {
-                await SendEmail(account, templatePath);
-            }
+                await semaphore.WaitAsync();
+                try
+                {
+                    await SendEmail(account, templatePath);
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            });
+            await Task.WhenAll(tasks);
 
             return Ok(accounts);
         }

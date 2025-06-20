@@ -10,5 +10,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task UpdateHealthCheckSchedule(HealthCheckSchedule request);
         Task<int> CountAsync();
         Task<IEnumerable<HealthCheckSchedule>> GetPagedHealthCheckSchedule(int skip, int take);
+        Task<IEnumerable<HealthCheckSchedule>> GetHealthCheckSchedulesByDateRange(DateTime monday, DateTime sunday);
     }
 }

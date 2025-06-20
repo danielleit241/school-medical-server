@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>MEDICARE – School Medical Station of dtn2T</title>
+    <title>MEDICARE – Parent Confirmation Reminder</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         body {
@@ -64,11 +64,11 @@
             padding: 32px 40px;
         }
 
-        .welcome-badge {
+        .notification-badge {
             display: inline-flex;
             align-items: center;
-            background: #e8f5e8;
-            color: #137333;
+            background: #e3f2fd;
+            color: #1565c0;
             padding: 4px 8px;
             border-radius: 4px;
             font-size: 12px;
@@ -76,90 +76,86 @@
             margin-bottom: 16px;
         }
 
-        .welcome-title {
-            font-size: 20px;
-            font-weight: 400;
+        .greeting {
+            font-size: 16px;
             color: #202124;
             margin-bottom: 24px;
         }
 
-        .welcome-name {
+        .parent-name {
             color: #1a73e8;
             font-weight: 500;
         }
 
-        .main-message {
-            font-size: 14px;
-            color: #3c4043;
-            margin-bottom: 32px;
-            line-height: 1.5;
-        }
-
-        .account-card {
+        .reminder-card {
             background: #f8f9fa;
             border: 1px solid #e8eaed;
             border-radius: 8px;
             padding: 24px;
-            margin: 32px 0;
+            margin: 24px 0;
         }
 
-        .account-title {
-            font-size: 16px;
-            font-weight: 600;
+        .reminder-title {
+            font-size: 18px;
+            font-weight: 700;
             color: #202124;
             margin-bottom: 16px;
             display: flex;
             align-items: center;
         }
 
-        .account-item {
-            display: flex;
-            align-items: center;
-            justify-content: left;
-            gap: 12px;
-            padding: 12px 25px;
-            border-bottom: 1px solid #e8eaed;
-        }
-
-            .account-item:last-child {
-                border-bottom: none;
-            }
-
-        .account-label {
-            font-size: 16px;
-            color: #1a73e8;
-            font-weight: 400;
-            width: 110px
-        }
-
-        .account-value {
-            font-size: 18px;
-            color: #5f6368;
+        .reminder-type {
+            background: #fce8e6;
+            color: #d93025;
+            padding: 2px 6px;
+            border-radius: 4px;
             font-weight: 500;
+            font-size: 14px;
             margin-left: 8px;
-            width: 110px;
-            font-family: "Google Sans Mono", monospace;
         }
 
-        .security-notice {
-            background: #fef7e0;
-            border: 1px solid #fdd663;
+        .instructions {
+            background: #ffffff;
+            border: 1px solid #e8eaed;
             border-radius: 8px;
             padding: 16px;
             margin: 24px 0;
         }
 
-        .security-notice-title {
+        .instructions-title {
             font-size: 14px;
             font-weight: 500;
-            color: #b06000;
-            margin-bottom: 4px;
+            color: #202124;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
         }
 
-        .security-notice-text {
+        .instructions-text {
+            font-size: 14px;
+            color: #3c4043;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .highlight-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 16px 0;
+        }
+
+        .highlight-text {
             font-size: 13px;
-            color: #b06000;
-            line-height: 1.4;
+            color: #856404;
+            font-weight: 500;
+        }
+
+        .signature {
+            font-size: 14px;
+            color: #5f6368;
+            font-style: italic;
         }
 
         .divider {
@@ -211,31 +207,6 @@
             color: #5f6368;
         }
 
-        .feature-list {
-            background: #ffffff;
-            border: 1px solid #e8eaed;
-            border-radius: 8px;
-            padding: 16px;
-            margin: 24px 0;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 12px;
-            font-size: 14px;
-            color: #3c4043;
-        }
-
-            .feature-item:last-child {
-                margin-bottom: 0;
-            }
-
-        .feature-icon {
-            margin-right: 8px;
-            margin-top: 2px;
-        }
-
         @media (max-width: 640px) {
             body {
                 padding: 10px;
@@ -248,14 +219,9 @@
                 padding-right: 24px;
             }
 
-            .welcome-title {
-                font-size: 20px;
-            }
-
-            .account-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 4px;
+            .reminder-card,
+            .instructions {
+                padding: 16px;
             }
 
             .logo-section img {
@@ -269,7 +235,7 @@
     <div class="gmail-container">
         <div class="gmail-header">
             <div class="logo-section">
-                <img src="https://res.cloudinary.com/darnrlpag/image/upload/v1749307550/dir5m6mwiu8l9zzvhgnl.png?fbclid=IwY2xjawKyjtFleHRuA2FlbQIxMABicmlkETFUeTlWNDFMdmV3STRSeFU0AR6iVwk-vgjS9jy_4Wy7uNuplOI6lw-HaVFJXoPkvEpmJJBFoTG4ZtoNhRccDA_aem_AfcpWrE3_YtkE63D1HnJ3w"
+                <img src="https://res.cloudinary.com/darnrlpag/image/upload/v1749307550/dir5m6mwiu8l9zzvhgnl.png"
                      alt="Medicare Logo" />
                 <div class="company-info">
                     <h1 class="company-name">MEDICARE</h1>
@@ -277,63 +243,47 @@
                 </div>
             </div>
         </div>
-
         <div class="gmail-body">
-            <div class="welcome-badge">🎉 Welcome to Medicare</div>
-
-            <div class="welcome-title">
-                <span class="welcome-name">{FULLNAME}</span>, welcome to Medicare!
+            <div class="notification-badge">🔔 Parent Confirmation Needed</div>
+            <div class="greeting">
+                Dear <span class="parent-name">{ParentName}</span>,
             </div>
-
-            <div class="main-message">
-                To enhance student health care and streamline school medical
-                operations, the school has officially launched the
-                <strong>MEDICARE – School Medical Station of dh2TT</strong> — a modern
-                platform designed to support school staff and healthcare personnel.
-            </div>
-
-            <div class="feature-list">
-                <div class="feature-item">
-                    <span class="feature-icon">📋</span>
-                    <span>
-                        Receiving and responding to health-related information from
-                        parents
-                    </span>
+            <div class="reminder-card">
+                <div class="reminder-title">
+                    Please confirm your child(ren)'s
+                    <span class="reminder-type">{Type}</span>
                 </div>
-                <div class="feature-item">
-                    <span class="feature-icon">💉</span>
-                    <span>Monitoring students' health during vaccination programs</span>
+                <div style="margin-bottom: 16px">
+                    We kindly remind you to access the Medicare app to confirm your
+                    <span style="color: #1a73e8; font-weight: 500">{Type}</span> result
+                    as soon as possible.
                 </div>
             </div>
-
-            <div class="account-card">
-                <div class="account-title">🔑 Your Account Information</div>
-                <div class="account-item">
-                    <span class="account-label">Phone number: </span>
-                    <span class="account-value">{PHONENUMBER}</span>
+            <div class="instructions">
+                <div class="instructions-title">📋 How to confirm?</div>
+                <div class="instructions-text">
+                    1. Open the Medicare app or website.<br />
+                    2. Log in with your account.<br />
+                    3. Go to the <b>{Type}</b> notification section.<br />
+                    4. Review and confirm the result.<br />
                 </div>
-                <div class="account-item">
-                    <span class="account-label">Password: </span>
-                    <span class="account-value">{PASSWORD}</span>
+                <div class="highlight-box">
+                    <div class="highlight-text">
+                        ⚠️ Please confirm before the deadline to help us complete the
+                        school medical records.
+                    </div>
+                </div>
+                <div class="signature">
+                    Best regards,<br />
+                    School Medical Station – Medicare
                 </div>
             </div>
-
-            <div class="security-notice">
-                <div class="security-notice-title">🛡️ Security Note</div>
-                <div class="security-notice-text">
-                    Please change your password after your first login to keep your
-                    account secure. We recommend using a strong, unique password.
-                </div>
-            </div>
-
             <hr class="divider" />
-
             <div class="automated-message">
-                This is an automated message from MEDICARE system. Please do not reply
-                to this email.
+                This is an automated email from the MEDICARE system. Please do not
+                reply to this message.
             </div>
         </div>
-
         <div class="gmail-footer">
             <div class="footer-content">
                 <div class="footer-copyright">
@@ -343,8 +293,6 @@
                 <div class="footer-links">
                     <a href="https://www.facebook.com/gcfootball2024">Website</a>
                     <a href="https://www.facebook.com/gcfootball2024">Facebook</a>
-                    <a href="https://www.facebook.com/gcfootball2024">Instagram</a>
-                    <a href="https://www.facebook.com/gcfootball2024">LinkedIn</a>
                 </div>
                 <div class="footer-address">📍 Ho Chi Minh City, Vietnam</div>
             </div>

@@ -10,6 +10,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         void UpdateVaccinationSchedule(VaccinationSchedule request);
         Task<int> CountAsync();
         Task<IEnumerable<VaccinationSchedule>> GetPagedVaccinationSchedule(int skip, int take);
-
+        Task<IEnumerable<VaccinationSchedule>> GetVaccinationSchedulesByDateRange(DateTime monday, DateTime sunday);
     }
 }

@@ -21,21 +21,33 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             var students = await studentRepository.GetStudentsWithParentPhoneAsync();
 
-            var parentPhones = await studentRepository.GetParentsPhoneNumber();
+            var parentPhones = students
+                .Where(s => !string.IsNullOrEmpty(s.ParentPhoneNumber))
+                .Select(s => s.ParentPhoneNumber!)
+                .Distinct()
+                .ToList();
 
             var existingUsers = await userRepository.GetUsersByPhoneNumbersAsync(parentPhones);
 
+            var studentsByParentPhone = students
+                .Where(s => !string.IsNullOrEmpty(s.ParentPhoneNumber))
+                .GroupBy(s => s.ParentPhoneNumber!)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
             List<AccountResponse> accounts = [];
 
-            foreach (var student in students)
+            foreach (var parentPhone in parentPhones)
             {
-                if (string.IsNullOrEmpty(student.ParentPhoneNumber))
+                if (!studentsByParentPhone.TryGetValue(parentPhone, out var studentsWithSameParent))
                     continue;
 
-                if (existingUsers.TryGetValue(student.ParentPhoneNumber, out var existingUser))
+                if (existingUsers.TryGetValue(parentPhone, out var existingUser))
                 {
-                    student.UserId = existingUser.UserId;
-                    studentRepository.UpdateStudent(student);
+                    foreach (var student in studentsWithSameParent)
+                    {
+                        student.UserId = existingUser.UserId;
+                        studentRepository.UpdateStudent(student);
+                    }
                     continue;
                 }
 
@@ -46,29 +58,31 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 var user = new User
                 {
                     UserId = Guid.NewGuid(),
-                    PhoneNumber = student.ParentPhoneNumber!,
+                    PhoneNumber = parentPhone,
                     PasswordHash = new PasswordHasher<User>().HashPassword(null!, defaultPassword),
                     RoleId = role.RoleId,
-                    EmailAddress = student.ParentEmailAddress,
+                    EmailAddress = studentsWithSameParent.First().ParentEmailAddress,
                     Status = true,
                     CreateAt = DateTime.UtcNow,
                 };
 
-                student.UserId = user.UserId;
-
-                accounts.Add(new AccountResponse
+                foreach (var student in studentsWithSameParent)
                 {
-                    Id = user.UserId,
-                    FullName = "Parent of " + student.FullName,
-                    EmailAddress = user.EmailAddress!,
-                    PhoneNumber = user.PhoneNumber,
-                    Password = defaultPassword
-                });
+                    student.UserId = user.UserId;
+                    studentRepository.UpdateStudent(student);
+
+                    accounts.Add(new AccountResponse
+                    {
+                        Id = user.UserId,
+                        FullName = "Parent of " + student.FullName,
+                        EmailAddress = user.EmailAddress!,
+                        PhoneNumber = user.PhoneNumber,
+                        Password = defaultPassword
+                    });
+                }
 
                 await userRepository.AddUserAsync(user);
-                studentRepository.UpdateStudent(student);
-
-                existingUsers[user.PhoneNumber] = user;
+                existingUsers[parentPhone] = user;
             }
 
             await baseRepository.SaveChangesAsync();

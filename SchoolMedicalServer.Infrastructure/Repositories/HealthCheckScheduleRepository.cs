@@ -27,6 +27,14 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
             return await _context.HealthCheckSchedules.Include(s => s.Rounds).ToListAsync();
         }
 
+        public async Task<IEnumerable<HealthCheckSchedule>> GetHealthCheckSchedulesByDateRange(DateTime monday, DateTime sunday)
+        {
+            return await _context.HealthCheckSchedules
+                .Include(s => s.Rounds).ThenInclude(r => r.HealthCheckResults)
+                .Where(s => s.ParentNotificationEndDate >= DateOnly.FromDateTime(monday) && s.ParentNotificationEndDate <= DateOnly.FromDateTime(sunday))
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<HealthCheckSchedule>> GetPagedHealthCheckSchedule(int skip, int take)
         {
             return await _context.HealthCheckSchedules

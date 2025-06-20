@@ -74,6 +74,7 @@ namespace SchoolMedicalServer.Api.Bootstrapping
                     sqlOptions => sqlOptions.MigrationsAssembly("SchoolMedicalServer.Infrastructure"));
             });
             services.AddHostedService<RoundsRemindersForTomorrowService>();
+            services.AddHostedService<DailyCheckParentConfirmedService>();
 
 
             services.AddCors(options =>
