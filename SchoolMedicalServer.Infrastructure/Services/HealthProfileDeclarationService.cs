@@ -96,7 +96,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return response;
         }
 
-        public async  Task<bool> UpdateHealthDeclarationAsync(HealthProfileDeclarationRequest request)
+        public async Task<bool> UpdateHealthDeclarationAsync(HealthProfileDeclarationRequest request)
         {
             var studentId = request.HealthDeclaration.StudentId;
             if (studentId == Guid.Empty)
@@ -110,7 +110,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return false;
             }
 
-           
+
             healthProfile.DeclarationDate = request.HealthDeclaration.DeclarationDate ?? healthProfile.DeclarationDate;
             healthProfile.ChronicDiseases = request.HealthDeclaration.ChronicDiseases ?? healthProfile.ChronicDiseases;
             healthProfile.DrugAllergies = request.HealthDeclaration.DrugAllergies ?? healthProfile.DrugAllergies;
@@ -123,7 +123,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     if (vaccination.VaccinationDeclarationId.HasValue)
                     {
-                  
+
                         var existing = healthProfile.VaccinationDeclarations
                             .FirstOrDefault(v => v.VaccinationDeclarationId == vaccination.VaccinationDeclarationId.Value);
 
@@ -133,11 +133,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
                             existing.DoseNumber = vaccination.DoseNumber;
                             existing.VaccinatedDate = vaccination.VaccinatedDate;
                         }
-                        
+
                     }
                     else
                     {
-                        
+
                         var vaccinationDeclaration = new VaccinationDeclaration
                         {
                             HealthProfileId = healthProfile.HealthProfileId,
@@ -149,7 +149,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         healthProfile.VaccinationDeclarations.Add(vaccinationDeclaration);
                     }
                 }
-              
+
             }
 
             await baseRepository.SaveChangesAsync();

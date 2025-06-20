@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Entities;
-using SchoolMedicalServer.Api.BackgroundServices;
 using SchoolMedicalServer.Api.Bootstrapping;
 using SchoolMedicalServer.Api.Hubs;
 using SchoolMedicalServer.Infrastructure;

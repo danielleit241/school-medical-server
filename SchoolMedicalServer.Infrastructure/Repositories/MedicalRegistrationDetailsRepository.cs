@@ -1,8 +1,7 @@
 ﻿
-using SchoolMedicalServer.Abstractions.IRepositories;
-using SchoolMedicalServer.Abstractions.Entities;
-using DocumentFormat.OpenXml.InkML;
 using Microsoft.EntityFrameworkCore;
+using SchoolMedicalServer.Abstractions.Entities;
+using SchoolMedicalServer.Abstractions.IRepositories;
 
 namespace SchoolMedicalServer.Infrastructure.Repositories
 {
