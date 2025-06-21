@@ -11,7 +11,7 @@ namespace SchoolMedicalServer.Api.Controllers.Dashboard
     public class AdminDashboardController(IAdminDashboardService service) : ControllerBase
     {
         [HttpGet("admins/dashboards/users")]
-        public async Task<IActionResult> GetColumnDataUsers([FromQuery] DashboardRequest request)
+        public async Task<IActionResult> GetDataUsers([FromQuery] DashboardRequest request)
         {
             var res = await service.GetColumnDataUsersAsync(request);
             if (res == null || !res.Any())
@@ -22,7 +22,7 @@ namespace SchoolMedicalServer.Api.Controllers.Dashboard
         }
 
         [HttpGet("admins/dashboards/recent-actions")]
-        public async Task<IActionResult> GetRecentActions()
+        public async Task<IActionResult> GetUsersRecentActions()
         {
             var res = await service.GetRecentActionsAsync();
             if (res == null || !res.Any())
