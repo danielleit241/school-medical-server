@@ -19,9 +19,9 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             var isValid = await service.CheckVaccinationSchedule(request);
             if (!isValid)
             {
-                return NotFound(new { Message = "Students in this vaccination campaign have already been vaccinated." });
+                return NotFound(isValid);
             }
-            return Ok("Vaccination schedule valid.");
+            return Ok(isValid);
         }
 
         [HttpPut("vaccinations/schedules/finished")]
