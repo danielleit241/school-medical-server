@@ -47,6 +47,7 @@ namespace SchoolMedicalServer.Api
 
                 if (!context.Users.Any())
                 {
+                    //seed-data
                     var adminSection = config.GetSection("DefaultAdmin");
                     var phoneNumber = adminSection["PhoneNumber"];
                     var password = adminSection["Password"];
