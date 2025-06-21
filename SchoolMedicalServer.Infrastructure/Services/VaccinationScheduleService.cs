@@ -259,12 +259,18 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     var vaccineResults = await resultRepository.GetVaccinationResultsByStudentAndVaccineAsync(student.StudentId, request.VaccineId);
 
-                    if (vaccineResults.Any(result =>
-                    result?.VaccinatedDate.HasValue == true &&
-                    result.Vaccinated == true &&
-                    Math.Abs(DateOnly.FromDateTime(round.StartTime!.Value).DayNumber - result.VaccinatedDate.Value.DayNumber) <= 30))
+                    foreach (var result in vaccineResults)
                     {
-                        return false;
+                        if (result!.VaccinatedDate.HasValue && result.Vaccinated == true)
+                        {
+                            DateOnly roundDate = DateOnly.FromDateTime(round.StartTime!.Value);
+                            DateOnly vaccinatedDate = result.VaccinatedDate.Value;
+                            var days = Math.Abs((roundDate.DayNumber - vaccinatedDate.DayNumber));
+                            if (days <= 30)
+                            {
+                                return false;
+                            }
+                        }
                     }
                 }
             }
