@@ -12,6 +12,9 @@
         public bool Status { get; set; }
         public Guid NurseId { get; set; }
 
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+
         public virtual HealthCheckSchedule? Schedule { get; set; }
         public virtual ICollection<HealthCheckResult> HealthCheckResults { get; set; } = [];
     }

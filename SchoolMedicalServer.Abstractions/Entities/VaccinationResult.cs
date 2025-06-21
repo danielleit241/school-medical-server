@@ -17,6 +17,9 @@
         public string? Status { get; set; } // "Pending", "Completed", "Failed", etc.
         public string? Notes { get; set; }
 
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+
         public virtual VaccinationRound? Round { get; set; }
         public virtual HealthProfile? HealthProfile { get; set; }
         public virtual VaccinationObservation? VaccinationObservation { get; set; }

@@ -18,8 +18,8 @@ public partial class User
     public string? Address { get; set; }
     public string? Otp { get; set; }
     public DateTime? OtpExpiryTime { get; set; }
-    public DateTime? CreateAt { get; set; }
-    public DateTime? UpdateAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     [JsonIgnore]
     public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();

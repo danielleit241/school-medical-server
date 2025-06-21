@@ -1,8 +1,8 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlow;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlow.Vaccination.Schedules;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlow.Vaccination.Vaccines;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules;
-using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Vaccines;
 
 namespace SchoolMedicalServer.Abstractions.IServices
 {

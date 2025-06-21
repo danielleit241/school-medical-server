@@ -91,6 +91,9 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateOnly?>("DatePerformed")
                         .HasColumnType("date");
 
@@ -128,6 +131,9 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<double?>("VisionLeft")
                         .HasColumnType("float");
 
@@ -150,6 +156,9 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                 {
                     b.Property<Guid>("RoundId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
@@ -177,6 +186,9 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.Property<string>("TargetGrade")
                         .HasMaxLength(12)
                         .HasColumnType("nvarchar(12)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("RoundId");
 
@@ -627,7 +639,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<DateTime?>("CreateAt")
+                    b.Property<DateTime?>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("GETDATE()");
@@ -666,7 +678,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(8)");
 
-                    b.Property<DateTime?>("UpdateAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime");
 
                     b.Property<Guid?>("UserId")
@@ -701,7 +713,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<DateTime?>("CreateAt")
+                    b.Property<DateTime?>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("GETDATE()");
@@ -755,7 +767,7 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<DateTime?>("UpdateAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime");
 
                     b.HasKey("UserId")
@@ -865,6 +877,9 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("VaccinationObservationID");
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ImmediateReaction")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -916,6 +931,9 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("VaccinationResultID");
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("HealthProfileId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("HealthProfileID");
@@ -947,6 +965,9 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("Vaccinated")
                         .HasColumnType("bit")
                         .HasColumnName("Vaccinated");
@@ -973,6 +994,9 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.Property<Guid>("RoundId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("RoundID");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
@@ -1002,6 +1026,9 @@ namespace SchoolMedicalServer.Infrastructure.Migrations
                     b.Property<string>("TargetGrade")
                         .HasMaxLength(12)
                         .HasColumnType("nvarchar(12)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("RoundId");
 

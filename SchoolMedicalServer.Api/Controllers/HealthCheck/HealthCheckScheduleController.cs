@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SchoolMedicalServer.Abstractions.Dtos;
-using SchoolMedicalServer.Abstractions.Dtos.HealthCheck.Schedules;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlow;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlow.HealthCheck.Schedules;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.IServices;
 

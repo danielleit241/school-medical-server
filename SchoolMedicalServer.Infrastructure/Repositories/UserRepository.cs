@@ -80,5 +80,14 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
 
             return await query.Skip(skip).Take(take).ToListAsync();
         }
+
+        public async Task<IEnumerable<User>> GetAllUser()
+        {
+            return await _context.Users
+                .Include(u => u.Role)
+                .Where(u => u.Status == true)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }

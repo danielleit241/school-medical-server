@@ -1,4 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.HealthCheck.Results;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlow.HealthCheck.Results;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -39,8 +39,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
             if (result.ParentConfirmed == false)
             {
                 result.Notes = "Parent declined health check.";
-                result.Status = "Failed";
+                result.Status = "Declined";
             }
+            result.UpdatedAt = DateTime.UtcNow;
             await healthCheckResultRepository.UpdateAsync(result);
             return result.ParentConfirmed;
         }
@@ -73,6 +74,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             result.Status = request.Status;
             result.RecordedId = round.NurseId;
             result.RecordedAt = DateTime.UtcNow;
+            result.UpdatedAt = DateTime.UtcNow;
             await healthCheckResultRepository.UpdateAsync(result);
             var notification = new NotificationRequest
             {

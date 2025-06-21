@@ -1,5 +1,5 @@
+using SchoolMedicalServer.Abstractions.Dtos.MainFlow.Vaccination.Rounds;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Rounds;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
@@ -145,6 +145,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return false;
             }
             round.Status = request;
+            round.UpdatedAt = today;
             await vaccinationRound.UpdateVaccinationRound(round);
             return true;
         }
@@ -220,7 +221,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 StartTime = request.StartTime!.Value,
                 EndTime = request.EndTime!.Value,
                 NurseId = request.NurseId,
-                ScheduleId = schedule.ScheduleId
+                ScheduleId = schedule.ScheduleId,
+                Status = false,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
             await vaccinationRound.CreateVaccinationRoundAsync(round);
             return true;
@@ -298,6 +302,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             updateRound.StartTime = request.StartTime;
             updateRound.EndTime = request.EndTime;
             updateRound.NurseId = request.NurseId;
+            updateRound.UpdatedAt = DateTime.UtcNow;
             await vaccinationRound.UpdateVaccinationRound(updateRound);
             return true;
         }

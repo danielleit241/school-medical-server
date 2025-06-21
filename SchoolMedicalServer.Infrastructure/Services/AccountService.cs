@@ -63,7 +63,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     RoleId = role.RoleId,
                     EmailAddress = studentsWithSameParent.First().ParentEmailAddress,
                     Status = true,
-                    CreateAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow,
                 };
 
                 foreach (var student in studentsWithSameParent)
@@ -117,7 +117,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Status = true,
                 RoleId = role.RoleId,
                 PasswordHash = new PasswordHasher<User>().HashPassword(null!, request.Password),
-                CreateAt = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
             };
 
             await userRepository.AddUserAsync(user);

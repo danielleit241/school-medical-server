@@ -143,8 +143,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                             Address = address ?? "",
                             ParentPhoneNumber = parentPhoneNumber,
                             ParentEmailAddress = parentEmailAddress,
-                            CreateAt = DateTime.UtcNow,
-                            UpdateAt = DateTime.UtcNow
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
                         };
 
                         var studentHealthProfile = new HealthProfile

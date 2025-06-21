@@ -4,8 +4,6 @@
     {
         public Guid VaccinationObservationId { get; set; }
         public Guid VaccinationResultId { get; set; }
-
-        //public bool? Is
         public DateTime? ObservationStartTime { get; set; }
         public DateTime? ObservationEndTime { get; set; }
 
@@ -16,6 +14,8 @@
         public string? Intervention { get; set; }
         public string? ObservedBy { get; set; }
         public string? Notes { get; set; }
+
+        public DateTime? CreatedAt { get; set; }
 
         public virtual VaccinationResult? VaccinationResult { get; set; }
     }

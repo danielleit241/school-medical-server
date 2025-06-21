@@ -1,5 +1,5 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Vaccines;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlow.Vaccination.Vaccines;
+using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
