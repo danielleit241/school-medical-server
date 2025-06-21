@@ -44,5 +44,13 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .Where(h => students.Contains(h.StudentId ?? Guid.Empty))
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<HealthProfile>> GetAllAsync()
+        {
+            return await _context.HealthProfiles
+                .Include(h => h.Student)
+                .Include(h => h.VaccinationDeclarations)
+                .ToListAsync();
+        }
     }
 }

@@ -1,8 +1,8 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlow;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlow.Vaccination.Schedules;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlow.Vaccination.Vaccines;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Schedules;
-using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Vaccines;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
@@ -46,6 +46,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     StartTime = round.StartTime,
                     EndTime = round.EndTime,
                     NurseId = round.NurseId,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
                 })]
             };
 
@@ -81,7 +83,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
                             VaccinatedDate = null,
                             RecorderId = round.NurseId,
                             Notes = null,
-                            Status = "Pending - (Supplement round)",
+                            Status = "Pending",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
                         };
                         toParents.Add(new NotificationRequest
                         {
@@ -117,6 +121,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         RecorderId = round.NurseId,
                         Notes = null,
                         Status = "Pending",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
                     };
                     await resultRepository.Create(result);
                     toParents.Add(new NotificationRequest
@@ -203,7 +209,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         StartTime = round.StartTime,
                         EndTime = round.EndTime,
                         NurseId = round.NurseId,
-                        Status = round.Status
+                        Status = round.Status,
                     })],
                 VaccinationDetailsResponse = new VaccinationDetailsResponse
                 {

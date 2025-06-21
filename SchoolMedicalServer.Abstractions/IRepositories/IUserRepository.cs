@@ -18,5 +18,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<Role?> GetRoleByNameAsync(string roleName);
         Task<int> CountByRoleIdAsync(int roleId);
         Task<List<User>> GetUsersByRoleIdPagedAsync(int roleId, string search, string sortBy, string sortOrder, int skip, int take);
+        Task<IEnumerable<User>> GetAllUser();
     }
 }

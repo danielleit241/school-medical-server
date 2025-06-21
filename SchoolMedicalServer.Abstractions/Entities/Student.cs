@@ -12,8 +12,8 @@ public partial class Student
     public string? Address { get; set; }
     public string? ParentPhoneNumber { get; set; }
     public string? ParentEmailAddress { get; set; }
-    public DateTime? CreateAt { get; set; }
-    public DateTime? UpdateAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     public virtual ICollection<Appointment> Appointments { get; set; } = [];
     public virtual HealthProfile? HealthProfile { get; set; }

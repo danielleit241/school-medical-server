@@ -9,5 +9,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task AddRangeAsync(List<MedicalRequest> requests);
         Task<int> CountAsync();
         Task<IEnumerable<MedicalRequest>> GetMedicalRequestsAsync(int pageSize, int skip, string? search);
+        Task<IEnumerable<MedicalRequest>> GetAllAsync();
     }
 }

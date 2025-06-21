@@ -49,5 +49,14 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .AsNoTracking()
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<MedicalRequest>> GetAllAsync()
+        {
+            return await context.MedicalRequests
+                .Include(r => r.Item)
+                .Include(r => r.Event)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }

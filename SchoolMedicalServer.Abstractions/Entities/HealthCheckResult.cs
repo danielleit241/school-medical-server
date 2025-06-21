@@ -18,7 +18,8 @@ public partial class HealthCheckResult
     public string? Notes { get; set; }
     public Guid? RecordedId { get; set; }
     public DateTime? RecordedAt { get; set; }
-
+    public DateTime? CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     public virtual HealthCheckRound? Round { get; set; }
     public virtual HealthProfile? HealthProfile { get; set; }
 }

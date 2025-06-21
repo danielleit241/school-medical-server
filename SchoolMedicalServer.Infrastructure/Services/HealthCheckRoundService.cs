@@ -1,4 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.HealthCheck.Rounds;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlow.HealthCheck.Rounds;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
@@ -37,7 +37,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 StartTime = request.StartTime!.Value,
                 EndTime = request.EndTime!.Value,
                 NurseId = request.NurseId,
-                ScheduleId = schedule.ScheduleId
+                ScheduleId = schedule.ScheduleId,
+                Status = false,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
             await healthCheckRoundRepository.CreateHealthCheckRoundAsync(round);
             return true;
@@ -221,6 +224,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return false;
             }
             round.Status = request;
+            round.UpdatedAt = DateTime.UtcNow;
             await healthCheckRoundRepository.UpdateHealthCheckRound(round);
             return true;
         }
@@ -266,6 +270,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             round.StartTime = request.StartTime;
             round.EndTime = request.EndTime;
             round.NurseId = request.NurseId;
+            round.UpdatedAt = DateTime.UtcNow;
             await healthCheckRoundRepository.UpdateHealthCheckRound(round);
             return true;
         }

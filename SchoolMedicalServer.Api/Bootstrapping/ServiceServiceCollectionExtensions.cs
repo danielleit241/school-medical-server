@@ -28,6 +28,8 @@ namespace SchoolMedicalServer.Api.Bootstrapping
             services.AddScoped<IHealthCheckResultService, HealthCheckResultService>();
             services.AddScoped<IHealthCheckRoundService, HealthCheckRoundService>();
             services.AddScoped<IMedicalRequestService, MedicalRequestService>();
+            services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+            services.AddScoped<IManagerDashboardService, ManagerDashboardService>();
             return services;
         }
     }

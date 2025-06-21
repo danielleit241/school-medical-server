@@ -494,10 +494,10 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.UserId)
                 .HasColumnName("UserID");
 
-            entity.Property(e => e.CreateAt)
+            entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasDefaultValueSql("GETDATE()");
-            entity.Property(e => e.UpdateAt)
+            entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime");
 
             entity.HasOne(d => d.User)
@@ -548,10 +548,10 @@ public partial class SchoolMedicalManagementContext : DbContext
             entity.Property(e => e.OtpExpiryTime)
                 .HasColumnType("datetime");
 
-            entity.Property(e => e.CreateAt)
+            entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasDefaultValueSql("GETDATE()");
-            entity.Property(e => e.UpdateAt)
+            entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime");
 
             entity.Property(e => e.DayOfBirth)

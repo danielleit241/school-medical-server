@@ -1,5 +1,5 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos;
-using SchoolMedicalServer.Abstractions.Dtos.HealthCheck.Schedules;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlow;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlow.HealthCheck.Schedules;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -44,6 +44,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     StartTime = round.StartTime,
                     EndTime = round.EndTime,
                     NurseId = round.NurseId,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
                 })]
             };
             await healthCheckRepository.CreateHealthCheckSchedule(healthCheckSchedule);
@@ -81,9 +83,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
                             Hearing = null,
                             Nose = null,
                             BloodPressure = null,
-                            Status = "Pending - (Supplement round)",
+                            Status = "Pending",
                             Notes = null,
-                            RecordedId = round.NurseId
+                            RecordedId = round.NurseId,
+                            CreatedAt = DateTime.UtcNow
                         };
                         toParents.Add(new NotificationRequest
                         {
@@ -107,7 +110,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 foreach (var student in students)
                 {
                     var healthProfile = await profileRepository.GetByStudentIdAsync(student.StudentId);
-                    //if (healthProfile == null || healthProfile.DeclarationDate == null) continue;
+                    if (healthProfile == null || healthProfile.DeclarationDate == null) continue;
                     var result = new HealthCheckResult
                     {
                         ResultId = Guid.NewGuid(),
@@ -124,7 +127,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         BloodPressure = null,
                         Status = "Pending",
                         Notes = null,
-                        RecordedId = round.NurseId
+                        RecordedId = round.NurseId,
+                        CreatedAt = DateTime.UtcNow
                     };
                     await resultRepository.Create(result);
                     toParents.Add(new NotificationRequest

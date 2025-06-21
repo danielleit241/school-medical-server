@@ -1,6 +1,6 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.Notification;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlow.Vaccination.Results;
+using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.Dtos.Vaccination.Results;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
@@ -45,9 +45,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
             if (result.ParentConfirmed == false)
             {
                 result.HealthQualified = false;
+                result.Status = "Declined";
                 result.Notes = "Parent declined vaccination.";
-                result.Status = "Falied";
             }
+            result.UpdatedAt = DateTime.UtcNow;
             await resultRepository.UpdateAsync(result);
             return result.ParentConfirmed;
         }
@@ -79,6 +80,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Intervention = request.Intervention,
                 ReactionType = request.ReactionType,
                 SeverityLevel = request.SeverityLevel,
+                CreatedAt = DateTime.UtcNow,
                 Notes = request.Notes,
             };
 
@@ -107,6 +109,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             result.InjectionSite = request.InjectionSite;
             result.Notes = request.Notes;
             result.Status = request.Status ?? "Failed";
+            result.UpdatedAt = DateTime.UtcNow;
 
             await resultRepository.UpdateAsync(result);
             return true;
@@ -185,9 +188,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 result.Vaccinated = false;
                 result.VaccinatedDate = null;
                 result.VaccinatedTime = null;
-                result.Status = "Failed";
+                result.Status = "Not Qualified";
                 result.Notes = "Health not qualified";
             }
+            result.UpdatedAt = DateTime.UtcNow;
             await resultRepository.UpdateAsync(result);
             return true;
         }
