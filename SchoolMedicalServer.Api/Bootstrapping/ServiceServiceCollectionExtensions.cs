@@ -30,6 +30,7 @@ namespace SchoolMedicalServer.Api.Bootstrapping
             services.AddScoped<IMedicalRequestService, MedicalRequestService>();
             services.AddScoped<IAdminDashboardService, AdminDashboardService>();
             services.AddScoped<IManagerDashboardService, ManagerDashboardService>();
+            services.AddScoped<INurseDashboardService, NurseDashboardService>();
             return services;
         }
     }
