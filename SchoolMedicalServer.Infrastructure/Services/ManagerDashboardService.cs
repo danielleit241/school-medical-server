@@ -209,66 +209,66 @@ namespace SchoolMedicalServer.Infrastructure.Services
             ];
         }
 
-        public async Task<IEnumerable<DashboardResponse>> GetTotalVaccinationsAsync(DashboardRequest request)
-        {
-            DateTime? fromDate = request.From?.ToDateTime(new TimeOnly(0, 0));
-            DateTime? toDate = request.To?.ToDateTime(new TimeOnly(23, 59));
-            var responses = new List<DashboardResponse>();
-
-            var results = await vaccinationResultRepository.GetAllAsync();
-            results = [.. results.Where(v => v.CreatedAt >= fromDate && v.CreatedAt <= toDate)];
-
-            var completedResults = results.Where(v => v.Status!.ToLower().Contains("completed")).Count();
-
-            var pendingResults = results.Where(v => v.Status!.ToLower().Contains("pending")).Count();
-
-            var failedResults = results.Where(v => v.Status!.ToLower().Contains("failed")).Count();
-
-            var declinedResults = results.Where(v => v.Status!.ToLower().Contains("declined")).Count();
-
-            var notHealthQualifiedResults = results.Where(v => v.Status!.ToLower().Contains("not qualified")).Count();
-
-            responses.Add(new DashboardResponse
+            public async Task<IEnumerable<DashboardResponse>> GetTotalVaccinationsAsync(DashboardRequest request)
             {
-                Item = new Item
+                DateTime? fromDate = request.From?.ToDateTime(new TimeOnly(0, 0));
+                DateTime? toDate = request.To?.ToDateTime(new TimeOnly(23, 59));
+                var responses = new List<DashboardResponse>();
+
+                var results = await vaccinationResultRepository.GetAllAsync();
+                results = [.. results.Where(v => v.CreatedAt >= fromDate && v.CreatedAt <= toDate)];
+
+                var completedResults = results.Where(v => v.Status!.ToLower().Contains("completed")).Count();
+
+                var pendingResults = results.Where(v => v.Status!.ToLower().Contains("pending")).Count();
+
+                var failedResults = results.Where(v => v.Status!.ToLower().Contains("failed")).Count();
+
+                var declinedResults = results.Where(v => v.Status!.ToLower().Contains("declined")).Count();
+
+                var notHealthQualifiedResults = results.Where(v => v.Status!.ToLower().Contains("not qualified")).Count();
+
+                responses.Add(new DashboardResponse
                 {
-                    Name = $"Completed in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
-                    Count = completedResults
-                }
-            });
-            responses.Add(new DashboardResponse
-            {
-                Item = new Item
+                    Item = new Item
+                    {
+                        Name = $"Completed in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
+                        Count = completedResults
+                    }
+                });
+                responses.Add(new DashboardResponse
                 {
-                    Name = $"Pending in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
-                    Count = pendingResults
-                }
-            });
-            responses.Add(new DashboardResponse
-            {
-                Item = new Item
+                    Item = new Item
+                    {
+                        Name = $"Pending in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
+                        Count = pendingResults
+                    }
+                });
+                responses.Add(new DashboardResponse
                 {
-                    Name = $"Failed in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
-                    Count = failedResults
-                }
-            });
-            responses.Add(new DashboardResponse
-            {
-                Item = new Item
+                    Item = new Item
+                    {
+                        Name = $"Failed in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
+                        Count = failedResults
+                    }
+                });
+                responses.Add(new DashboardResponse
                 {
-                    Name = $"Declined in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
-                    Count = declinedResults
-                }
-            });
-            responses.Add(new DashboardResponse
-            {
-                Item = new Item
+                    Item = new Item
+                    {
+                        Name = $"Declined in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
+                        Count = declinedResults
+                    }
+                }); 
+                responses.Add(new DashboardResponse
                 {
-                    Name = $"Not Health Qualified in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
-                    Count = notHealthQualifiedResults
-                }
-            });
-            return responses;
+                    Item = new Item
+                    {
+                        Name = $"Not Health Qualified in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
+                        Count = notHealthQualifiedResults
+                    }
+                });
+                return responses;
+            }
         }
-    }
 }
