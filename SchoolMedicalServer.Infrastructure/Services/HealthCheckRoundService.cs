@@ -78,6 +78,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     Description = round.Description ?? "",
                     StartTime = round.StartTime,
                     EndTime = round.EndTime,
+                    Status = round.Status
                 },
                 Nurse = new HealthCheckRoundNurseInformationResponse
                 {
