@@ -54,8 +54,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             var confirmedResults = filteredAppointments.Count(a => a.ConfirmationStatus == true);
             var pendingResults = filteredAppointments.Count(a => a.ConfirmationStatus == false);
-            var completedResults = filteredAppointments.Count(a => a.CompletionStatus == true);
-            var notCompletedResults = filteredAppointments.Count(a => a.CompletionStatus == false);
+            var completedResults = filteredAppointments.Count(a => a.CompletionStatus == true && a.ConfirmationStatus == true);
+            var notCompletedResults = filteredAppointments.Count(a => a.ConfirmationStatus == true && a.CompletionStatus == false);
 
             responses.Add(new DashboardResponse
             {
@@ -199,9 +199,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 .ToList();
 
             var pendingRegistration = filteredRegistrations.Count(r => r.Status == false);
-            var completedRegistration = filteredRegistrations.Count(r => r.Details.Any() && r.Details.All(d => d.IsCompleted));
+            var completedRegistration = filteredRegistrations.Count(r => r.Status == true && r.Details.Any() && r.Details.All(d => d.IsCompleted));
             var approvedRegistration = filteredRegistrations.Count(r => r.Status == true);
-            var notCompletedRegistration = filteredRegistrations.Count(r => r.Details.Any() && r.Details.Any(d => !d.IsCompleted));
+            var notCompletedRegistration = filteredRegistrations.Count(r => r.Status == true && r.Details.Any() && r.Details.Any(d => !d.IsCompleted));
 
             responses.Add(new DashboardResponse
             {
