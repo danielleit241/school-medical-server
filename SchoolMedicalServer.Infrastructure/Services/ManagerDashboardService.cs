@@ -17,10 +17,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
         public async Task<IEnumerable<IDictionary<string, MedicalInventoryDashboardResponse>>> GetExpiringMedicalItemsAsync()
         {
             var medicalItems = await medicalInventoryRepository.GetAllAsync();
-            var today = DateTime.UtcNow.Date;
 
+            var today = DateTime.UtcNow.Date;
             var daysUntilSunday = DayOfWeek.Sunday - today.DayOfWeek;
-            if (daysUntilSunday < 0) daysUntilSunday += 7;
+            if (daysUntilSunday <= 0) daysUntilSunday += 7;
             var endOfWeek = today.AddDays(daysUntilSunday);
 
             var expiringThisWeek = medicalItems
