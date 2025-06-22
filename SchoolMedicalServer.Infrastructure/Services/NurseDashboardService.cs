@@ -52,19 +52,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 )
                 .ToList();
 
-            var confirmedResults = filteredAppointments.Count(a => a.ConfirmationStatus == true);
             var pendingResults = filteredAppointments.Count(a => a.ConfirmationStatus == false);
-            var completedResults = filteredAppointments.Count(a => a.CompletionStatus == true && a.ConfirmationStatus == true);
+            var confirmedResults = filteredAppointments.Count(a => a.ConfirmationStatus == true);
             var notCompletedResults = filteredAppointments.Count(a => a.ConfirmationStatus == true && a.CompletionStatus == false);
+            var completedResults = filteredAppointments.Count(a => a.CompletionStatus == true && a.ConfirmationStatus == true);
 
-            responses.Add(new DashboardResponse
-            {
-                Item = new Item
-                {
-                    Name = $"Confirmed in {fromDate} to {toDate}",
-                    Count = confirmedResults
-                }
-            });
+           
             responses.Add(new DashboardResponse
             {
                 Item = new Item
@@ -77,8 +70,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 Item = new Item
                 {
-                    Name = $"Completed in {fromDate} to {toDate}",
-                    Count = completedResults
+                    Name = $"Confirmed in {fromDate} to {toDate}",
+                    Count = confirmedResults
                 }
             });
             responses.Add(new DashboardResponse
@@ -89,7 +82,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     Count = notCompletedResults
                 }
             });
-
+            responses.Add(new DashboardResponse
+            {
+                Item = new Item
+                {
+                    Name = $"Completed in {fromDate} to {toDate}",
+                    Count = completedResults
+                }
+            });
             return responses;
         }
 
@@ -109,7 +109,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 .ToList();
 
             var totalMedicalEvents = filteredEvents.Count;
-
             return new DashboardResponse
             {
                 Item = new Item
@@ -135,7 +134,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 )
                 .ToList();
 
-            // Đếm theo từng loại EventType (không phân biệt hoa thường)
             var eventTypeGroups = filteredEvents
                 .Where(e => !string.IsNullOrEmpty(e.EventType))
                 .GroupBy(e => e.EventType!.Trim(), StringComparer.OrdinalIgnoreCase)
@@ -199,24 +197,16 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 .ToList();
 
             var pendingRegistration = filteredRegistrations.Count(r => r.Status == false);
-            var completedRegistration = filteredRegistrations.Count(r => r.Status == true && r.Details.Any() && r.Details.All(d => d.IsCompleted));
             var approvedRegistration = filteredRegistrations.Count(r => r.Status == true);
             var notCompletedRegistration = filteredRegistrations.Count(r => r.Status == true && r.Details.Any() && r.Details.Any(d => !d.IsCompleted));
-
+            var completedRegistration = filteredRegistrations.Count(r => r.Status == true && r.Details.Any() && r.Details.All(d => d.IsCompleted));
+          
             responses.Add(new DashboardResponse
             {
                 Item = new Item
                 {
                     Name = $"Pending in {fromDate} to {toDate}",
                     Count = pendingRegistration
-                }
-            });
-            responses.Add(new DashboardResponse
-            {
-                Item = new Item
-                {
-                    Name = $"Completed in {fromDate} to {toDate}",
-                    Count = completedRegistration
                 }
             });
             responses.Add(new DashboardResponse
@@ -235,7 +225,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     Count = notCompletedRegistration
                 }
             });
-
+            responses.Add(new DashboardResponse
+            {
+                Item = new Item
+                {
+                    Name = $"Completed in {fromDate} to {toDate}",
+                    Count = completedRegistration
+                }
+            });
             return responses;
         }
     }
