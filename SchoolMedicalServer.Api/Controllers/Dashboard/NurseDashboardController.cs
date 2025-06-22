@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.IServices;
@@ -11,19 +10,19 @@ namespace SchoolMedicalServer.Api.Controllers.Dashboard
     [Authorize(Roles = "admin, manager, nurse")]
     public class NurseDashboardController(INurseDashboardService service) : ControllerBase
     {
-        //[HttpGet("nurses/{nurseId}/dashboards/vaccinations")]
-        //public async Task<IActionResult> GetNurseVaccinationsDashboard(Guid nurseId, [FromBody] DashboardRequest request)
-        //{
-        //    var vaccinations = await service.GetNurseVaccinationsDashboardAsync(nurseId, request);
-        //    return Ok(vaccinations);
-        //}
+        [HttpGet("nurses/{nurseId}/dashboards/vaccinations")]
+        public async Task<IActionResult> GetNurseVaccinationsDashboard(Guid nurseId, [FromQuery] DashboardRequest request)
+        {
+            var vaccinations = await service.GetNurseVaccinationsDashboardAsync(nurseId, request);
+            return Ok(vaccinations);
+        }
 
-        //[HttpGet("nurses/{nurseId}/dashboards/health-checks")]
-        //public async Task<IActionResult> GetNurseHealthChecksDashboard(Guid nurseId, [FromBody] DashboardRequest request)
-        //{
-        //    var healthChecks = await service.GetNurseHealthChecksDashboardAsync(nurseId, request);
-        //    return Ok(healthChecks);
-        //}
+        [HttpGet("nurses/{nurseId}/dashboards/health-checks")]
+        public async Task<IActionResult> GetNurseHealthChecksDashboard(Guid nurseId, [FromQuery] DashboardRequest request)
+        {
+            var healthChecks = await service.GetNurseHealthChecksDashboardAsync(nurseId, request);
+            return Ok(healthChecks);
+        }
 
         [HttpGet("nurses/{nurseId}/dashboards/appoiments")]
         public async Task<IActionResult> GetNurseTotalAppointments(Guid nurseId, [FromBody] DashboardRequest request)
