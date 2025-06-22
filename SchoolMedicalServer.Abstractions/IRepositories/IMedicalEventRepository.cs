@@ -11,6 +11,7 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<MedicalEvent?> GetByIdAsync(Guid eventId);
         Task AddAsync(MedicalEvent medicalEvent);
         Task<MedicalEvent?> GetByIdWithStudentAsync(Guid eventId);
+        Task<IEnumerable<MedicalEvent>> GetAllMedicalEvent();
 
     }
 }

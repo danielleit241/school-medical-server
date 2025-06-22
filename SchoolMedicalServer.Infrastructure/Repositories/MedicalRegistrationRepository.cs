@@ -43,5 +43,15 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .Include(mr => mr.Student)
                 .FirstOrDefaultAsync(mr => mr.RegistrationId == registrationId && mr.Status == true);
         }
+
+        public async Task<IEnumerable<MedicalRegistration>> GetAllMedicalRegistration()
+        {
+            return await _context.MedicalRegistrations
+                .Include(r => r.Student)
+                .Include(r => r.User)
+                .Include(r => r.Details)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }

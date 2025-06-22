@@ -12,5 +12,7 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task AddAsync(MedicalRegistration registration);
         void Update(MedicalRegistration registration);
         Task<MedicalRegistration?> GetApprovedByIdWithStudentAsync(Guid registrationId);
+        Task<IEnumerable<MedicalRegistration>> GetAllMedicalRegistration();
+
     }
 }
