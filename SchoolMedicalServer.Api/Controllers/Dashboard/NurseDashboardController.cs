@@ -28,7 +28,7 @@ namespace SchoolMedicalServer.Api.Controllers.Dashboard
         public async Task<IActionResult> GetNurseTotalAppointments(Guid nurseId, [FromQuery] DashboardRequest request)
         {
             var appoinments = await service.GetNurseAppointmentsDashboardAsync(nurseId, request);
-            if (appoinments < 0)
+            if (appoinments == null || appoinments.Item == null)
             {
                 return BadRequest("Invalid request parameters.");
             }
@@ -38,7 +38,7 @@ namespace SchoolMedicalServer.Api.Controllers.Dashboard
         public async Task<IActionResult> GetNurseTotalMedicalRegistrations(Guid nurseId, [FromQuery] DashboardRequest request)
         {
             var registrations = await service.GetNurseMedicalRegistrationsDashboard(nurseId, request);
-            if (registrations < 0)
+            if (registrations == null || registrations.Item == null)
             {
                 return BadRequest("Invalid request parameters.");
             }
@@ -49,7 +49,7 @@ namespace SchoolMedicalServer.Api.Controllers.Dashboard
         public async Task<IActionResult> GetNurseTotalMedicalEvents(Guid nurseId, [FromQuery] DashboardRequest request)
         {
             var events = await service.GetNurseMedicalEventsDashboard(nurseId, request);
-            if (events < 0)
+            if (events == null || events.Item == null)
             {
                 return BadRequest("Invalid request parameters.");
             }

@@ -39,5 +39,15 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .Include(me => me.Student)
                 .FirstOrDefaultAsync(me => me.EventId == eventId);
         }
+
+        public async Task<IEnumerable<MedicalEvent>> GetAllMedicalEvent()
+        {
+            return await _context.MedicalEvents
+              .Include(m => m.Student)
+              .Include(m => m.User)
+              .Include(m => m.MedicalRequests)
+              .AsNoTracking()
+              .ToListAsync();
+        }
     }
 }

@@ -115,5 +115,14 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .Include(a => a.Student)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<IEnumerable<Appointment>> GetAllAppointment()
+        {
+            return await _context.Appointments
+                .Include(a => a.Student)
+                .Include(a => a.User)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }
