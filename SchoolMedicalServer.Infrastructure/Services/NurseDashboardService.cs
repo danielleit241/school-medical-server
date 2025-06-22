@@ -1,7 +1,6 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
-using SchoolMedicalServer.Infrastructure.Repositories;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
@@ -59,7 +58,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var notCompletedResults = filteredAppointments.Count(a => a.ConfirmationStatus == true && a.CompletionStatus == false);
             var completedResults = filteredAppointments.Count(a => a.CompletionStatus == true && a.ConfirmationStatus == true);
 
-           
+
             responses.Add(new DashboardResponse
             {
                 Item = new Item
@@ -114,32 +113,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 });
             }
             return responses;
-        }
-
-        public Task<int> GetNurseMedicalEventsDashboard(Guid nurseId, DashboardRequest request)
-        {
-            DateOnly? fromDate = request.From;
-            DateOnly? toDate = request.To;
-
-            var medicalEvents = await medicalEventRepository.GetAllMedicalEvent();
-
-            var filteredEvents = medicalEvents
-                .Where(e => e.StaffNurseId == nurseId)
-                .Where(e =>
-                    (!fromDate.HasValue || (e.EventDate.HasValue && e.EventDate.Value >= fromDate.Value)) &&
-                    (!toDate.HasValue || (e.EventDate.HasValue && e.EventDate.Value <= toDate.Value))
-                )
-                .ToList();
-
-            var totalMedicalEvents = filteredEvents.Count;
-            return new DashboardResponse
-            {
-                Item = new Item
-                {
-                    Name = $"Total Medical Events in {fromDate} to {toDate}",
-                    Count = totalMedicalEvents
-                }
-            };
         }
 
         public async Task<IEnumerable<DashboardResponse>> GetNurseMedicalEventsDetailsDashboard(Guid nurseId, DashboardRequest request)
@@ -223,7 +196,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var approvedRegistration = filteredRegistrations.Count(r => r.Status == true);
             var notCompletedRegistration = filteredRegistrations.Count(r => r.Status == true && r.Details.Any() && r.Details.Any(d => !d.IsCompleted));
             var completedRegistration = filteredRegistrations.Count(r => r.Status == true && r.Details.Any() && r.Details.All(d => d.IsCompleted));
-          
+
             responses.Add(new DashboardResponse
             {
                 Item = new Item
@@ -277,6 +250,32 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 });
             }
             return responses;
+        }
+
+        public async Task<DashboardResponse> GetNurseMedicalEventsDashboard(Guid nurseId, DashboardRequest request)
+        {
+            DateOnly? fromDate = request.From;
+            DateOnly? toDate = request.To;
+
+            var medicalEvents = await medicalEventRepository.GetAllMedicalEvent();
+
+            var filteredEvents = medicalEvents
+                .Where(e => e.StaffNurseId == nurseId)
+                .Where(e =>
+                    (!fromDate.HasValue || (e.EventDate.HasValue && e.EventDate.Value >= fromDate.Value)) &&
+                    (!toDate.HasValue || (e.EventDate.HasValue && e.EventDate.Value <= toDate.Value))
+                )
+                .ToList();
+
+            var totalMedicalEvents = filteredEvents.Count;
+            return new DashboardResponse
+            {
+                Item = new Item
+                {
+                    Name = $"Total Medical Events in {fromDate} to {toDate}",
+                    Count = totalMedicalEvents
+                }
+            };
         }
 
         private (DateTime today, DateTime endOfWeek) GetWeekRange()
