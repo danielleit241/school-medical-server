@@ -55,6 +55,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var confirmedResults = filteredAppointments.Count(a => a.ConfirmationStatus == true);
             var pendingResults = filteredAppointments.Count(a => a.ConfirmationStatus == false);
             var completedResults = filteredAppointments.Count(a => a.CompletionStatus == true);
+            var notCompletedResults = filteredAppointments.Count(a => a.CompletionStatus == false);
 
             responses.Add(new DashboardResponse
             {
@@ -78,6 +79,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Completed in {fromDate} to {toDate}",
                     Count = completedResults
+                }
+            });
+            responses.Add(new DashboardResponse
+            {
+                Item = new Item
+                {
+                    Name = $"Not Completed in {fromDate} to {toDate}",
+                    Count = notCompletedResults
                 }
             });
 
@@ -126,34 +135,23 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 )
                 .ToList();
 
-            var lowEvents = filteredEvents.Count(e => !string.IsNullOrEmpty(e.SeverityLevel) && e.SeverityLevel.Equals("Low", StringComparison.OrdinalIgnoreCase));
-            var mediumEvents = filteredEvents.Count(e => !string.IsNullOrEmpty(e.SeverityLevel) && e.SeverityLevel.Equals("Medium", StringComparison.OrdinalIgnoreCase));
-            var highEvents = filteredEvents.Count(e => !string.IsNullOrEmpty(e.SeverityLevel) && e.SeverityLevel.Equals("High", StringComparison.OrdinalIgnoreCase));
+            // Đếm theo từng loại EventType (không phân biệt hoa thường)
+            var eventTypeGroups = filteredEvents
+                .Where(e => !string.IsNullOrEmpty(e.EventType))
+                .GroupBy(e => e.EventType!.Trim(), StringComparer.OrdinalIgnoreCase)
+                .OrderBy(g => g.Key);
 
-            responses.Add(new DashboardResponse
+            foreach (var group in eventTypeGroups)
             {
-                Item = new Item
+                responses.Add(new DashboardResponse
                 {
-                    Name = $"Low Events in {fromDate} to {toDate}",
-                    Count = lowEvents
-                }
-            });
-            responses.Add(new DashboardResponse
-            {
-                Item = new Item
-                {
-                    Name = $"Medium Events in {fromDate} to {toDate}",
-                    Count = mediumEvents
-                }
-            });
-            responses.Add(new DashboardResponse
-            {
-                Item = new Item
-                {
-                    Name = $"High Events in {fromDate} to {toDate}",
-                    Count = highEvents
-                }
-            });
+                    Item = new Item
+                    {
+                        Name = $"{group.Key} Events in {fromDate} to {toDate}",
+                        Count = group.Count()
+                    }
+                });
+            }
 
             return responses;
         }
@@ -200,23 +198,41 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 )
                 .ToList();
 
-            var completedRegistrations = filteredRegistrations.Count(r => r.Status == true);
-            var notYetRegistrations = filteredRegistrations.Count(r => r.Status == false);
+            var pendingRegistration = filteredRegistrations.Count(r => r.Status == false);
+            var completedRegistration = filteredRegistrations.Count(r => r.Details.Any() && r.Details.All(d => d.IsCompleted));
+            var approvedRegistration = filteredRegistrations.Count(r => r.Status == true);
+            var notCompletedRegistration = filteredRegistrations.Count(r => r.Details.Any() && r.Details.Any(d => !d.IsCompleted));
 
             responses.Add(new DashboardResponse
             {
                 Item = new Item
                 {
-                    Name = $"Completed in {fromDate} to {toDate}",
-                    Count = completedRegistrations
+                    Name = $"Pending in {fromDate} to {toDate}",
+                    Count = pendingRegistration
                 }
             });
             responses.Add(new DashboardResponse
             {
                 Item = new Item
                 {
-                    Name = $"Not Yet in {fromDate} to {toDate}",
-                    Count = notYetRegistrations
+                    Name = $"Completed in {fromDate} to {toDate}",
+                    Count = completedRegistration
+                }
+            });
+            responses.Add(new DashboardResponse
+            {
+                Item = new Item
+                {
+                    Name = $"Approved in {fromDate} to {toDate}",
+                    Count = approvedRegistration
+                }
+            });
+            responses.Add(new DashboardResponse
+            {
+                Item = new Item
+                {
+                    Name = $"Not Completed in {fromDate} to {toDate}",
+                    Count = notCompletedRegistration
                 }
             });
 
