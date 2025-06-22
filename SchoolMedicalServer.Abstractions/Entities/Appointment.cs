@@ -17,6 +17,7 @@ public partial class Appointment
     public DateTime? ConfirmationAt { get; set; }
     public bool? CompletionStatus { get; set; }
     public DateTime? CompletionAt { get; set; }
+
     [JsonIgnore]
     public virtual Student? Student { get; set; }
     [JsonIgnore]
