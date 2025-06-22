@@ -25,7 +25,7 @@ namespace SchoolMedicalServer.Api.Controllers.Dashboard
         }
 
         [HttpGet("nurses/{nurseId}/dashboards/appoiments")]
-        public async Task<IActionResult> GetNurseTotalAppointments(Guid nurseId, [FromBody] DashboardRequest request)
+        public async Task<IActionResult> GetNurseTotalAppointments(Guid nurseId, [FromQuery] DashboardRequest request)
         {
             var appoinments = await service.GetNurseAppointmentsDashboardAsync(nurseId, request);
             if (appoinments < 0)
@@ -35,7 +35,7 @@ namespace SchoolMedicalServer.Api.Controllers.Dashboard
             return Ok(appoinments);
         }
         [HttpGet("nurses/{nurseId}/dashboards/medical-registations")]
-        public async Task<IActionResult> GetNurseTotalMedicalRegistrations(Guid nurseId, [FromBody] DashboardRequest request)
+        public async Task<IActionResult> GetNurseTotalMedicalRegistrations(Guid nurseId, [FromQuery] DashboardRequest request)
         {
             var registrations = await service.GetNurseMedicalRegistrationsDashboard(nurseId, request);
             if (registrations < 0)
@@ -46,7 +46,7 @@ namespace SchoolMedicalServer.Api.Controllers.Dashboard
         }
 
         [HttpGet("nurses/{nurseId}/dashboards/medical-events")]
-        public async Task<IActionResult> GetNurseTotalMedicalEvents(Guid nurseId, [FromBody] DashboardRequest request)
+        public async Task<IActionResult> GetNurseTotalMedicalEvents(Guid nurseId, [FromQuery] DashboardRequest request)
         {
             var events = await service.GetNurseMedicalEventsDashboard(nurseId, request);
             if (events < 0)
@@ -57,7 +57,7 @@ namespace SchoolMedicalServer.Api.Controllers.Dashboard
         }
 
         [HttpGet("nurses/{nurseId}/dashboards/appoiments/details")]
-        public async Task<IActionResult> GetNurseTotalAppointmentsDetails(Guid nurseId, [FromBody] DashboardRequest request)
+        public async Task<IActionResult> GetNurseTotalAppointmentsDetails(Guid nurseId, [FromQuery] DashboardRequest request)
         {
             var details = await service.GetNurseAppointmentsDetailsDashboardAsync(nurseId, request);
             if (details == null || !details.Any())
@@ -68,7 +68,7 @@ namespace SchoolMedicalServer.Api.Controllers.Dashboard
         }
 
         [HttpGet("nurses/{nurseId}/dashboards/medical-registations/details")]
-        public async Task<IActionResult> GetNurseTotalMedicalRegistrationsDetails(Guid nurseId, [FromBody] DashboardRequest request)
+        public async Task<IActionResult> GetNurseTotalMedicalRegistrationsDetails(Guid nurseId, [FromQuery] DashboardRequest request)
         {
             var details = await service.GetNurseMedicalRegistrationsDetailsDashboard(nurseId, request);
             if (details == null || !details.Any())
@@ -79,7 +79,7 @@ namespace SchoolMedicalServer.Api.Controllers.Dashboard
         }
 
         [HttpGet("nurses/{nurseId}/dashboards/medical-events/details")]
-        public async Task<IActionResult> GetNurseTotalMedicalEventsDetails(Guid nurseId, [FromBody] DashboardRequest request)
+        public async Task<IActionResult> GetNurseTotalMedicalEventsDetails(Guid nurseId, [FromQuery] DashboardRequest request)
         {
             var details = await service.GetNurseMedicalEventsDetailsDashboard(nurseId, request);
             if (details == null || !details.Any())
