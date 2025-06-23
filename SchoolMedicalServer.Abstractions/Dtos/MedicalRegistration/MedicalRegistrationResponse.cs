@@ -19,6 +19,7 @@ namespace SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration
         public string? Notes { get; set; }
         public bool ParentConsent { get; set; }
         public DateOnly? DateSubmitted { get; set; }
+        public string? PictureUrl { get; set; }
         public bool Status { get; set; }
     }
 

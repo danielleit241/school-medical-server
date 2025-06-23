@@ -79,6 +79,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 DateSubmitted = request.MedicalRegistration.DateSubmitted ?? DateOnly.FromDateTime(DateTime.Now),
                 MedicationName = request.MedicalRegistration.MedicationName,
                 TotalDosages = request.MedicalRegistration.TotalDosages,
+                PictureUrl = request.MedicalRegistration.PictureUrl,
                 Notes = request.MedicalRegistration.Notes,
                 ParentalConsent = request.MedicalRegistration.ParentConsent,
                 StaffNurseId = request.MedicalRegistration.StaffNurseId,
@@ -283,6 +284,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     RegistrationId = medicalRegistration.RegistrationId,
                     MedicationName = medicalRegistration.MedicationName,
                     TotalDosages = medicalRegistration.TotalDosages,
+                    PictureUrl = medicalRegistration.PictureUrl,
                     Notes = medicalRegistration.Notes,
                     ParentConsent = medicalRegistration.ParentalConsent ?? false,
                     DateSubmitted = medicalRegistration.DateSubmitted

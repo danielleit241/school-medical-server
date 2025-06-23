@@ -32,7 +32,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Item = new Item
                 {
                     Name = $"Total Appointments in {fromDate} to {toDate}",
-                    Count = totalAppointments
+                    Count = totalAppointments,
                 }
             };
         }
@@ -53,7 +53,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 )
                 .ToList();
 
-            var pendingResults = filteredAppointments.Count(a => a.ConfirmationStatus == false);
+            var pendingResults = filteredAppointments.Where(a => a.ConfirmationStatus == false).ToList();
             var confirmedResults = filteredAppointments.Count(a => a.ConfirmationStatus == true);
             var notCompletedResults = filteredAppointments.Count(a => a.ConfirmationStatus == true && a.CompletionStatus == false);
             var completedResults = filteredAppointments.Count(a => a.CompletionStatus == true && a.ConfirmationStatus == true);
@@ -64,7 +64,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Item = new Item
                 {
                     Name = $"Pending in {fromDate} to {toDate}",
-                    Count = pendingResults
+                    Count = pendingResults.Count,
+                    Details = pendingResults.Select(pending => new ItemDetais
+                    {
+                        Id = pending.AppointmentId,
+                        Name = pending.AppointmentReason
+                    }).ToList()
                 }
             });
             responses.Add(new DashboardResponse

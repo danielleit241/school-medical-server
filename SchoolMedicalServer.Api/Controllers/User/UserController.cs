@@ -10,6 +10,18 @@ namespace SchoolMedicalServer.Api.Controllers.User
     [ApiController]
     public class UserController(IUserService userService) : ControllerBase
     {
+        [HttpGet("free-nurses")]
+        [Authorize]
+        public async Task<IActionResult> GetFreeNurses()
+        {
+            var nurses = await userService.GetFreeNursesAsync();
+            if (nurses == null)
+            {
+                return NotFound("No free nurses found.");
+            }
+            return Ok(nurses);
+        }
+
 
         [HttpGet("roles/{roleName}")]
         [Authorize(Roles = "admin")]
