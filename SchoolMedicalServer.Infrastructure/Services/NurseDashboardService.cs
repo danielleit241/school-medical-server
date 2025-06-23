@@ -54,9 +54,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 .ToList();
 
             var pendingResults = filteredAppointments.Where(a => a.ConfirmationStatus == false).ToList();
-            var confirmedResults = filteredAppointments.Count(a => a.ConfirmationStatus == true);
-            var notCompletedResults = filteredAppointments.Count(a => a.ConfirmationStatus == true && a.CompletionStatus == false);
-            var completedResults = filteredAppointments.Count(a => a.CompletionStatus == true && a.ConfirmationStatus == true);
+            var confirmedResults = filteredAppointments.Where(a => a.ConfirmationStatus == true).ToList();
+            var notCompletedResults = filteredAppointments.Where(a => a.ConfirmationStatus == true && a.CompletionStatus == false).ToList();
+            var completedResults = filteredAppointments.Where(a => a.CompletionStatus == true && a.ConfirmationStatus == true).ToList();
 
 
             responses.Add(new DashboardResponse
@@ -77,7 +77,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Item = new Item
                 {
                     Name = $"Confirmed in {fromDate} to {toDate}",
-                    Count = confirmedResults
+                    Count = confirmedResults.Count,
+                    Details = confirmedResults.Select(confirmed => new  ItemDetais
+                    {
+                        Id = confirmed.AppointmentId,
+                        Name = confirmed.AppointmentReason
+                    }).ToList()
                 }
             });
             responses.Add(new DashboardResponse
@@ -85,7 +90,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Item = new Item
                 {
                     Name = $"Not Completed in {fromDate} to {toDate}",
-                    Count = notCompletedResults
+                    Count = notCompletedResults.Count,
+                    Details = notCompletedResults.Select(notCompleted => new ItemDetais
+                    {
+                        Id = notCompleted.AppointmentId,
+                        Name = notCompleted.AppointmentReason
+                    }).ToList()
                 }
             });
             responses.Add(new DashboardResponse
@@ -93,7 +103,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Item = new Item
                 {
                     Name = $"Completed in {fromDate} to {toDate}",
-                    Count = completedResults
+                    Count = completedResults.Count,
+                    Details =  completedResults.Select(completed => new ItemDetais
+                    {
+                        Id = completed.AppointmentId,
+                        Name = completed.AppointmentReason
+                    }).ToList()
                 }
             });
             return responses;
@@ -138,8 +153,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var eventTypeGroups = filteredEvents
                 .Where(e => !string.IsNullOrEmpty(e.EventType))
                 .GroupBy(e => e.EventType!.Trim(), StringComparer.OrdinalIgnoreCase)
-                .OrderBy(g => g.Key);
-
+                .OrderBy(g => g.Key)
+                .ToList();
             foreach (var group in eventTypeGroups)
             {
                 responses.Add(new DashboardResponse
@@ -147,7 +162,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     Item = new Item
                     {
                         Name = $"{group.Key} Events in {fromDate} to {toDate}",
-                        Count = group.Count()
+                        Count = group.Count(),
+                        Details = group.Select(Group => new ItemDetais
+                        {
+                            Id = Group.EventId,
+                            Name = Group.SeverityLevel
+                        }).ToList()
                     }
                 });
             }
@@ -197,17 +217,22 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 )
                 .ToList();
 
-            var pendingRegistration = filteredRegistrations.Count(r => r.Status == false);
-            var approvedRegistration = filteredRegistrations.Count(r => r.Status == true);
-            var notCompletedRegistration = filteredRegistrations.Count(r => r.Status == true && r.Details.Any() && r.Details.Any(d => !d.IsCompleted));
-            var completedRegistration = filteredRegistrations.Count(r => r.Status == true && r.Details.Any() && r.Details.All(d => d.IsCompleted));
+            var pendingRegistration = filteredRegistrations.Where(r => r.Status == false).ToList();
+            var approvedRegistration = filteredRegistrations.Where(r => r.Status == true).ToList();
+            var notCompletedRegistration = filteredRegistrations.Where(r => r.Status == true && r.Details.Any() && r.Details.Any(d => !d.IsCompleted)).ToList();
+            var completedRegistration = filteredRegistrations.Where(r => r.Status == true && r.Details.Any() && r.Details.All(d => d.IsCompleted)).ToList();
 
             responses.Add(new DashboardResponse
             {
                 Item = new Item
                 {
                     Name = $"Pending in {fromDate} to {toDate}",
-                    Count = pendingRegistration
+                    Count = pendingRegistration.Count ,
+                    Details = pendingRegistration.Select(pending => new ItemDetais
+                    {
+                        Id = pending.RegistrationId ,
+                        Name = pending.MedicationName
+                    }).ToList()
                 }
             });
             responses.Add(new DashboardResponse
@@ -215,7 +240,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Item = new Item
                 {
                     Name = $"Approved in {fromDate} to {toDate}",
-                    Count = approvedRegistration
+                    Count = approvedRegistration.Count ,
+                    Details = approvedRegistration.Select(approved => new ItemDetais
+                    {
+                        Id = approved.RegistrationId ,
+                        Name = approved.MedicationName
+                    }).ToList()
                 }
             });
             responses.Add(new DashboardResponse
@@ -223,7 +253,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Item = new Item
                 {
                     Name = $"Not Completed in {fromDate} to {toDate}",
-                    Count = notCompletedRegistration
+                    Count = notCompletedRegistration.Count ,
+                    Details = notCompletedRegistration.Select(notCompleted => new ItemDetais
+                    {
+                        Id = notCompleted.RegistrationId ,
+                        Name= notCompleted.MedicationName
+                    }).ToList()
                 }
             });
             responses.Add(new DashboardResponse
@@ -231,7 +266,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Item = new Item
                 {
                     Name = $"Completed in {fromDate} to {toDate}",
-                    Count = completedRegistration
+                    Count = completedRegistration.Count ,
+                    Details = completedRegistration.Select(completed => new ItemDetais
+                    {
+                        Id= completed.RegistrationId ,
+                        Name= completed.MedicationName
+                    }).ToList()
                 }
             });
             return responses;
