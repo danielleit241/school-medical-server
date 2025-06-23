@@ -9,5 +9,6 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task<UserInformation?> GetUserAsync(Guid userId);
         Task<bool> UpdateStatusUserAsync(Guid userid, bool status);
         Task<bool> UpdateUserAsync(Guid userid, UserInformation request);
+        Task<IEnumerable<UserInformation>> GetFreeNursesAsync();
     }
 }

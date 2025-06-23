@@ -16,6 +16,8 @@ public partial class MedicalRegistration
 
     public string? TotalDosages { get; set; }
 
+    public string? PictureUrl { get; set; }
+
     public string? Notes { get; set; }
 
     public bool? ParentalConsent { get; set; }

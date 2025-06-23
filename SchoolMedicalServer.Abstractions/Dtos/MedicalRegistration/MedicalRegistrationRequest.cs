@@ -28,6 +28,8 @@ namespace SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration
         [Required(ErrorMessage = "Dosage is required.")]
         public string TotalDosages { get; set; } = default!;
 
+        public string? PictureUrl { get; set; }
+
         public string Notes { get; set; } = default!;
 
         [Required(ErrorMessage = "Parent consent is required.")]

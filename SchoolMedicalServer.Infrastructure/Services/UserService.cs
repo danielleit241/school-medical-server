@@ -7,7 +7,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class UserService(
         IBaseRepository baseRepository,
-        IUserRepository userRepository) : IUserService
+        IUserRepository userRepository,
+        IHealthCheckRoundRepository healthCheckRoundRepository,
+        IVaccinationRoundRepository vaccinationRoundRepository) : IUserService
     {
         public async Task<PaginationResponse<UserInformation?>> GetUsersByRoleNamePaginationAsync(PaginationRequest? paginationRequest, string roleName)
         {
@@ -116,6 +118,37 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             await baseRepository.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<IEnumerable<UserInformation>> GetFreeNursesAsync()
+        {
+            var today = DateTime.UtcNow;
+            var vaccinationRounds = await vaccinationRoundRepository.GetVaccinationRoundsAsync();
+            var healthCheckRounds = await healthCheckRoundRepository.GetHealthCheckRoundsAsync();
+            var nurses = await userRepository.GetUsersByRoleName("nurse");
+
+            var freeNurses = new List<UserInformation>();
+            foreach (var nurse in nurses)
+            {
+                var hasVaccinationToday = vaccinationRounds.Any(vr => vr.NurseId == nurse.UserId && vr.StartTime <= today && vr.EndTime >= today);
+                var hasHealthCheckToday = healthCheckRounds.Any(hcr => hcr.NurseId == nurse.UserId && hcr.StartTime <= today && hcr.EndTime >= today);
+                if (!hasVaccinationToday && !hasHealthCheckToday)
+                {
+                    freeNurses.Add(new UserInformation
+                    {
+                        UserId = nurse.UserId,
+                        FullName = nurse.FullName,
+                        PhoneNumber = nurse.PhoneNumber,
+                        EmailAddress = nurse.EmailAddress,
+                        AvatarUrl = nurse.AvatarUrl ?? "",
+                        DayOfBirth = nurse.DayOfBirth,
+                        RoleName = nurse.Role?.RoleName ?? "",
+                        Status = nurse.Status ?? false,
+                        Address = nurse.Address ?? ""
+                    });
+                }
+            }
+            return freeNurses;
         }
     }
 }
