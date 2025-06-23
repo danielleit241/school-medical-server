@@ -21,7 +21,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task<IEnumerable<VaccinationResult>> GetAllAsync()
         {
             return await _context.VaccinationResults
-                .Include(vr => vr.Round)
+                .Include(vr => vr.Round).Include(vr => vr.HealthProfile).ThenInclude(vr => vr!.Student)
                 .ToListAsync();
         }
 

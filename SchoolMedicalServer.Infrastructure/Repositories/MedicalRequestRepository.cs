@@ -58,5 +58,10 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .AsNoTracking()
                 .ToListAsync();
         }
+
+        public async Task<MedicalRequest?> GetMedicalRequestByIdAsync(Guid requestId)
+        {
+            return await context.MedicalRequests.Include(r => r.Item).Include(r => r.Event).FirstOrDefaultAsync(r => r.RequestId == requestId);
+        }
     }
 }

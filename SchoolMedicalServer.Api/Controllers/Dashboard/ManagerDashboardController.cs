@@ -46,7 +46,7 @@ namespace SchoolMedicalServer.Api.Controllers.Dashboard
         [HttpGet("managers/dashboards/health-checks")]
         public async Task<IActionResult> GetTotalHealthChecks([FromQuery] DashboardRequest request)
         {
-            var healthChecks = await service.GetTotalHealthChecksAsync(request);
+            var healthChecks = await service.GetTotalHealthCheckResultsAsync(request);
             if (healthChecks == null || !healthChecks.Any())
             {
                 return NotFound("No health checks found for the specified date range.");
@@ -57,7 +57,7 @@ namespace SchoolMedicalServer.Api.Controllers.Dashboard
         [HttpGet("managers/dashboards/vaccinations")]
         public async Task<IActionResult> GetTotalVaccinations([FromQuery] DashboardRequest request)
         {
-            var vaccinations = await service.GetTotalVaccinationsAsync(request);
+            var vaccinations = await service.GetTotalVaccinationResultsAsync(request);
             if (vaccinations == null || !vaccinations.Any())
             {
                 return NotFound("No vaccinations found for the specified date range.");

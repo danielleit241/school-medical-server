@@ -7,10 +7,10 @@ namespace SchoolMedicalServer.Abstractions.IServices
     {
         Task<IEnumerable<IDictionary<string, MedicalInventoryDashboardResponse>>> GetExpiringMedicalItemsAsync();
         Task<IEnumerable<IDictionary<string, int>>> GetLowStockMedicalItemsAsync();
-        Task<IEnumerable<DashboardResponse>> GetTotalHealthChecksAsync(DashboardRequest request);
+        Task<IEnumerable<DashboardResponse>> GetTotalHealthCheckResultsAsync(DashboardRequest request);
         Task<IEnumerable<DashboardResponse>> GetTotalHealthDeclarationsAsync(DashboardRequest request);
         Task<IEnumerable<DashboardResponse>> GetTotalMedicalRequestsAsync(DashboardRequest request);
         Task<IEnumerable<DashboardResponse>> GetTotalStudentsAsync(DashboardRequest request);
-        Task<IEnumerable<DashboardResponse>> GetTotalVaccinationsAsync(DashboardRequest request);
+        Task<IEnumerable<DashboardResponse>> GetTotalVaccinationResultsAsync(DashboardRequest request);
     }
 }

@@ -10,5 +10,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<int> CountAsync();
         Task<IEnumerable<MedicalRequest>> GetMedicalRequestsAsync(int pageSize, int skip, string? search);
         Task<IEnumerable<MedicalRequest>> GetAllAsync();
+        Task<MedicalRequest?> GetMedicalRequestByIdAsync(Guid requestId);
     }
 }
