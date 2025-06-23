@@ -24,8 +24,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                             fromDate <= u.CreatedAt!.Value &&
                             toDate >= u.CreatedAt.Value)];
 
-            var usersChangePassword = users.Where(u => passwordHasher.VerifyHashedPassword(u, u.PasswordHash, defaultPassword!) != PasswordVerificationResult.Success).ToList().Count;
-            var usersNotChangePassword = users.Where(u => passwordHasher.VerifyHashedPassword(u, u.PasswordHash, defaultPassword!) == PasswordVerificationResult.Success).ToList().Count;
+            var usersChangePassword = users.Where(u => passwordHasher.VerifyHashedPassword(u, u.PasswordHash, defaultPassword!) != PasswordVerificationResult.Success).ToList();
+            var usersNotChangePassword = users.Where(u => passwordHasher.VerifyHashedPassword(u, u.PasswordHash, defaultPassword!) == PasswordVerificationResult.Success).ToList();
 
             var totalUsers = users.ToList().Count;
 
@@ -42,7 +42,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Item = new Item
                 {
                     Name = $"Password Changed in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
-                    Count = usersChangePassword
+                    Count = usersChangePassword.Count,
+                    Details = usersChangePassword.Select(u => new ItemDetais
+                    {
+                        Id = u.UserId,
+                        Name = u.FullName
+                    }).ToList()
                 }
             });
             responses.Add(new DashboardResponse
@@ -50,7 +55,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Item = new Item
                 {
                     Name = $"Default Password in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
-                    Count = usersNotChangePassword
+                    Count = usersNotChangePassword.Count,
+                    Details = usersNotChangePassword.Select(u => new ItemDetais
+                    {
+                        Id = u.UserId,
+                        Name = u.FullName
+                    }).ToList()
                 }
             });
             return responses;

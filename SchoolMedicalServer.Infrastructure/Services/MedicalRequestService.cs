@@ -7,6 +7,37 @@ namespace SchoolMedicalServer.Infrastructure.Services
 {
     public class MedicalRequestService(IMedicalRequestRepository requestRepository, IUserRepository userRepository) : IMedicalRequestService
     {
+        public async Task<MedicalRequestResponse> GetMedicalRequestAsync(Guid requestId)
+        {
+            var medicalRequest = await requestRepository.GetMedicalRequestByIdAsync(requestId);
+            if (medicalRequest == null)
+            {
+                return null!;
+            }
+            var nurseInfor = await userRepository.GetByIdAsync(medicalRequest.Event!.StaffNurseId);
+            var response = new MedicalRequestResponse
+            {
+                EventInfo = new EventInfo
+                {
+                    EventId = medicalRequest.Event!.EventId,
+                },
+                MedicalInfo = new MedicalInfo
+                {
+                    ItemId = medicalRequest.Item!.ItemId,
+                    ItemName = medicalRequest.Item.ItemName,
+                    RequestId = medicalRequest.RequestId,
+                    RequestQuantity = medicalRequest.RequestQuantity,
+                    RequestDate = medicalRequest.RequestDate
+                },
+                NurseInfo = new NurseInfo
+                {
+                    NurseId = nurseInfor!.UserId,
+                    FullName = nurseInfor!.FullName!,
+                },
+            };
+            return response;
+        }
+
         public async Task<PaginationResponse<MedicalRequestResponse>> GetMedicalRequestsAsync(PaginationRequest? pagination)
         {
             var total = await requestRepository.CountAsync();
