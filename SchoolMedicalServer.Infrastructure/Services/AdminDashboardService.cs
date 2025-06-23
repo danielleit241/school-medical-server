@@ -7,7 +7,9 @@ using SchoolMedicalServer.Abstractions.IServices;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
-    public class AdminDashboardService(IUserRepository userRepository, IConfiguration configuration) : IAdminDashboardService
+    public class AdminDashboardService(
+        IUserRepository userRepository,
+        IConfiguration configuration) : IAdminDashboardService
     {
         public async Task<IEnumerable<DashboardResponse>> GetColumnDataUsersAsync(DashboardRequest request)
         {
@@ -66,9 +68,49 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return responses;
         }
 
-        public Task<IEnumerable<DashboardRecentActionResponse>> GetRecentActionsAsync()
+        public async Task<IEnumerable<DashboardUserRecentActionResponse>> GetRecentActionsAsync()
         {
-            throw new NotImplementedException();
+            var now = DateTime.Now;
+            var next30Mins = now.AddMinutes(30);
+            var nextDays = now.AddDays(1);
+            var responses = new List<DashboardUserRecentActionResponse>();
+
+
+            var user = await userRepository.GetAllUser();
+            var userJustCreated = user.Where(u => u.CreatedAt >= now && u.CreatedAt <= next30Mins).ToList();
+            var userJustUpdated = user.Where(u => u.UpdatedAt >= now && u.UpdatedAt <= next30Mins).ToList();
+            var userJustResetPassword = user.Where(u => u.OtpExpiryTime >= now.Date && u.OtpExpiryTime <= nextDays).ToList();
+
+            responses.Add(new DashboardUserRecentActionResponse
+            {
+                UserRecentAction = new UserRecentAction
+                {
+                    Name = $"Create in {now} to {next30Mins}",
+                    Count = userJustCreated.Count,
+                    DateTime = now
+                }
+            });
+
+            responses.Add(new DashboardUserRecentActionResponse
+            {
+                UserRecentAction = new UserRecentAction
+                {
+                    Name = $"Update in {now} to {next30Mins}",
+                    Count = userJustUpdated.Count,
+                    DateTime = now
+                }
+            });
+
+            responses.Add(new DashboardUserRecentActionResponse
+            {
+                UserRecentAction = new UserRecentAction
+                {
+                    Name = $"Reset password in {now.Date} to {nextDays}",
+                    Count = userJustResetPassword.Count
+                }
+            });
+
+            return responses;
         }
     }
 }
