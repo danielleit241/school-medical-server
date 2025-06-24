@@ -451,7 +451,7 @@ public partial class SchoolMedicalManagementContext : DbContext
 
             entity.ToTable("Role");
 
-            entity.Property(e => e.RoleId).HasColumnName("RoleID");
+            entity.Property(e => e.RoleId).HasColumnName("RoleID").ValueGeneratedNever();
             entity.Property(e => e.RoleName)
                 .HasMaxLength(10)
                 .IsUnicode(false);
@@ -707,13 +707,6 @@ public partial class SchoolMedicalManagementContext : DbContext
                 .HasDefaultValue(true)
                 .HasColumnName("Status");
         });
-
-        modelBuilder.Entity<Role>().HasData(
-            new Role { RoleId = 1, RoleName = "admin" },
-            new Role { RoleId = 2, RoleName = "nurse" },
-            new Role { RoleId = 3, RoleName = "manager" },
-            new Role { RoleId = 4, RoleName = "parent" }
-        );
 
         modelBuilder.Entity<VaccinationDeclaration>(entity =>
         {
