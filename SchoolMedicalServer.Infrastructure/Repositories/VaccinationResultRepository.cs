@@ -127,5 +127,14 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .Where(vr => vr.Round!.ScheduleId == scheduleId)
                 .ToListAsync() ?? [];
         }
+
+        public async Task<IEnumerable<VaccinationResult?>> GetByRoundIdAsync(Guid roundId)
+        {
+            return await _context.VaccinationResults
+                .Include(vr => vr.HealthProfile)
+                .ThenInclude(hp => hp!.Student)
+                .Where(vr => vr.RoundId == roundId)
+                .ToListAsync() ?? [];
+        }
     }
 }

@@ -71,6 +71,15 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .FirstOrDefaultAsync(hcr => hcr.ResultId == id);
         }
 
+        public async Task<IEnumerable<HealthCheckResult?>> GetByRoundIdAsync(Guid roundId)
+        {
+            return await _context.HealthCheckResults
+                .Include(hcr => hcr.Round)
+                .Include(hcr => hcr.HealthProfile).ThenInclude(hp => hp!.Student)
+                .Where(hcr => hcr.RoundId == roundId)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<HealthCheckResult?>> GetHealthCheckRoundsByStudentIdAsync(Guid studentId, string? search, int skip, int pageSize)
         {
             return await _context.HealthCheckResults

@@ -169,18 +169,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return null!;
             }
-
-            var totalCount = await vaccinationResultRepository.CountByRoundIdAsync(roundId);
-            if (totalCount == 0)
-            {
-                return null!;
-            }
+            var total = await vaccinationResultRepository.CountByRoundIdAsync(roundId);
             var skip = (pagination!.PageIndex - 1) * pagination.PageSize;
             var results = await vaccinationResultRepository.GetPagedStudents(roundId, pagination.Search!, skip, pagination.PageSize);
 
             var confirmedResults = results
                       .Where(r => r != null && r.ParentConfirmed == true)
-                       .ToList();
+                      .ToList();
 
             List<VaccinationRoundStudentResponse> responses = new();
             foreach (var result in confirmedResults)
@@ -196,7 +191,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return new PaginationResponse<VaccinationRoundStudentResponse>(
                 pagination.PageIndex,
                 pagination.PageSize,
-                totalCount,
+                total,
                 responses
             );
 
@@ -305,6 +300,36 @@ namespace SchoolMedicalServer.Infrastructure.Services
             updateRound.UpdatedAt = DateTime.UtcNow;
             await vaccinationRound.UpdateVaccinationRound(updateRound);
             return true;
+        }
+
+        public async Task<IEnumerable<VaccinationRoundStudentResponse>> GetStudentsByVacciantionRoundIdForNurseAsync(Guid roundId, Guid nurseId)
+        {
+            var round = await vaccinationRound.GetVaccinationRoundByIdAsync(roundId);
+            if (round == null || round.NurseId != nurseId)
+            {
+                return null!;
+            }
+            var results = await vaccinationResultRepository.GetByRoundIdAsync(roundId);
+            if (results == null || results.Count() == 0)
+            {
+                return null!;
+            }
+            var confirmedResults = results
+                      .Where(r => r != null && r.ParentConfirmed == true)
+                      .ToList();
+            List<VaccinationRoundStudentResponse> responses = new();
+            foreach (var result in confirmedResults)
+            {
+                var studentResponse = await StudentsOfRoundResponse(result!);
+                var parentResponse = await ParentOfStudentResponse(result!);
+                responses.Add(new VaccinationRoundStudentResponse
+                {
+                    StudentsOfRoundResponse = studentResponse,
+                    ParentsOfStudent = parentResponse
+                });
+            }
+            ;
+            return responses;
         }
     }
 }
