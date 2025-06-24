@@ -1,4 +1,5 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlow.Vaccination.Results;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlows;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlows.Vaccination.Results;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -15,7 +16,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IHealthProfileRepository healthProfileRepository,
         IStudentRepository studentRepository) : IVaccinationResultService
     {
-        public async Task<bool?> ConfirmOrDeclineVaccination(Guid resultId, ParentVaccinationConfirmationRequest request)
+        public async Task<bool?> ConfirmOrDeclineVaccination(Guid resultId, ParentConfirmationRequest request)
         {
             var result = await resultRepository.GetByIdAsync(resultId);
             if (result == null)

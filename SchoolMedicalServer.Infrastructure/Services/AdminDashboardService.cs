@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using SchoolMedicalServer.Abstractions.Dtos;
+using SchoolMedicalServer.Abstractions.Dtos.Dashboard;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
@@ -45,7 +45,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Password Changed in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
                     Count = usersChangePassword.Count,
-                    Details = usersChangePassword.Select(u => new ItemDetais
+                    Details = usersChangePassword.Select(u => new ItemDetails
                     {
                         Id = u.UserId,
                         Name = u.FullName
@@ -58,7 +58,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Default Password in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
                     Count = usersNotChangePassword.Count,
-                    Details = usersNotChangePassword.Select(u => new ItemDetais
+                    Details = usersNotChangePassword.Select(u => new ItemDetails
                     {
                         Id = u.UserId,
                         Name = u.FullName

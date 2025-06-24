@@ -1,4 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Dashboard;
 
 namespace SchoolMedicalServer.Abstractions.IServices
 {

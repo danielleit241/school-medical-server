@@ -56,10 +56,10 @@ namespace SchoolMedicalServer.Infrastructure.Data
 
             var roles = new[]
             {
-                new Role { RoleId = 1, RoleName = "Admin"},
-                new Role { RoleId = 2, RoleName = "Manager"},
-                new Role { RoleId = 3, RoleName = "Nurse"},
-                new Role { RoleId = 4, RoleName = "Parent"}
+                new Role { RoleId = 1, RoleName = "admin"},
+                new Role { RoleId = 2, RoleName = "nurse"},
+                new Role { RoleId = 3, RoleName = "manager"},
+                new Role { RoleId = 4, RoleName = "parent"}
             };
 
             _context.Roles.AddRange(roles);

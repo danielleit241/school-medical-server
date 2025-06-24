@@ -1,5 +1,5 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlow;
-using SchoolMedicalServer.Abstractions.Dtos.MainFlow.HealthCheck.Schedules;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlows;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlows.HealthCheck.Schedules;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 

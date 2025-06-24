@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SchoolMedicalServer.Abstractions.Dtos.MainFlow.HealthCheck.Results;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlows;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlows.HealthCheck.Results;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.IServices;
 
@@ -24,7 +25,7 @@ namespace SchoolMedicalServer.Api.Controllers.HealthCheck
 
         [HttpPut("health-check-results/{resultId}/confirm")]
         [Authorize(Roles = "parent")]
-        public async Task<IActionResult> ConfirmOrDeclineHealthCheck(Guid resultId, [FromBody] ParentHealthCheckConfirmationRequest request)
+        public async Task<IActionResult> ConfirmOrDeclineHealthCheck(Guid resultId, [FromBody] ParentConfirmationRequest request)
         {
             var result = await service.ConfirmOrDeclineHealthCheck(resultId, request);
             if (result == null)

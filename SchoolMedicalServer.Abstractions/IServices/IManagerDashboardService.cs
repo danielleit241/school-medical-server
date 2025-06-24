@@ -1,4 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Dashboard;
 using SchoolMedicalServer.Abstractions.Dtos.MedicalInventory;
 
 namespace SchoolMedicalServer.Abstractions.IServices
