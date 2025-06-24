@@ -19,10 +19,10 @@ namespace SchoolMedicalServer.Test
         {
             var roles = new[]
             {
-                new Role {RoleName = "admin" },
-                new Role {RoleName = "manager" },
-                new Role {RoleName = "nurse" },
-                new Role {RoleName = "parent" }
+                new Role {RoleId = 1, RoleName = "admin" },
+                new Role {RoleId = 3, RoleName = "manager" },
+                new Role {RoleId = 2, RoleName = "nurse" },
+                new Role {RoleId = 4, RoleName = "parent" }
             };
             context.Roles.AddRange(roles);
             context.SaveChanges();
