@@ -133,6 +133,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
             return await _context.VaccinationResults
                 .Include(vr => vr.HealthProfile)
                 .ThenInclude(hp => hp!.Student)
+                .Include(vr => vr.VaccinationObservation)
                 .Where(vr => vr.RoundId == roundId)
                 .ToListAsync() ?? [];
         }
