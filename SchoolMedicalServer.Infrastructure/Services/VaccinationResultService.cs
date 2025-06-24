@@ -252,5 +252,39 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 responses
             );
         }
+
+        public async Task<IEnumerable<VaccinationObservationInformationResponse>> GetVaccinationObservationsByRoundId(Guid roundId)
+        {
+            var round = await roundRepository.GetVaccinationRoundByIdAsync(roundId);
+            if (round == null)
+            {
+                return null!;
+            }
+            var results = await resultRepository.GetByRoundIdAsync(roundId);
+            if (results == null || !results.Any())
+            {
+                return null!;
+            }
+            var observations = new List<VaccinationObservationInformationResponse>();
+            foreach (var result in results)
+            {
+                if (result.VaccinationObservation != null)
+                {
+                    observations.Add(new VaccinationObservationInformationResponse
+                    {
+                        ObservationStartTime = result.VaccinationObservation.ObservationStartTime,
+                        ObservationEndTime = result.VaccinationObservation.ObservationEndTime,
+                        ReactionStartTime = result.VaccinationObservation.ReactionStartTime,
+                        ImmediateReaction = result.VaccinationObservation.ImmediateReaction,
+                        Intervention = result.VaccinationObservation.Intervention,
+                        ReactionType = result.VaccinationObservation.ReactionType,
+                        SeverityLevel = result.VaccinationObservation.SeverityLevel,
+                        ObservedBy = result.VaccinationObservation.ObservedBy,
+                        Notes = result.VaccinationObservation.Notes
+                    });
+                }
+            }
+            return observations;
+        }
     }
 }

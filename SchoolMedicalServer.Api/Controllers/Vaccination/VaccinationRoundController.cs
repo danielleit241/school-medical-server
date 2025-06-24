@@ -62,6 +62,7 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
             return Ok(vaccinationRound);
         }
 
+
         [HttpGet("v2/nurses/{nurseId}/vaccination-rounds/{roundId}/students")]
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> GetStudentsByRoundIdForNurse(Guid roundId, Guid nurseId)
