@@ -66,11 +66,11 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
             => await _context.Appointments.CountAsync(a => a.UserId == userId);
 
         public async Task<List<Appointment>> GetByUserPagedAsync(Guid userId,
-        string? search,
-        string? sortBy,
-        string? sortOrder,
-        int skip,
-        int take)
+            string? search,
+            string? sortBy,
+            string? sortOrder,
+            int skip,
+            int take)
         {
             IQueryable<Appointment> query = _context.Appointments
                 .Where(a => a.UserId == userId)

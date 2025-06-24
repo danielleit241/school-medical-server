@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using SchoolMedicalServer.Api.BackgroundServices;
 using SchoolMedicalServer.Api.Helpers;
 using SchoolMedicalServer.Infrastructure;
+using SchoolMedicalServer.Infrastructure.Data;
 
 namespace SchoolMedicalServer.Api.Bootstrapping
 {
@@ -93,6 +94,7 @@ namespace SchoolMedicalServer.Api.Bootstrapping
             services.AddSingleton<IEmailHelper, EmailHelper>();
 
             services.AddTransient<INotificationSender, NotificationSender>();
+            services.AddScoped<DatabaseSeeder>();
 
             return services;
         }
