@@ -299,6 +299,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return null!;
             }
             var results = await healthCheckResultRepository.GetByRoundIdAsync(roundId);
+            results = results.Where(r => r != null && r!.ParentConfirmed == true).ToList();
             if (results == null || !results.Any())
             {
                 return null!;
