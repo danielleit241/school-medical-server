@@ -1,4 +1,5 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlow.Vaccination.Results;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlows;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlows.Vaccination.Results;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 
@@ -6,7 +7,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
 {
     public interface IVaccinationResultService
     {
-        Task<bool?> ConfirmOrDeclineVaccination(Guid resultId, ParentVaccinationConfirmationRequest request);
+        Task<bool?> ConfirmOrDeclineVaccination(Guid resultId, ParentConfirmationRequest request);
         Task<NotificationRequest> CreateVaccinationObservation(VaccinationObservationRequest request);
         Task<bool> CreateVaccinationResult(VaccinationResultRequest request);
         Task<bool?> GetHealthQualifiedVaccinationResult(Guid resultId);

@@ -1,4 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlow.HealthCheck.Rounds;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlows.HealthCheck.Rounds;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 
 namespace SchoolMedicalServer.Abstractions.IServices

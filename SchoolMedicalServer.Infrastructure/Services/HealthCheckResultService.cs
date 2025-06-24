@@ -1,4 +1,5 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlow.HealthCheck.Results;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlows;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlows.HealthCheck.Results;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -13,7 +14,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IHealthCheckScheduleRepository healthCheckScheduleRepository,
         IUserRepository userRepository) : IHealthCheckResultService
     {
-        public async Task<bool?> ConfirmOrDeclineHealthCheck(Guid resultId, ParentHealthCheckConfirmationRequest request)
+        public async Task<bool?> ConfirmOrDeclineHealthCheck(Guid resultId, ParentConfirmationRequest request)
         {
             var result = await healthCheckResultRepository.GetByIdAsync(resultId);
             if (result == null)

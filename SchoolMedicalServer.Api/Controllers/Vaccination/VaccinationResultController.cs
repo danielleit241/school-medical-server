@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SchoolMedicalServer.Abstractions.Dtos.MainFlow.Vaccination.Results;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlows;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlows.Vaccination.Results;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.IServices;
 
@@ -92,7 +93,7 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
 
         [HttpPut("vaccination-results/{resultId}/confirm")]
         [Authorize(Roles = "parent")]
-        public async Task<IActionResult> ConfirmOrDeclineVaccination(Guid resultId, [FromBody] ParentVaccinationConfirmationRequest request)
+        public async Task<IActionResult> ConfirmOrDeclineVaccination(Guid resultId, [FromBody] ParentConfirmationRequest request)
         {
             var result = await service.ConfirmOrDeclineVaccination(resultId, request);
             if (result == null)

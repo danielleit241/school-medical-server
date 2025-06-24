@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SchoolMedicalServer.Abstractions.Dtos.MainFlow;
-using SchoolMedicalServer.Abstractions.Dtos.MainFlow.Vaccination.Schedules;
-using SchoolMedicalServer.Abstractions.Dtos.MainFlow.Vaccination.Vaccines;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlows;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlows.Vaccination.Schedules;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlows.Vaccination.Vaccines;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.IServices;
 
@@ -14,7 +14,7 @@ namespace SchoolMedicalServer.Api.Controllers.Vaccination
     {
         [HttpPost("vaccinations/schedules/is-valid")]
         [Authorize(Roles = "admin, manager")]
-        public async Task<IActionResult> CheckVaccinationSchedule([FromBody] VaccinationScheduleCheckRequest request)
+        public async Task<IActionResult> CheckVaccinationSchedule([FromBody] VaccinationCheckRequest request)
         {
             var isValid = await service.CheckVaccinationSchedule(request);
             if (!isValid)

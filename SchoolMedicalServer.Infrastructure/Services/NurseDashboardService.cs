@@ -1,4 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Dashboard;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
 
@@ -65,7 +65,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Pending in {fromDate} to {toDate}",
                     Count = pendingResults.Count,
-                    Details = pendingResults.Select(pending => new ItemDetais
+                    Details = pendingResults.Select(pending => new ItemDetails
                     {
                         Id = pending.AppointmentId,
                         Name = pending.AppointmentReason
@@ -78,7 +78,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Confirmed in {fromDate} to {toDate}",
                     Count = confirmedResults.Count,
-                    Details = confirmedResults.Select(confirmed => new  ItemDetais
+                    Details = confirmedResults.Select(confirmed => new ItemDetails
                     {
                         Id = confirmed.AppointmentId,
                         Name = confirmed.AppointmentReason
@@ -91,7 +91,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Not Completed in {fromDate} to {toDate}",
                     Count = notCompletedResults.Count,
-                    Details = notCompletedResults.Select(notCompleted => new ItemDetais
+                    Details = notCompletedResults.Select(notCompleted => new ItemDetails
                     {
                         Id = notCompleted.AppointmentId,
                         Name = notCompleted.AppointmentReason
@@ -104,7 +104,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Completed in {fromDate} to {toDate}",
                     Count = completedResults.Count,
-                    Details =  completedResults.Select(completed => new ItemDetais
+                    Details = completedResults.Select(completed => new ItemDetails
                     {
                         Id = completed.AppointmentId,
                         Name = completed.AppointmentReason
@@ -163,7 +163,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     {
                         Name = $"{group.Key} Events in {fromDate} to {toDate}",
                         Count = group.Count(),
-                        Details = group.Select(Group => new ItemDetais
+                        Details = group.Select(Group => new ItemDetails
                         {
                             Id = Group.EventId,
                             Name = Group.SeverityLevel
@@ -227,10 +227,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Item = new Item
                 {
                     Name = $"Pending in {fromDate} to {toDate}",
-                    Count = pendingRegistration.Count ,
-                    Details = pendingRegistration.Select(pending => new ItemDetais
+                    Count = pendingRegistration.Count,
+                    Details = pendingRegistration.Select(pending => new ItemDetails
                     {
-                        Id = pending.RegistrationId ,
+                        Id = pending.RegistrationId,
                         Name = pending.MedicationName
                     }).ToList()
                 }
@@ -240,10 +240,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Item = new Item
                 {
                     Name = $"Approved in {fromDate} to {toDate}",
-                    Count = approvedRegistration.Count ,
-                    Details = approvedRegistration.Select(approved => new ItemDetais
+                    Count = approvedRegistration.Count,
+                    Details = approvedRegistration.Select(approved => new ItemDetails
                     {
-                        Id = approved.RegistrationId ,
+                        Id = approved.RegistrationId,
                         Name = approved.MedicationName
                     }).ToList()
                 }
@@ -253,11 +253,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Item = new Item
                 {
                     Name = $"Not Completed in {fromDate} to {toDate}",
-                    Count = notCompletedRegistration.Count ,
-                    Details = notCompletedRegistration.Select(notCompleted => new ItemDetais
+                    Count = notCompletedRegistration.Count,
+                    Details = notCompletedRegistration.Select(notCompleted => new ItemDetails
                     {
-                        Id = notCompleted.RegistrationId ,
-                        Name= notCompleted.MedicationName
+                        Id = notCompleted.RegistrationId,
+                        Name = notCompleted.MedicationName
                     }).ToList()
                 }
             });
@@ -266,11 +266,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Item = new Item
                 {
                     Name = $"Completed in {fromDate} to {toDate}",
-                    Count = completedRegistration.Count ,
-                    Details = completedRegistration.Select(completed => new ItemDetais
+                    Count = completedRegistration.Count,
+                    Details = completedRegistration.Select(completed => new ItemDetails
                     {
-                        Id= completed.RegistrationId ,
-                        Name= completed.MedicationName
+                        Id = completed.RegistrationId,
+                        Name = completed.MedicationName
                     }).ToList()
                 }
             });

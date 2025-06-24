@@ -1,6 +1,6 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlow;
-using SchoolMedicalServer.Abstractions.Dtos.MainFlow.Vaccination.Schedules;
-using SchoolMedicalServer.Abstractions.Dtos.MainFlow.Vaccination.Vaccines;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlows;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlows.Vaccination.Schedules;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlows.Vaccination.Vaccines;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -253,7 +253,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return true;
         }
 
-        public async Task<bool> CheckVaccinationSchedule(VaccinationScheduleCheckRequest request)
+        public async Task<bool> CheckVaccinationSchedule(VaccinationCheckRequest request)
         {
             if (request == null || request.VaccineId == Guid.Empty || request.VaccinationRounds == null || !request.VaccinationRounds.Any())
                 return false;

@@ -1,5 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Api.Bootstrapping;
 using SchoolMedicalServer.Api.Hubs;
+using SchoolMedicalServer.Api.Middleware;
+using SchoolMedicalServer.Infrastructure;
 using SchoolMedicalServer.Infrastructure.Data;
 
 
@@ -26,11 +29,21 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
 app.UseCors("AllowAllClients");
 
 app.UseAuthorization();
 
-await SeedDatabaseAsync(app);
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<SchoolMedicalManagementContext>();
+    var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
+    context.Database.Migrate();
+
+    await SeedDatabaseAsync(app);
+}
 
 app.MapControllers();
 app.MapHub<NotificationHub>("/notificationHub");

@@ -1,4 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos;
+﻿using SchoolMedicalServer.Abstractions.Dtos.Dashboard;
 using SchoolMedicalServer.Abstractions.Dtos.MedicalInventory;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
@@ -89,7 +89,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Completed in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
                     Count = completedResults.Count,
-                    Details = completedResults.Select(detail => new ItemDetais
+                    Details = completedResults.Select(detail => new ItemDetails
                     {
                         Id = detail.ResultId,
                         Name = detail.HealthProfile!.Student.FullName
@@ -102,7 +102,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Pending in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
                     Count = pendingResults.Count,
-                    Details = pendingResults.Select(detail => new ItemDetais
+                    Details = pendingResults.Select(detail => new ItemDetails
                     {
                         Id = detail.ResultId,
                         Name = detail.HealthProfile!.Student.FullName
@@ -115,7 +115,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Failed in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
                     Count = failedResults.Count,
-                    Details = failedResults.Select(detail => new ItemDetais
+                    Details = failedResults.Select(detail => new ItemDetails
                     {
                         Id = detail.ResultId,
                         Name = detail.HealthProfile!.Student.FullName
@@ -128,7 +128,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Declined in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
                     Count = declinedResults.Count,
-                    Details = declinedResults.Select(detail => new ItemDetais
+                    Details = declinedResults.Select(detail => new ItemDetails
                     {
                         Id = detail.ResultId,
                         Name = detail.HealthProfile!.Student.FullName
@@ -171,7 +171,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Submitted in {fromDate} to {toDate}",
                     Count = areSubmited.Count,
-                    Details = areSubmited.Select(detail => new ItemDetais
+                    Details = areSubmited.Select(detail => new ItemDetails
                     {
                         Id = detail.HealthProfileId
                     }).ToList()
@@ -184,7 +184,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Not Submitted in {fromDate} to {toDate}",
                     Count = areNotSubmitted.Count,
-                    Details = areNotSubmitted.Select(detail => new ItemDetais
+                    Details = areNotSubmitted.Select(detail => new ItemDetails
                     {
                         Id = detail.HealthProfileId
                     }).ToList()
@@ -210,7 +210,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     {
                         Name = $"Total Medical Requests in {fromDate} to {toDate}",
                         Count = totalMedicalRequests,
-                        Details = medicalRequests.Select(detail => new ItemDetais{
+                        Details = medicalRequests.Select(detail => new ItemDetails{
                             Id = detail.RequestId,
                             Name = detail.Item!.ItemName
                         }).ToList()
@@ -266,7 +266,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Completed in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
                     Count = completedResults.Count,
-                    Details = completedResults.Select(detail => new ItemDetais
+                    Details = completedResults.Select(detail => new ItemDetails
                     {
                         Id = detail.VaccinationResultId,
                         Name = detail.HealthProfile!.Student.FullName
@@ -279,7 +279,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Pending in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
                     Count = pendingResults.Count,
-                    Details = pendingResults.Select(detail => new ItemDetais
+                    Details = pendingResults.Select(detail => new ItemDetails
                     {
                         Id = detail.VaccinationResultId,
                         Name = detail.HealthProfile!.Student.FullName
@@ -292,7 +292,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Failed in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
                     Count = failedResults.Count,
-                    Details = failedResults.Select(detail => new ItemDetais
+                    Details = failedResults.Select(detail => new ItemDetails
                     {
                         Id = detail.VaccinationResultId,
                         Name = detail.HealthProfile!.Student.FullName
@@ -305,7 +305,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Declined in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
                     Count = declinedResults.Count,
-                    Details = declinedResults.Select(detail => new ItemDetais
+                    Details = declinedResults.Select(detail => new ItemDetails
                     {
                         Id = detail.VaccinationResultId,
                         Name = detail.HealthProfile!.Student.FullName
@@ -318,7 +318,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     Name = $"Not Health Qualified in {DateOnly.FromDateTime(fromDate!.Value)} to {DateOnly.FromDateTime(toDate!.Value)}",
                     Count = notHealthQualifiedResults.Count,
-                    Details = notHealthQualifiedResults.Select(detail => new ItemDetais
+                    Details = notHealthQualifiedResults.Select(detail => new ItemDetails
                     {
                         Id = detail.VaccinationResultId
                     }).ToList()
