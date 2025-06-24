@@ -183,6 +183,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<PaginationResponse<HealthCheckRoundStudentResponse>> GetStudentsByHealthCheckRoundIdForNurseAsync(PaginationRequest? pagination, Guid roundId, Guid nurseId)
         {
+            var round = await healthCheckRoundRepository.GetHealthCheckRoundByIdAsync(roundId);
+            if (round == null || round.NurseId != nurseId)
+            {
+                return null!;
+            }
             var totalCount = await healthCheckResultRepository.CountByRoundIdAsync(roundId);
             if (totalCount == 0)
             {
@@ -284,6 +289,33 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return null!;
             var res = await MapToDetailsResponse(round);
             return res;
+        }
+
+        public async Task<IEnumerable<HealthCheckRoundStudentResponse>> GetStudentsByHealthCheckRoundIdForNurseAsync(Guid roundId, Guid nurseId)
+        {
+            var round = await healthCheckRoundRepository.GetHealthCheckRoundByIdAsync(roundId);
+            if (round == null || round.NurseId != nurseId)
+            {
+                return null!;
+            }
+            var results = await healthCheckResultRepository.GetByRoundIdAsync(roundId);
+            if (results == null || !results.Any())
+            {
+                return null!;
+            }
+
+            List<HealthCheckRoundStudentResponse> responses = [];
+            foreach (var result in results)
+            {
+                var studentResponse = await StudentsOfRoundResponse(result!);
+                var parentResponse = await ParentOfStudentResponse(result!);
+                responses.Add(new HealthCheckRoundStudentResponse
+                {
+                    StudentsOfRoundResponse = studentResponse,
+                    ParentOfStudent = parentResponse
+                });
+            }
+            return responses;
         }
     }
 }
