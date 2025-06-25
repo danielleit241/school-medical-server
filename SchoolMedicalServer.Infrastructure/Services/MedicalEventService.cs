@@ -31,7 +31,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return true;
         }
 
-        public async Task<NotificationRequest> CreateMedicalEventAsync(MedicalEventRequest request)
+        public async Task<NotificationMedicalEventResponse> CreateMedicalEventAsync(MedicalEventRequest request)
         {
             var student = await studentRepo.FindByStudentCodeAsync(request.MedicalEvent.StudentCode);
             if (student == null)
@@ -53,9 +53,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 inventoryRepo.Update(inventoryItem);
             }
 
+            var medicalEventId = Guid.NewGuid();
             var medicalEvent = new MedicalEvent
             {
-                EventId = Guid.NewGuid(),
+                EventId = medicalEventId,
                 StudentId = student.StudentId,
                 StaffNurseId = request.MedicalEvent.StaffNurseId,
                 EventType = request.MedicalEvent.EventType,
@@ -64,31 +65,38 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 SeverityLevel = request.MedicalEvent.SeverityLevel,
                 ParentNotified = request.MedicalEvent.ParentNotified,
                 EventDate = DateOnly.FromDateTime(DateTime.Now),
-                Notes = request.MedicalEvent.Notes
+                Notes = request.MedicalEvent.Notes,
+                MedicalRequests = request.MedicalRequests?.Select(r => new MedicalRequest
+                {
+                    RequestId = Guid.NewGuid(),
+                    ItemId = r.ItemId,
+                    RequestQuantity = r.RequestQuantity,
+                    Purpose = r.Purpose,
+                    MedicalEventId = medicalEventId,
+                    RequestDate = DateOnly.FromDateTime(DateTime.Now)
+                }).ToList() ?? []
             };
-            var medicalRequests = request.MedicalRequests?.Select(r => new MedicalRequest
-            {
-                RequestId = Guid.NewGuid(),
-                ItemId = r.ItemId,
-                RequestQuantity = r.RequestQuantity,
-                Purpose = r.Purpose,
-                MedicalEventId = medicalEvent.EventId,
-                RequestDate = DateOnly.FromDateTime(DateTime.Now)
-            }).ToList() ?? [];
-
             await eventRepo.AddAsync(medicalEvent);
-            await requestRepo.AddRangeAsync(medicalRequests);
-
             await baseRepository.SaveChangesAsync();
 
-            var receiverId = await studentRepo.GetParentUserIdAsync(medicalEvent.StudentId);
-
-            return new NotificationRequest
+            var manager = await userRepo.GetUserByRoleName("manager") ?? await userRepo.GetUserByRoleName("admin");
+            var parentId = await studentRepo.GetParentUserIdAsync(medicalEvent.StudentId);
+            var notifications = new NotificationMedicalEventResponse()
             {
-                NotificationTypeId = medicalEvent.EventId,
-                SenderId = medicalEvent.StaffNurseId,
-                ReceiverId = receiverId,
+                ToManager = new NotificationRequest
+                {
+                    NotificationTypeId = medicalEvent.EventId,
+                    SenderId = medicalEvent.StaffNurseId,
+                    ReceiverId = manager?.UserId
+                },
+                ToParent = new NotificationRequest
+                {
+                    NotificationTypeId = medicalEvent.EventId,
+                    SenderId = medicalEvent.StaffNurseId,
+                    ReceiverId = parentId,
+                }
             };
+            return notifications;
         }
 
         public async Task<PaginationResponse<MedicalEventResponse>?> GetAllStudentMedicalEventsAsync(PaginationRequest? paginationRequest)

@@ -8,8 +8,35 @@ namespace SchoolMedicalServer.Infrastructure.Services
     public class MedicalEventNotificationService(
         INotificationRepository notificationRepository,
         IMedicalEventRepository medicalEventRepository,
-        INotificationHelperService helperService) : IMedicalEventNotificationService
+        INotificationHelperService helperService,
+        IMedicalRequestRepository medicalRequestRepository) : IMedicalEventNotificationService
     {
+        public async Task<NotificationResponse> SendMedicalEventNotificationToManagerAsync(NotificationRequest request)
+        {
+            var medicalRequests = await medicalRequestRepository.GetAllAsync();
+            medicalRequests = medicalRequests.Where(r => r.MedicalEventId == request.NotificationTypeId).ToList();
+
+            var receiver = await helperService.GetReceiverInformationAsync(request);
+            var sender = await helperService.GetSenderInformationAsync(request);
+            var notification = new Notification
+            {
+                NotificationId = Guid.NewGuid(),
+                UserId = receiver!.UserId,
+                SenderId = sender!.UserId,
+                Title = "Medical Event Notification",
+                Content = $"A medical event has been recorded for a student with {medicalRequests.Count()} medical requests.",
+                SendDate = DateTime.UtcNow,
+                IsRead = false,
+                Type = NotificationTypes.MedicalEvent,
+                SourceId = request.NotificationTypeId
+            };
+            await notificationRepository.AddAsync(notification);
+            var notiInfo = helperService.GetNotificationInformation(notification);
+            var notificationResponse = helperService.GetNotificationResponse(notiInfo, sender, receiver);
+
+            return notificationResponse;
+        }
+
         public async Task<NotificationResponse> SendMedicalEventNotificationToParentAsync(NotificationRequest request)
         {
             var medicalEvent = await medicalEventRepository.GetByIdWithStudentAsync(request.NotificationTypeId);

@@ -122,7 +122,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<IEnumerable<UserInformation>> GetFreeNursesAsync()
         {
-            var today = DateTime.UtcNow;
+            var today = DateTime.UtcNow.Date;
             var vaccinationRounds = await vaccinationRoundRepository.GetVaccinationRoundsAsync();
             var healthCheckRounds = await healthCheckRoundRepository.GetHealthCheckRoundsAsync();
             var nurses = await userRepository.GetUsersByRoleName("nurse");

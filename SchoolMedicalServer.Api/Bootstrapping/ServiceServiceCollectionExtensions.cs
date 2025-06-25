@@ -14,7 +14,7 @@ namespace SchoolMedicalServer.Api.Bootstrapping
             services.AddScoped<IHealthProfileDeclarationService, HealthProfileDeclarationService>();
             services.AddScoped<IAppointmentService, AppointmentService>();
             services.AddScoped<IParentStudentService, ParentStudentService>();
-            services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IImportFileService, ImportFileService>();
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IMedicalRegistrationService, MedicalRegistrationService>();
             services.AddScoped<IMedicalEventService, MedicalEventService>();
@@ -37,6 +37,7 @@ namespace SchoolMedicalServer.Api.Bootstrapping
             services.AddScoped<IAppointmentNotificationService, AppointmentNotificationService>();
             services.AddScoped<IMedicalEventNotificationService, MedicalEventNotificationService>();
             services.AddScoped<IMedicalRegistrationNotificationService, MedicalRegistrationNotificationService>();
+            services.AddScoped<IExportFileService, ExportFileService>();
             return services;
         }
     }
