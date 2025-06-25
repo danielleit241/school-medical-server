@@ -1,11 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using SchoolMedicalServer.Api.Bootstrapping;
-using SchoolMedicalServer.Api.Hubs;
-using SchoolMedicalServer.Api.Middleware;
-using SchoolMedicalServer.Infrastructure;
-using SchoolMedicalServer.Infrastructure.Data;
-
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

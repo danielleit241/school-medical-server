@@ -1,9 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.Helpers;
-using SchoolMedicalServer.Abstractions.Entities;
-using SchoolMedicalServer.Abstractions.IRepositories;
-using SchoolMedicalServer.Api.Helpers;
-
-namespace SchoolMedicalServer.Api.BackgroundServices
+﻿namespace SchoolMedicalServer.Api.BackgroundServices
 {
     public enum ReminderType
     {

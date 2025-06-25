@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-namespace SchoolMedicalServer.Api.Middleware
+﻿namespace SchoolMedicalServer.Api.Middleware
 {
     public class GlobalExceptionMiddleware
     {

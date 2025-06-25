@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using SchoolMedicalServer.Abstractions.IServices;
-using SchoolMedicalServer.Api.Hubs;
-
-namespace SchoolMedicalServer.Api.Helpers
+﻿namespace SchoolMedicalServer.Api.Helpers
 {
     public class NotificationSender(IUserNotificationService service, IHubContext<NotificationHub> hubContext) : INotificationSender
     {

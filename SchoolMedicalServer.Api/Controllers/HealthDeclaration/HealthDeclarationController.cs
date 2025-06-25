@@ -1,8 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SchoolMedicalServer.Abstractions.Dtos.HealthDeclaration;
-using SchoolMedicalServer.Abstractions.IServices;
-
 namespace SchoolMedicalServer.Api.Controllers.HealthDeclaration
 {
     [Route("api")]

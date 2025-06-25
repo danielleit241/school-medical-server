@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SchoolMedicalServer.Abstractions.IServices;
-
-namespace SchoolMedicalServer.Api.Controllers.File
+﻿namespace SchoolMedicalServer.Api.Controllers.File
 {
     [Route("api")]
     [ApiController]

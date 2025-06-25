@@ -1,10 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SchoolMedicalServer.Abstractions.Dtos.MainFlows.HealthCheck.Rounds;
-using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.IServices;
-
-namespace SchoolMedicalServer.Api.Controllers.HealthCheck
+﻿namespace SchoolMedicalServer.Api.Controllers.HealthCheck
 {
     [Route("api")]
     [ApiController]

@@ -1,10 +1,4 @@
-﻿using MailKit.Net.Smtp;
-using MailKit.Security;
-using MimeKit;
-using MimeKit.Text;
-using SchoolMedicalServer.Abstractions.Dtos.Helpers;
-
-namespace SchoolMedicalServer.Api.Helpers
+﻿namespace SchoolMedicalServer.Api.Helpers
 {
     public class EmailHelper(IConfiguration configuration) : IEmailHelper
     {
