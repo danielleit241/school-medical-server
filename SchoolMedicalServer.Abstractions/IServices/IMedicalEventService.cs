@@ -6,7 +6,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
 {
     public interface IMedicalEventService
     {
-        Task<NotificationRequest> CreateMedicalEventAsync(MedicalEventRequest request);
+        Task<NotificationMedicalEventResponse> CreateMedicalEventAsync(MedicalEventRequest request);
         Task<PaginationResponse<MedicalEventResponse>?> GetAllStudentMedicalEventsAsync(PaginationRequest? paginationRequest);
         Task<MedicalEventResponse?> GetMedicalEventDetailAsync(Guid medicalEventId);
         Task<PaginationResponse<MedicalEventResponse>?> GetMedicalEventsByStudentIdAsync(PaginationRequest? paginationRequest, Guid studentId);

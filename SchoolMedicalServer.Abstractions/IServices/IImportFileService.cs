@@ -2,14 +2,10 @@
 
 namespace SchoolMedicalServer.Abstractions.IServices
 {
-    public interface IFileService
+    public interface IImportFileService
     {
         Task UploadMedicalInventoriesExcelFile(IFormFile file);
         Task UploadStudentsExcelFile(IFormFile file);
         Task UploadVaccinationDetailFile(IFormFile file);
-        Task<byte[]> ExportStudentsExcelFileAsync();
-        Task<byte[]> ExportMedicalInventoriesExcelFileAsync();
-        Task<byte[]> ExportVaccinationDetailsExcelFileAsync();
-
     }
 }

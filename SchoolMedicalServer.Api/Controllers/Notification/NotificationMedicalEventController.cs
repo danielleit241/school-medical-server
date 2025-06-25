@@ -22,5 +22,18 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
             await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
             return Ok(notification);
         }
+
+        [HttpPost("notifications/medical-events/to-manager")]
+        [Authorize(Roles = "nurse")]
+        public async Task<IActionResult> SendMedicalEventNotificationToManager([FromBody] NotificationRequest request)
+        {
+            var notification = await service.SendMedicalEventNotificationToManagerAsync(request);
+            if (notification == null)
+            {
+                return NotFound("Notification not found.");
+            }
+            await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
+            return Ok(notification);
+        }
     }
 }
