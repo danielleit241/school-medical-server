@@ -10,5 +10,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         Task<List<Notification>> GetUnreadByUserIdAsync(Guid userId);
         Task<int> CountUnreadByUserIdAsync(Guid userId);
         Task AddAsync(Notification notification);
+        Task UpdateRangeAsync(List<Notification> notifications);
     }
 }

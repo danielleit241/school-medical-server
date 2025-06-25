@@ -4,7 +4,7 @@ using SchoolMedicalServer.Api.Hubs;
 
 namespace SchoolMedicalServer.Api.Helpers
 {
-    public class NotificationSender(INotificationService service, IHubContext<NotificationHub> hubContext) : INotificationSender
+    public class NotificationSender(IUserNotificationService service, IHubContext<NotificationHub> hubContext) : INotificationSender
     {
         public async Task NotifyUserUnreadCountAsync(Guid? userId)
         {

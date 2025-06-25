@@ -27,6 +27,15 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
             => await _context.Notifications.Where(n => n.UserId == userId && !n.IsRead).CountAsync();
 
         public async Task AddAsync(Notification notification)
-            => await _context.Notifications.AddAsync(notification);
+        {
+            await _context.Notifications.AddAsync(notification);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateRangeAsync(List<Notification> notifications)
+        {
+            _context.Notifications.UpdateRange(notifications);
+            await _context.SaveChangesAsync();
+        }
     }
 }
