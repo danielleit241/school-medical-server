@@ -8,7 +8,7 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
 {
     [Route("api")]
     [ApiController]
-    public class NotificationMedicalEventController(INotificationService service, INotificationSender notificationSender) : ControllerBase
+    public class NotificationMedicalEventController(IMedicalEventNotificationService service, INotificationSender notificationSender) : ControllerBase
     {
         [HttpPost("notifications/medical-events/to-parent")]
         [Authorize(Roles = "nurse")]

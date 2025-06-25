@@ -8,7 +8,7 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
 {
     [Route("api")]
     [ApiController]
-    public class NotificationController(INotificationService service, INotificationSender notificationSender) : ControllerBase
+    public class NotificationController(IUserNotificationService service, INotificationSender notificationSender) : ControllerBase
     {
         [HttpGet]
         [Route("users/{userId}/notifications")]

@@ -8,13 +8,13 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
 {
     [Route("api")]
     [ApiController]
-    public class NotificationAppoimentController(INotificationService service, INotificationSender notificationSender) : ControllerBase
+    public class NotificationAppoimentController(IAppointmentNotificationService service, INotificationSender notificationSender) : ControllerBase
     {
         [HttpPost("notification/appointments/to-nurse")]
         [Authorize(Roles = "parent")]
         public async Task<IActionResult> SendAppoimentToNurseNotification([FromBody] NotificationRequest request)
         {
-            var notification = await service.SendAppoimentNotificationToNurseAsync(request);
+            var notification = await service.SendAppointmentNotificationToNurseAsync(request);
             if (notification == null)
             {
                 return BadRequest("Failed to send appointment notification to nurse.");
@@ -27,7 +27,7 @@ namespace SchoolMedicalServer.Api.Controllers.Notification
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> SendAppoimentToParentNotification([FromBody] NotificationRequest request)
         {
-            var notification = await service.SendAppoimentNotificationToParentAsync(request);
+            var notification = await service.SendAppointmentNotificationToParentAsync(request);
             if (notification == null)
             {
                 return BadRequest("Failed to send appointment notification to parent.");

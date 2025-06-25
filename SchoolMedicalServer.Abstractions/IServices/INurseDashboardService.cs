@@ -4,7 +4,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
 {
     public interface INurseDashboardService
     {
-        Task<DashboardResponse>GetNurseAppointmentsDashboardAsync(Guid nurseId, DashboardRequest request);
+        Task<DashboardResponse> GetNurseAppointmentsDashboardAsync(Guid nurseId, DashboardRequest request);
         Task<IEnumerable<DashboardResponse>> GetNurseAppointmentsDetailsDashboardAsync(Guid nurseId, DashboardRequest request);
         Task<DashboardResponse> GetNurseMedicalEventsDashboard(Guid nurseId, DashboardRequest request);
         Task<IEnumerable<DashboardResponse>> GetNurseMedicalEventsDetailsDashboard(Guid nurseId, DashboardRequest request);
