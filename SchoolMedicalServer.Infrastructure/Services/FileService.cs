@@ -110,27 +110,28 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         }
 
                         var studentId = Guid.NewGuid();
-                        var studentCode = row.Cell(1).GetString();
-                        var fullName = row.Cell(2).GetString();
+                        //var studentCode = row.Cell(1).GetString();
+                        var studentCode = await studentRepository.GenerateStudentCodeAsync();
+                        var fullName = row.Cell(1).GetString();
                         DateOnly? dayOfBirth = null;
-                        if (row.Cell(3).DataType == XLDataType.DateTime)
+                        if (row.Cell(2).DataType == XLDataType.DateTime)
                         {
-                            var dateTime = row.Cell(3).GetDateTime();
+                            var dateTime = row.Cell(2).GetDateTime();
                             dayOfBirth = DateOnly.FromDateTime(dateTime);
                         }
                         else
                         {
-                            if (DateTime.TryParse(row.Cell(3).GetString(), out var parsedDate))
+                            if (DateTime.TryParse(row.Cell(2).GetString(), out var parsedDate))
                             {
                                 dayOfBirth = DateOnly.FromDateTime(parsedDate);
                             }
                         }
 
-                        var gender = row.Cell(4).GetString();
-                        var grade = row.Cell(5).GetString();
-                        var address = row.Cell(6).GetString();
-                        var parentPhoneNumber = row.Cell(7).GetString();
-                        var parentEmailAddress = row.Cell(8).GetString();
+                        var gender = row.Cell(3).GetString();
+                        var grade = row.Cell(4).GetString();
+                        var address = row.Cell(5).GetString();
+                        var parentPhoneNumber = row.Cell(6).GetString();
+                        var parentEmailAddress = row.Cell(7).GetString();
 
                         var student = new Student
                         {
@@ -156,8 +157,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
                         await healthProfileRepository.AddAsync(studentHealthProfile);
                         await studentRepository.AddAsync(student);
+                        await baseRepository.SaveChangesAsync();
                     }
-                    await baseRepository.SaveChangesAsync();
                 }
             }
             catch (Exception ex)
@@ -244,13 +245,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 var worksheet = workbook.Worksheets.Add("Students");
 
                 worksheet.Cell(1, 1).Value = "StudentCode";
-                worksheet.Cell(1, 2).Value = "FullName";
-                worksheet.Cell(1, 3).Value = "DayOfBirth";
-                worksheet.Cell(1, 4).Value = "Gender";
-                worksheet.Cell(1, 5).Value = "Grade";
-                worksheet.Cell(1, 6).Value = "Address";
-                worksheet.Cell(1, 7).Value = "ParentPhoneNumber";
-                worksheet.Cell(1, 8).Value = "ParentEmailAddress";
+                worksheet.Cell(1, 1).Value = "FullName";
+                worksheet.Cell(1, 2).Value = "DayOfBirth";
+                worksheet.Cell(1, 3).Value = "Gender";
+                worksheet.Cell(1, 4).Value = "Grade";
+                worksheet.Cell(1, 5).Value = "Address";
+                worksheet.Cell(1, 6).Value = "ParentPhoneNumber";
+                worksheet.Cell(1, 7).Value = "ParentEmailAddress";
 
                 int row = 2;
                 foreach (var student in students)

@@ -118,7 +118,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 nextNumber = int.Parse(numberPart) + 1;
             }
 
-            return $"{prefix}{nextNumber:D5}";
+            return $"{prefix}{nextNumber:D4}";
         }
 
         public async Task<IEnumerable<Student>> GetStudentsByGradeAsync(string? targetGrade)
