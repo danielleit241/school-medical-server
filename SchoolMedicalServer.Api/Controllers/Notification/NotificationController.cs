@@ -1,10 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.IServices;
-using SchoolMedicalServer.Api.Helpers;
-
-namespace SchoolMedicalServer.Api.Controllers.Notification
+﻿namespace SchoolMedicalServer.Api.Controllers.Notification
 {
     [Route("api")]
     [ApiController]

@@ -1,7 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.IServices;
-using SchoolMedicalServer.Infrastructure.Services;
-
-namespace SchoolMedicalServer.Api.Bootstrapping
+﻿namespace SchoolMedicalServer.Api.Bootstrapping
 {
     public static class ServiceServiceCollectionExtensions
     {

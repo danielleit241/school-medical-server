@@ -1,7 +1,4 @@
-﻿using SchoolMedicalServer.Abstractions.IRepositories;
-using SchoolMedicalServer.Infrastructure.Repositories;
-
-namespace SchoolMedicalServer.Api.Bootstrapping
+﻿namespace SchoolMedicalServer.Api.Bootstrapping
 {
     public static class RepositoryServiceCollectionExtensions
     {

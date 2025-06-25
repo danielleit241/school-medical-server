@@ -1,11 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SchoolMedicalServer.Abstractions.Dtos.MainFlows;
-using SchoolMedicalServer.Abstractions.Dtos.MainFlows.Vaccination.Results;
-using SchoolMedicalServer.Abstractions.Dtos.Pagination;
-using SchoolMedicalServer.Abstractions.IServices;
-
-namespace SchoolMedicalServer.Api.Controllers.Vaccination
+﻿namespace SchoolMedicalServer.Api.Controllers.Vaccination
 {
     [Route("api")]
     [ApiController]

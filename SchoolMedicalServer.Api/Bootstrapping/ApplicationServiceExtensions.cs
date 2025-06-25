@@ -1,13 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using SchoolMedicalServer.Api.BackgroundServices;
-using SchoolMedicalServer.Api.Helpers;
-using SchoolMedicalServer.Infrastructure;
-using SchoolMedicalServer.Infrastructure.Data;
-
-namespace SchoolMedicalServer.Api.Bootstrapping
+﻿namespace SchoolMedicalServer.Api.Bootstrapping
 {
     public static class ApplicationServiceExtensions
     {
@@ -90,7 +81,7 @@ namespace SchoolMedicalServer.Api.Bootstrapping
             });
 
 
-            services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+            services.AddSingleton<INameUserIdProvider, NameUserIdProvider>();
             services.AddSingleton<IEmailHelper, EmailHelper>();
 
             services.AddTransient<INotificationSender, NotificationSender>();

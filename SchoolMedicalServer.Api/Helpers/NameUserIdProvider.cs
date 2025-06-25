@@ -1,9 +1,6 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.SignalR;
-
-namespace SchoolMedicalServer.Api.Helpers
+﻿namespace SchoolMedicalServer.Api.Helpers
 {
-    public class NameUserIdProvider : IUserIdProvider
+    public class NameUserIdProvider : INameUserIdProvider
     {
         public string GetUserId(HubConnectionContext connection)
         {

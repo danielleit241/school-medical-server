@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SchoolMedicalServer.Abstractions.Dtos.Dashboard;
-using SchoolMedicalServer.Abstractions.IServices;
-
-namespace SchoolMedicalServer.Api.Controllers.Dashboard
+﻿namespace SchoolMedicalServer.Api.Controllers.Dashboard
 {
     [Route("api")]
     [ApiController]
