@@ -58,5 +58,39 @@ namespace SchoolMedicalServer.Api.Controllers.File
                 return StatusCode(400, ex.Message);
             }
         }
+
+        [HttpGet("vaccination-results/export-excel")]
+        [Authorize(Roles = "admin,manager")]
+        public async Task<IActionResult> ExportVaccinationResults()
+        {
+            try
+            {
+                var fileBytes = await service.ExportVaccinationResultsExcelFileAsync();
+                var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                var fileName = $"vaccination_results_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
+                return File(fileBytes, contentType, fileName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.Message);
+            }
+        }
+
+        [HttpGet("health-check-results/export-excel")]
+        [Authorize(Roles = "admin,manager")]
+        public async Task<IActionResult> ExportHealthCheckResults()
+        {
+            try
+            {
+                var fileBytes = await service.ExportHealthCheckResultsExcelFileAsync();
+                var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                var fileName = $"health_check_results_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
+                return File(fileBytes, contentType, fileName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.Message);
+            }
+        }
     }
 }
