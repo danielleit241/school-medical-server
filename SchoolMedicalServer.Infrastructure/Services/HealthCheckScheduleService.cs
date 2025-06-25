@@ -202,6 +202,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 return false;
             }
             schedule.Title = request.Title;
+            schedule.HealthCheckType = request.HealthCheckType;
             schedule.Description = request.Description;
             schedule.StartDate = request.StartDate;
             schedule.EndDate = request.EndDate;
