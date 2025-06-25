@@ -4,7 +4,7 @@ namespace SchoolMedicalServer.Abstractions.Dtos.Pagination
 {
     public class PaginationRequest
     {
-        [Range(10, 40)]
+        [Range(3, 40)]
         public int PageSize { get; set; } = 10;
 
         [Range(1, 100)]
