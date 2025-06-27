@@ -60,87 +60,117 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var schedule = await vaccinationScheduleRepository.GetVaccinationScheduleByIdAsync(scheduleId);
             if (schedule == null)
                 return null!;
+
             var toParents = new List<NotificationRequest>();
             var toNurses = new List<NotificationRequest>();
+
             foreach (var round in schedule!.Rounds)
             {
-                if (round.TargetGrade!.Trim().Contains("supplement", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    List<VaccinationResult> results = await resultRepository.GetAllStudentsInSchedule(scheduleId);
-                    results = [.. results.Where(r => r!.HealthQualified == true && r.ParentConfirmed == true && r.Vaccinated == false)];
-                    var healthProfileIds = results.Select(r => r!.HealthProfileId).ToList();
-                    var healthProfiles = await profileRepository.GetByIdsAsync(healthProfileIds);
-                    foreach (var healthProfile in healthProfiles)
-                    {
-                        var result = new VaccinationResult
-                        {
-                            VaccinationResultId = Guid.NewGuid(),
-                            HealthProfileId = healthProfile.HealthProfileId,
-                            RoundId = round.RoundId,
-                            ParentConfirmed = true,
-                            HealthQualified = true,
-                            Vaccinated = false,
-                            VaccinatedDate = null,
-                            RecorderId = round.NurseId,
-                            Notes = null,
-                            Status = "Pending",
-                            CreatedAt = DateTime.UtcNow,
-                            UpdatedAt = DateTime.UtcNow
-                        };
-                        toParents.Add(new NotificationRequest
-                        {
-                            NotificationTypeId = result.VaccinationResultId,
-                            SenderId = schedule.CreatedBy,
-                            ReceiverId = healthProfile.Student!.UserId,
-                        });
-                        await resultRepository.Create(result);
-                    }
-                    toNurses.Add(new NotificationRequest
-                    {
-                        NotificationTypeId = scheduleId,
-                        SenderId = schedule.CreatedBy,
-                        ReceiverId = round.NurseId,
-                    });
-                    return new NotificationScheduleResponse(toParents, toNurses);
-                }
-
                 if (await resultRepository.IsExistStudentByRoundId(round.RoundId))
                     continue;
-                var students = await studentRepository.GetStudentsByGradeAsync(round.TargetGrade);
-                foreach (var student in students)
+
+                if (round.TargetGrade!.Trim().Contains("supplement", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    var healthProfile = await profileRepository.GetByStudentIdAsync(student.StudentId);
-                    if (healthProfile == null || healthProfile.DeclarationDate == null) continue;
-                    var result = new VaccinationResult
-                    {
-                        VaccinationResultId = Guid.NewGuid(),
-                        HealthProfileId = healthProfile!.HealthProfileId,
-                        RoundId = round.RoundId,
-                        Vaccinated = false,
-                        VaccinatedDate = null,
-                        RecorderId = round.NurseId,
-                        Notes = null,
-                        Status = "Pending",
-                        CreatedAt = DateTime.UtcNow,
-                        UpdatedAt = DateTime.UtcNow
-                    };
-                    await resultRepository.Create(result);
-                    toParents.Add(new NotificationRequest
-                    {
-                        NotificationTypeId = result.VaccinationResultId,
-                        SenderId = schedule.CreatedBy,
-                        ReceiverId = student.UserId,
-                    });
+                    return await ProcessSupplementRound(scheduleId, round, schedule, toParents, toNurses);
                 }
-                toNurses.Add(new NotificationRequest
-                {
-                    NotificationTypeId = scheduleId,
-                    SenderId = schedule.CreatedBy,
-                    ReceiverId = round.NurseId,
-                });
+
+                await ProcessRegularRound(round, schedule, toParents, toNurses);
             }
+
             return new NotificationScheduleResponse(toParents, toNurses);
         }
+
+        private async Task<NotificationScheduleResponse> ProcessSupplementRound(
+            Guid scheduleId,
+            VaccinationRound round,
+            VaccinationSchedule schedule,
+            List<NotificationRequest> toParents,
+            List<NotificationRequest> toNurses)
+        {
+            List<VaccinationResult> results = await resultRepository.GetAllStudentsInSchedule(scheduleId);
+            results = [.. results.Where(r => r.HealthQualified == true && r.ParentConfirmed == true && r.Vaccinated == false)];
+            var healthProfileIds = results.Select(r => r!.HealthProfileId).ToList();
+            var healthProfiles = await profileRepository.GetByIdsAsync(healthProfileIds);
+
+            foreach (var healthProfile in healthProfiles)
+            {
+                var result = new VaccinationResult
+                {
+                    VaccinationResultId = Guid.NewGuid(),
+                    HealthProfileId = healthProfile.HealthProfileId,
+                    RoundId = round.RoundId,
+                    ParentConfirmed = true,
+                    HealthQualified = true,
+                    Vaccinated = false,
+                    RecorderId = round.NurseId,
+                    Status = "Pending",
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                toParents.Add(new NotificationRequest
+                {
+                    NotificationTypeId = result.VaccinationResultId,
+                    SenderId = schedule.CreatedBy,
+                    ReceiverId = healthProfile.Student!.UserId,
+                });
+
+                await resultRepository.Create(result);
+            }
+
+            toNurses.Add(new NotificationRequest
+            {
+                NotificationTypeId = scheduleId,
+                SenderId = schedule.CreatedBy,
+                ReceiverId = round.NurseId,
+            });
+
+            return new NotificationScheduleResponse(toParents, toNurses);
+        }
+
+        private async Task ProcessRegularRound(
+            VaccinationRound round,
+            VaccinationSchedule schedule,
+            List<NotificationRequest> toParents,
+            List<NotificationRequest> toNurses)
+        {
+            var students = await studentRepository.GetStudentsByGradeAsync(round.TargetGrade);
+
+            foreach (var student in students)
+            {
+                var healthProfile = await profileRepository.GetByStudentIdAsync(student.StudentId);
+                if (healthProfile == null || healthProfile.DeclarationDate == null) continue;
+
+                var result = new VaccinationResult
+                {
+                    VaccinationResultId = Guid.NewGuid(),
+                    HealthProfileId = healthProfile!.HealthProfileId,
+                    RoundId = round.RoundId,
+                    Vaccinated = false,
+                    RecorderId = round.NurseId,
+                    Status = "Pending",
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                await resultRepository.Create(result);
+
+                toParents.Add(new NotificationRequest
+                {
+                    NotificationTypeId = result.VaccinationResultId,
+                    SenderId = schedule.CreatedBy,
+                    ReceiverId = student.UserId,
+                });
+            }
+
+            toNurses.Add(new NotificationRequest
+            {
+                NotificationTypeId = schedule.ScheduleId,
+                SenderId = schedule.CreatedBy,
+                ReceiverId = round.NurseId,
+            });
+        }
+
 
         public async Task<PaginationResponse<VaccinationScheduleResponse?>?> GetPaginationVaccinationSchedule(PaginationRequest? pagination)
         {
