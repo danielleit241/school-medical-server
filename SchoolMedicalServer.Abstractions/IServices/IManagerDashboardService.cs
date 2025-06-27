@@ -6,7 +6,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
     public interface IManagerDashboardService
     {
         Task<IEnumerable<IDictionary<string, MedicalInventoryDashboardResponse>>> GetExpiringMedicalItemsAsync();
-        Task<IEnumerable<IDictionary<string, int>>> GetLowStockMedicalItemsAsync();
+        Task<IEnumerable<IDictionary<string, LowStockDashboardResponse>>> GetLowStockMedicalItemsAsync();
         Task<IEnumerable<DashboardResponse>> GetTotalHealthCheckResultsAsync(DashboardRequest request);
         Task<IEnumerable<DashboardResponse>> GetTotalHealthDeclarationsAsync(DashboardRequest request);
         Task<IEnumerable<DashboardResponse>> GetTotalMedicalRequestsAsync(DashboardRequest request);
