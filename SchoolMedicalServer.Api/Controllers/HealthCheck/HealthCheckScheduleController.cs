@@ -31,7 +31,7 @@
         [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> AddStudentInRoundByScheduleId([FromBody] Guid scheduleId)
         {
-            var notificationRequests = await service.CreateVaccinationResultsByRounds(scheduleId);
+            var notificationRequests = await service.CreateHealthCheckResultsByRounds(scheduleId);
             if (notificationRequests == null)
             {
                 return BadRequest(new { Message = "Failed to create vaccination schedule." });
