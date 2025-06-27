@@ -1,4 +1,5 @@
 ﻿using SchoolMedicalServer.Abstractions.IRepositories;
+using SchoolMedicalServer.Infrastructure.Data;
 
 namespace SchoolMedicalServer.Infrastructure.Repositories
 {

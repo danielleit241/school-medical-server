@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Entities;
 
-namespace SchoolMedicalServer.Infrastructure;
+namespace SchoolMedicalServer.Infrastructure.Data;
 
 public partial class SchoolMedicalManagementContext : DbContext
 {

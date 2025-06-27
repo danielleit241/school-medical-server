@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SchoolMedicalServer.Abstractions.Dtos.Authentication;
 using SchoolMedicalServer.Abstractions.Entities;
-using SchoolMedicalServer.Infrastructure;
+using SchoolMedicalServer.Infrastructure.Data;
 
 namespace SchoolMedicalServer.Test
 {

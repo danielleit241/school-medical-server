@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using SchoolMedicalServer.Infrastructure;
+using SchoolMedicalServer.Infrastructure.Data;
 using SchoolMedicalServer.Infrastructure.Repositories;
 using SchoolMedicalServer.Infrastructure.Services;
 
