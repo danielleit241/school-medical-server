@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
+using SchoolMedicalServer.Infrastructure.Data;
 
 namespace SchoolMedicalServer.Infrastructure.Repositories
 {

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SchoolMedicalServer.Infrastructure;
+using SchoolMedicalServer.Infrastructure.Data;
 
 #nullable disable
 
