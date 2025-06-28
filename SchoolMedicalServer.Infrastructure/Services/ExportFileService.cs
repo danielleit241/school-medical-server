@@ -185,12 +185,15 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
         }
 
-        public async Task<byte[]> ExportVaccinationResultsExcelFileAsync(Guid resultID)
+        public async Task<byte[]> ExportVaccinationResultsExcelFileAsync(Guid roundId)
         {
             try
             {
                 var vaccinationResults = await vaccinationResultRepository.GetAllAsync();
-                var result = vaccinationResults.FirstOrDefault(r => r.VaccinationResultId == resultID);
+
+                var filteredResults = vaccinationResults
+                    .Where(r => r.RoundId == roundId)
+                    .ToList();
 
                 using var workbook = new XLWorkbook();
                 var worksheet = workbook.Worksheets.Add("VaccinationResults");
@@ -201,18 +204,16 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 worksheet.Cell(1, 4).Value = "Gender";
                 worksheet.Cell(1, 5).Value = "Grade";
                 worksheet.Cell(1, 6).Value = "ParentPhone";
-
                 worksheet.Cell(1, 7).Value = "ParentConfirmed";
                 worksheet.Cell(1, 8).Value = "HealthQualified";
                 worksheet.Cell(1, 9).Value = "Vaccinated";
                 worksheet.Cell(1, 10).Value = "VaccinatedDate";
                 worksheet.Cell(1, 11).Value = "VaccinatedTime";
                 worksheet.Cell(1, 12).Value = "InjectionSite";
-
                 worksheet.Cell(1, 13).Value = "ObservationNotes";
                 worksheet.Cell(1, 14).Value = "Notes";
 
-
+          
                 var titleRange = worksheet.Range(1, 1, 1, 14);
                 titleRange.Style.Font.Bold = true;
                 titleRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
@@ -221,7 +222,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
                 int row = 2;
 
-                if (result != null)
+                foreach (var result in filteredResults)
                 {
                     var student = result.HealthProfile?.Student;
                     var observation = result.VaccinationObservation;
@@ -260,7 +261,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     worksheet.Cell(row, 14).Value = !string.IsNullOrEmpty(result.Notes)
                         ? result.Notes
                         : "No notes";
+
+                    row++;
                 }
+
                 worksheet.Columns().AdjustToContents(); // Tự động căn lề cột
                 using var stream = new MemoryStream();
                 workbook.SaveAs(stream);
@@ -272,12 +276,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
         }
 
-        public async Task<byte[]> ExportHealthCheckResultsExcelFileAsync(Guid resultID)
+        public async Task<byte[]> ExportHealthCheckResultsExcelFileAsync(Guid roundId)
         {
             try
             {
                 var healthCheckResults = await healthCheckResultRepository.GetAllAsync();
-                var result = healthCheckResults.FirstOrDefault(r => r.ResultId == resultID);
+                var filteredResults = healthCheckResults
+                    .Where(r => r.RoundId == roundId)
+                    .ToList();
 
                 using var workbook = new XLWorkbook();
                 var worksheet = workbook.Worksheets.Add("HealthCheckResults");
@@ -303,7 +309,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
                 int row = 2;
 
-                if (result != null)
+                foreach (var result in filteredResults)
                 {
                     worksheet.Cell(row, 1).Value = result.HealthProfile?.Student?.FullName ?? "";
                     worksheet.Cell(row, 2).Value = result.ParentConfirmed.HasValue
@@ -324,6 +330,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     worksheet.Cell(row, 13).Value = result.RecordedAt.HasValue
                         ? result.RecordedAt.Value.ToString("yyyy-MM-dd HH:mm:ss")
                         : "";
+                    row++;
                 }
                 worksheet.Columns().AdjustToContents(); // Tự động căn lề cột
                 using var stream = new MemoryStream();
