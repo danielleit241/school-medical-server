@@ -42,7 +42,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return expiringThisWeek;
         }
 
-        public async Task<IEnumerable<IDictionary<string, int>>> GetLowStockMedicalItemsAsync()
+        public async Task<IEnumerable<IDictionary<string, LowStockDashboardResponse>>> GetLowStockMedicalItemsAsync()
         {
             int count = 10;
             var medicalItems = await medicalInventoryRepository.GetAllAsync();
@@ -57,9 +57,16 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 .OrderBy(x => x.Distance)
                 .ThenBy(x => x.QuantityInStock)
                 .Take(count)
-                .Select(x => new Dictionary<string, int>
+                .Select(x => new Dictionary<string, LowStockDashboardResponse>
                 {
-                        { x.ItemName!, x.QuantityInStock }
+                        {
+                            x.ItemName!,
+                            new LowStockDashboardResponse
+                            {
+                                QuantityInStock = x.QuantityInStock,
+                                MinimumStockLevel = x.MinimumStockLevel,
+                            }
+                        }
                 })
                 .ToList();
 
