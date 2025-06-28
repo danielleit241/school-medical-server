@@ -70,7 +70,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<IEnumerable<DashboardUserRecentActionResponse>> GetRecentActionsAsync()
         {
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             var next30Mins = now.AddMinutes(30);
             var nextDays = now.AddDays(1);
             var responses = new List<DashboardUserRecentActionResponse>();

@@ -30,7 +30,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return null!;
             }
-            medicalRegistration.DateApproved = request.DateApproved ?? DateOnly.FromDateTime(DateTime.Now);
+            medicalRegistration.DateApproved = request.DateApproved ?? DateOnly.FromDateTime(DateTime.UtcNow);
             medicalRegistration.Status = true;
 
             medicalRegistrationRepository.Update(medicalRegistration);
@@ -76,7 +76,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 RegistrationId = Guid.NewGuid(),
                 StudentId = request.MedicalRegistration.StudentId,
                 UserId = request.MedicalRegistration.UserId,
-                DateSubmitted = request.MedicalRegistration.DateSubmitted ?? DateOnly.FromDateTime(DateTime.Now),
+                DateSubmitted = request.MedicalRegistration.DateSubmitted ?? DateOnly.FromDateTime(DateTime.UtcNow),
                 MedicationName = request.MedicalRegistration.MedicationName,
                 TotalDosages = request.MedicalRegistration.TotalDosages,
                 PictureUrl = request.MedicalRegistration.PictureUrl,
@@ -287,7 +287,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     PictureUrl = medicalRegistration.PictureUrl,
                     Notes = medicalRegistration.Notes,
                     ParentConsent = medicalRegistration.ParentalConsent ?? false,
-                    DateSubmitted = medicalRegistration.DateSubmitted
+                    DateSubmitted = medicalRegistration.DateSubmitted,
+                    Status = medicalRegistration.Status
                 },
                 MedicalRegistrationDetails = details,
                 NurseApproved = nurseApprovedResponse,

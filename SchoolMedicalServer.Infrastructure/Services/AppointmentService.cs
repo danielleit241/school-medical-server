@@ -74,7 +74,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             var userId = user.UserId;
 
-            var hasAppointment = await appointmentRepository.StaffHasAppointmentAsync(request.AppointmentDate);
+            var hasAppointment = await appointmentRepository.StaffHasAppointmentAsync(request.AppointmentDate, request.AppointmentStartTime, request.AppointmentEndTime);
 
             if (hasAppointment)
                 return null!;
@@ -272,7 +272,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
         public async Task<bool> HasBookedAppointment(Guid parentId)
         {
             var today = DateOnly.FromDateTime(DateTime.UtcNow.Date);
-            var hasAppointment = await appointmentRepository.StaffHasAppointmentAsync(today);
+            var userAppoinments = await appointmentRepository.GetAllAppointment();
+            if (userAppoinments == null || !userAppoinments.Any())
+            {
+                return false;
+            }
+            var hasAppointment = userAppoinments
+                .Where(a => a.UserId == parentId && a.AppointmentDate == today)
+                .Any();
 
             return hasAppointment;
         }

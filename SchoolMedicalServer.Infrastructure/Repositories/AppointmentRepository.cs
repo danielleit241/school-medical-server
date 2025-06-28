@@ -101,8 +101,11 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
             return await query.Skip(skip).Take(take).ToListAsync();
         }
 
-        public async Task<bool> StaffHasAppointmentAsync(DateOnly? date)
-            => await _context.Appointments.AnyAsync(a => a.AppointmentDate == date);
+        public async Task<bool> StaffHasAppointmentAsync(DateOnly? date, TimeOnly? startTime, TimeOnly? endTime)
+            => await _context.Appointments
+                .AnyAsync(a => a.AppointmentDate == date &&
+                               a.AppointmentStartTime <= endTime &&
+                               a.AppointmentEndTime >= startTime);
 
         public async Task AddAsync(Appointment appointment)
             => await _context.Appointments.AddAsync(appointment);
