@@ -5,8 +5,8 @@
         Task<byte[]> ExportStudentsExcelFileAsync();
         Task<byte[]> ExportMedicalInventoriesExcelFileAsync();
         Task<byte[]> ExportVaccinationDetailsExcelFileAsync();
-        Task<byte[]> ExportVaccinationResultsExcelFileAsync();
-        Task<byte[]> ExportHealthCheckResultsExcelFileAsync();
+        Task<byte[]> ExportVaccinationResultsExcelFileAsync(Guid roundId);
+        Task<byte[]> ExportHealthCheckResultsExcelFileAsync(Guid roundId);
 
     }
 

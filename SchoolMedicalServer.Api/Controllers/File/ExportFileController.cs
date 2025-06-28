@@ -1,4 +1,6 @@
-﻿namespace SchoolMedicalServer.Api.Controllers.File
+﻿using DocumentFormat.OpenXml.Drawing;
+
+namespace SchoolMedicalServer.Api.Controllers.File
 {
     [Route("api")]
     [ApiController]
@@ -57,11 +59,11 @@
 
         [HttpGet("vaccination-results/export-excel")]
         [Authorize(Roles = "admin,manager")]
-        public async Task<IActionResult> ExportVaccinationResults()
+        public async Task<IActionResult> ExportVaccinationResults(Guid roundId)
         {
             try
             {
-                var fileBytes = await service.ExportVaccinationResultsExcelFileAsync();
+                var fileBytes = await service.ExportVaccinationResultsExcelFileAsync(roundId);
                 var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                 var fileName = $"vaccination_results_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
                 return File(fileBytes, contentType, fileName);
@@ -74,11 +76,11 @@
 
         [HttpGet("health-check-results/export-excel")]
         [Authorize(Roles = "admin,manager")]
-        public async Task<IActionResult> ExportHealthCheckResults()
+        public async Task<IActionResult> ExportHealthCheckResults(Guid roundId)
         {
             try
             {
-                var fileBytes = await service.ExportHealthCheckResultsExcelFileAsync();
+                var fileBytes = await service.ExportHealthCheckResultsExcelFileAsync(roundId);
                 var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                 var fileName = $"health_check_results_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
                 return File(fileBytes, contentType, fileName);
