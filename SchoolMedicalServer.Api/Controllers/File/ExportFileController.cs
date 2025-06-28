@@ -57,11 +57,11 @@
 
         [HttpGet("vaccination-results/export-excel")]
         [Authorize(Roles = "admin,manager")]
-        public async Task<IActionResult> ExportVaccinationResults()
+        public async Task<IActionResult> ExportVaccinationResults(Guid resultID)
         {
             try
             {
-                var fileBytes = await service.ExportVaccinationResultsExcelFileAsync();
+                var fileBytes = await service.ExportVaccinationResultsExcelFileAsync(resultID);
                 var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                 var fileName = $"vaccination_results_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
                 return File(fileBytes, contentType, fileName);
@@ -74,11 +74,11 @@
 
         [HttpGet("health-check-results/export-excel")]
         [Authorize(Roles = "admin,manager")]
-        public async Task<IActionResult> ExportHealthCheckResults()
+        public async Task<IActionResult> ExportHealthCheckResults(Guid resultID)
         {
             try
             {
-                var fileBytes = await service.ExportHealthCheckResultsExcelFileAsync();
+                var fileBytes = await service.ExportHealthCheckResultsExcelFileAsync(resultID);
                 var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                 var fileName = $"health_check_results_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
                 return File(fileBytes, contentType, fileName);
