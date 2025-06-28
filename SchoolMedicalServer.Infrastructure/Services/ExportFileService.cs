@@ -33,6 +33,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 worksheet.Cell(1, 7).Value = "ParentPhoneNumber";
                 worksheet.Cell(1, 8).Value = "ParentEmailAddress";
 
+                var titleRange = worksheet.Range(1, 1, 1, 8);
+                titleRange.Style.Font.Bold = true;
+                titleRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                titleRange.Style.Font.FontSize = 12;
+                titleRange.Style.Fill.BackgroundColor = XLColor.LightBlue;
+
                 int row = 2;
                 foreach (var student in students)
                 {
@@ -48,7 +54,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     worksheet.Cell(row, 8).Value = student.ParentEmailAddress;
                     row++;
                 }
-
+                worksheet.Columns().AdjustToContents(); // Tự động căn lề cột
                 using var stream = new MemoryStream();
                 workbook.SaveAs(stream);
                 return stream.ToArray();
@@ -81,6 +87,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 worksheet.Cell(1, 11).Value = "ExpiryDate";
                 worksheet.Cell(1, 12).Value = "Status";
 
+                var titleRange = worksheet.Range(1, 1, 1, 12);
+                titleRange.Style.Font.Bold = true;
+                titleRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                titleRange.Style.Font.FontSize = 12;
+                titleRange.Style.Fill.BackgroundColor = XLColor.LightBlue;
+
                 int row = 2;
                 foreach (var inventory in inventories)
                 {
@@ -104,7 +116,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     worksheet.Cell(row, 12).Value = inventory.Status ? "Available" : "Unavailable";
                     row++;
                 }
-
+                worksheet.Columns().AdjustToContents(); // Tự động căn lề cột
                 using var stream = new MemoryStream();
                 workbook.SaveAs(stream);
                 return stream.ToArray();
@@ -137,6 +149,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 worksheet.Cell(1, 11).Value = "CreatedAt";
                 worksheet.Cell(1, 12).Value = "UpdatedAt";
 
+                var titleRange = worksheet.Range(1, 1, 1, 12);
+                titleRange.Style.Font.Bold = true;
+                titleRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                titleRange.Style.Font.FontSize = 12;
+                titleRange.Style.Fill.BackgroundColor = XLColor.LightBlue;
+
                 int row = 2;
                 foreach (var detail in vaccinationDetails)
                 {
@@ -156,7 +174,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     worksheet.Cell(row, 12).Value = detail.UpdatedAt.ToString("yyyy-MM-dd HH:mm:ss");
                     row++;
                 }
-
+                worksheet.Columns().AdjustToContents(); // Tự động căn lề cột
                 using var stream = new MemoryStream();
                 workbook.SaveAs(stream);
                 return stream.ToArray();
@@ -172,9 +190,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             try
             {
                 var vaccinationResults = await vaccinationResultRepository.GetAllAsync();
-                var filteredResults = vaccinationResults
-                    .Where(r => r.VaccinationResultId == resultID)
-                    .ToList();
+                var result = vaccinationResults.FirstOrDefault(r => r.VaccinationResultId == resultID);
 
                 using var workbook = new XLWorkbook();
                 var worksheet = workbook.Worksheets.Add("VaccinationResults");
@@ -195,22 +211,30 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
                 worksheet.Cell(1, 13).Value = "ObservationNotes";
                 worksheet.Cell(1, 14).Value = "Notes";
-               
+
+
+                var titleRange = worksheet.Range(1, 1, 1, 14);
+                titleRange.Style.Font.Bold = true;
+                titleRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                titleRange.Style.Font.FontSize = 12;
+                titleRange.Style.Fill.BackgroundColor = XLColor.LightBlue;
 
                 int row = 2;
-                foreach (var result in filteredResults)
+
+                if (result != null)
                 {
                     var student = result.HealthProfile?.Student;
                     var observation = result.VaccinationObservation;
+
                     string healthQualifiedText = (result.HealthQualified.HasValue && result.HealthQualified.Value)
                         ? "Qualified"
                         : "Not Qualified";
 
                     worksheet.Cell(row, 1).Value = student?.StudentCode ?? "";
                     worksheet.Cell(row, 2).Value = student?.FullName ?? "";
-                    worksheet.Cell(row, 3).Value = student.DayOfBirth.HasValue
-                                 ? student.DayOfBirth.Value.ToString("yyyy-MM-dd")
-                                 : "";
+                    worksheet.Cell(row, 3).Value = student?.DayOfBirth.HasValue == true
+                        ? student.DayOfBirth.Value.ToString("yyyy-MM-dd")
+                        : "";
                     worksheet.Cell(row, 4).Value = student?.Gender ?? "";
                     worksheet.Cell(row, 5).Value = student?.Grade ?? "";
                     worksheet.Cell(row, 6).Value = student?.ParentPhoneNumber ?? "";
@@ -236,10 +260,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     worksheet.Cell(row, 14).Value = !string.IsNullOrEmpty(result.Notes)
                         ? result.Notes
                         : "No notes";
-                    
-                    row++;
                 }
-
+                worksheet.Columns().AdjustToContents(); // Tự động căn lề cột
                 using var stream = new MemoryStream();
                 workbook.SaveAs(stream);
                 return stream.ToArray();
@@ -255,9 +277,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             try
             {
                 var healthCheckResults = await healthCheckResultRepository.GetAllAsync();
-                var filteredResults = healthCheckResults
-                   .Where(r => r.ResultId == resultID)
-                   .ToList();
+                var result = healthCheckResults.FirstOrDefault(r => r.ResultId == resultID);
 
                 using var workbook = new XLWorkbook();
                 var worksheet = workbook.Worksheets.Add("HealthCheckResults");
@@ -273,15 +293,25 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 worksheet.Cell(1, 10).Value = "BloodPressure";
                 worksheet.Cell(1, 11).Value = "Status";
                 worksheet.Cell(1, 12).Value = "Notes";
+                worksheet.Cell(1, 13).Value = "RecordedAt";
 
-
+                var titleRange = worksheet.Range(1, 1, 1, 13);
+                titleRange.Style.Font.Bold = true;
+                titleRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                titleRange.Style.Font.FontSize = 12;
+                titleRange.Style.Fill.BackgroundColor = XLColor.LightBlue;
 
                 int row = 2;
-                foreach (var result in filteredResults)
+
+                if (result != null)
                 {
                     worksheet.Cell(row, 1).Value = result.HealthProfile?.Student?.FullName ?? "";
-                    worksheet.Cell(row, 2).Value = result.ParentConfirmed.HasValue ? (result.ParentConfirmed.Value ? "Confirmed" : "Declined") : "Pending";
-                    worksheet.Cell(row, 3).Value = result.DatePerformed.HasValue ? result.DatePerformed.Value.ToString("yyyy-MM-dd") : "";
+                    worksheet.Cell(row, 2).Value = result.ParentConfirmed.HasValue
+                        ? (result.ParentConfirmed.Value ? "Confirmed" : "Declined")
+                        : "Pending";
+                    worksheet.Cell(row, 3).Value = result.DatePerformed.HasValue
+                        ? result.DatePerformed.Value.ToString("yyyy-MM-dd")
+                        : "";
                     worksheet.Cell(row, 4).Value = result.Height?.ToString() ?? "";
                     worksheet.Cell(row, 5).Value = result.Weight?.ToString() ?? "";
                     worksheet.Cell(row, 6).Value = result.VisionLeft?.ToString() ?? "";
@@ -291,11 +321,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     worksheet.Cell(row, 10).Value = result.BloodPressure ?? "";
                     worksheet.Cell(row, 11).Value = result.Status ?? "";
                     worksheet.Cell(row, 12).Value = result.Notes ?? "";
-                    worksheet.Cell(row, 13).Value = result.RecordedAt.HasValue ? result.RecordedAt.Value.ToString("yyyy-MM-dd HH:mm:ss") : "";
-                   
-                    row++;
+                    worksheet.Cell(row, 13).Value = result.RecordedAt.HasValue
+                        ? result.RecordedAt.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                        : "";
                 }
-
+                worksheet.Columns().AdjustToContents(); // Tự động căn lề cột
                 using var stream = new MemoryStream();
                 workbook.SaveAs(stream);
                 return stream.ToArray();
