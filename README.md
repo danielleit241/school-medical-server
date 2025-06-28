@@ -1,45 +1,48 @@
-# School Medical Server
+# 🏥 School Medical Server
+
 [![CI - Medicare](https://github.com/danielleit241/school-medical-server/actions/workflows/dotnet.yml/badge.svg)](https://github.com/danielleit241/school-medical-server/actions/workflows/dotnet.yml)
+
 ---
-## Overview
+
+## 📝 Overview
 
 School Medical Server is a backend system for managing school healthcare operations, including student health records, parent and staff accounts, medical registrations, inventory, appointments, notifications, and event management.
 
-## Technologies Used
+## 🛠️ Technologies Used
 
-- **Language:** C#
-- **Framework:** ASP.NET Core (.NET 8)
-- **ORM:** Entity Framework Core
-- **Database:** SQL Server (default, configurable)
-- **Authentication:** JWT Bearer Authentication
-- **API Documentation:** Swagger (Swashbuckle)
-- **Mail:** MailKit, MimeKit
-- **Excel Import/Export:** ClosedXML
-- **Dynamic LINQ:** System.Linq.Dynamic.Core
-- **Unit Testing:** xUnit, FluentAssertions, InMemory provider
+- **🖥️ Language:** C#
+- **⚙️ Framework:** ASP.NET Core (.NET 8)
+- **🗄️ ORM:** Entity Framework Core
+- **🗃️ Database:** SQL Server (default, configurable)
+- **🔒 Authentication:** JWT Bearer Authentication
+- **📖 API Documentation:** Swagger (Swashbuckle)
+- **✉️ Mail:** MailKit, MimeKit
+- **📊 Excel Import/Export:** ClosedXML
+- **🔎 Dynamic LINQ:** System.Linq.Dynamic.Core
+- **🧪 Unit Testing:** xUnit, FluentAssertions, InMemory provider
 
-## Functional Architecture
+## 🏗️ Functional Architecture
 
 - **Domain Layer:** Contracts and entities (Abstractions)
 - **Infrastructure Layer:** Data persistence, repositories, and services implementation
 - **API Layer:** Dependency injection and API endpoints
 
-Key repositories and services include:
-- User, Student, and Role management
-- Medical Registration and Event tracking
-- Appointment scheduling
-- Medical Inventory management
-- Notifications and reporting
+**Key repositories and services include:**
+- 👨‍🎓 User, Student, and Role management
+- 📝 Medical Registration and Event tracking
+- 📅 Appointment scheduling
+- 💊 Medical Inventory management
+- 🔔 Notifications and reporting
 
-## Installation Guide
+## 🚀 Installation Guide
 
-### Prerequisites
+### ✅ Prerequisites
 
 - .NET 8 SDK or newer
 - SQL Server (or configure another provider)
 - Visual Studio 2022+ or VS Code with C# extensions
 
-### Steps
+### 📦 Steps
 
 1. **Clone the repository**
     ```bash
@@ -74,6 +77,6 @@ Key repositories and services include:
 6. **Test the API**
     - Use Swagger UI (usually at `/swagger`) or Postman to interact with endpoints.
 
-## Contribution
+## 🤝 Contribution
 
 Pull requests and issues are welcome! Please submit your suggestions or bug reports via GitHub Issues.
