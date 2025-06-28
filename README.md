@@ -1,5 +1,6 @@
 # School Medical Server
-
+[![CI - Medicare](https://github.com/danielleit241/school-medical-server/actions/workflows/dotnet.yml/badge.svg)](https://github.com/danielleit241/school-medical-server/actions/workflows/dotnet.yml)
+---
 ## Overview
 
 School Medical Server is a backend system for managing school healthcare operations, including student health records, parent and staff accounts, medical registrations, inventory, appointments, notifications, and event management.
@@ -16,15 +17,6 @@ School Medical Server is a backend system for managing school healthcare operati
 - **Excel Import/Export:** ClosedXML
 - **Dynamic LINQ:** System.Linq.Dynamic.Core
 - **Unit Testing:** xUnit, FluentAssertions, InMemory provider
-
-## Main NuGet Packages
-
-- ASP.NET Core & Entity Framework Core (with SQL Server support)
-- JWT authentication
-- Swagger/OpenAPI documentation
-- MailKit & MimeKit for email
-- ClosedXML for Excel operations
-- System.Linq.Dynamic.Core for dynamic LINQ
 
 ## Functional Architecture
 
