@@ -15,7 +15,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         IHealthProfileRepository profileRepository,
         INotificationHelperService helperService) : IVaccinationNotificationService
     {
-        public async Task<IEnumerable<NotificationResponse>> SendVaccinationNotificationToParents(IEnumerable<NotificationRequest> requests)
+        public async Task<IEnumerable<NotificationResponse>> SendVaccinationResultNotificationToParents(IEnumerable<NotificationRequest> requests)
         {
             List<NotificationResponse> responses = [];
             foreach (var request in requests)
@@ -130,6 +130,57 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Type = NotificationTypes.VaccinationObservation,
                 SourceId = observation.VaccinationObservationId
             };
+            await notificationRepository.AddAsync(notification);
+            var notiInfo = helperService.GetNotificationInformation(notification);
+            return helperService.GetNotificationResponse(notiInfo, sender, receiver);
+        }
+
+        public async Task<NotificationResponse> SendVaccinationResultNotificationToParent(NotificationRequest request)
+        {
+            var result = await resultRepository.GetByIdAsync(request.NotificationTypeId);
+            if (result == null)
+            {
+                return null!;
+            }
+            var sender = await helperService.GetSenderInformationAsync(request);
+            var receiver = await helperService.GetReceiverInformationAsync(request);
+            var vaccineName = result.Round!.Schedule!.Vaccine!.VaccineName ?? "Vaccination";
+            var studentName = result.HealthProfile?.Student!.FullName ?? "Student";
+            var startTime = result.Round!.StartTime?.ToString("d") ?? "Unknown date";
+
+
+            var contentFailed = $"Your child {studentName} has not received the vaccination: {vaccineName} on {startTime}.";
+            var contentSuccess = $"Your child {studentName} has received the vaccination: {vaccineName} on {startTime}.";
+            var contentNotHealthQualified = $"Your child {studentName} is not qualified for the vaccination: {vaccineName} on {startTime}.";
+            var defaultContent = $"Your child {studentName} has received the vaccination: {vaccineName} on {startTime}.";
+
+            var notification = new Notification
+            {
+                NotificationId = Guid.NewGuid(),
+                UserId = receiver!.UserId,
+                SenderId = sender!.UserId,
+                Title = "Vaccination Result Notification",
+                SendDate = DateTime.UtcNow,
+                IsRead = false,
+                Type = NotificationTypes.VaccinationResult,
+                SourceId = result.VaccinationResultId
+            };
+            if (result.Status!.Contains("completed"))
+            {
+                notification.Content = contentSuccess;
+            }
+            else if (result.Status.Contains("failed"))
+            {
+                notification.Content = contentFailed;
+            }
+            else if (result.Status.Contains("not qualified"))
+            {
+                notification.Content = contentNotHealthQualified;
+            }
+            else
+            {
+                notification.Content = defaultContent;
+            }
             await notificationRepository.AddAsync(notification);
             var notiInfo = helperService.GetNotificationInformation(notification);
             return helperService.GetNotificationResponse(notiInfo, sender, receiver);

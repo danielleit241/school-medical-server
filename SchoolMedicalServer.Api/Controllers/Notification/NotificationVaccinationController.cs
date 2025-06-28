@@ -8,7 +8,7 @@
         [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> SendVaccinationNotificationToParent([FromBody] IEnumerable<NotificationRequest> requests)
         {
-            var notifications = await service.SendVaccinationNotificationToParents(requests);
+            var notifications = await service.SendVaccinationResultNotificationToParents(requests);
             if (notifications == null)
             {
                 return BadRequest("Failed to send vaccination notification to parent.");
@@ -18,6 +18,19 @@
                 await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
             }
             return Ok(notifications);
+        }
+
+        [HttpPost("notifications/vaccinations/results/to-parent")]
+        [Authorize(Roles = "admin, manager, nurse")]
+        public async Task<IActionResult> SendVaccinationResultNotificationToParent([FromBody] NotificationRequest request)
+        {
+            var notification = await service.SendVaccinationResultNotificationToParent(request);
+            if (notification == null)
+            {
+                return BadRequest("Failed to send vaccination notification to parent.");
+            }
+            await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
+            return Ok(notification);
         }
 
         [HttpPost("notifications/vaccinations/observations/to-parent")]
