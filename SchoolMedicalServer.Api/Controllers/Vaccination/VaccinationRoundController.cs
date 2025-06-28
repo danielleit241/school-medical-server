@@ -12,12 +12,24 @@
             {
                 return BadRequest(new { Message = "Invalid request data." });
             }
-            var result = await service.CreateVaccinationRoundByScheduleIdAsync(request);
+            var result = await service.CreateVaccinationRegularRoundByScheduleIdAsync(request);
             if (!result)
             {
                 return NotFound(new { Message = "Vaccination round not found or update failed." });
             }
             return Ok(new { Message = "Vaccination round updated successfully." });
+        }
+
+        [HttpGet("schedules/{scheduleId}/vaccination-rounds/supplementary/total-students")]
+        [Authorize(Roles = "admin, manager")]
+        public async Task<IActionResult> GetTotalSupplementaryTotalStudents(Guid scheduleId)
+        {
+            if (scheduleId == Guid.Empty)
+            {
+                return BadRequest(new { Message = "Invalid request data." });
+            }
+            var result = await service.GetTotalSupplementaryTotalStudentsAsync(scheduleId);
+            return Ok(new { SupplementStudents = result });
         }
 
         [HttpGet("managers/vaccination-rounds/{roundId}/students")]

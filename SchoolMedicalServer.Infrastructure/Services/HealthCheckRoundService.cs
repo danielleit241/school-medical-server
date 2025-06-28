@@ -28,6 +28,15 @@ namespace SchoolMedicalServer.Infrastructure.Services
             if (schedule.Rounds.Any(r => r.TargetGrade!.Equals(request.TargetGrade!)))
                 return false;
 
+            if (request.TargetGrade!.Contains("supplement"))
+            {
+                var supplementStudents = await GetTotalSupplementaryTotalStudentsAsync(request.ScheduleId!.Value);
+                if (supplementStudents == 0)
+                {
+                    return false;
+                }
+            }
+
             var round = new HealthCheckRound
             {
                 RoundId = Guid.NewGuid(),
@@ -317,6 +326,21 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 });
             }
             return responses;
+        }
+
+        public async Task<int> GetTotalSupplementaryTotalStudentsAsync(Guid scheduleId)
+        {
+            var schedule = await healthCheckScheduleRepository.GetHealthCheckScheduleByIdAsync(scheduleId);
+            if (schedule == null)
+            {
+                return 0;
+            }
+            if (schedule.Rounds.Any(r => r.TargetGrade != null && r.TargetGrade.Contains("supplement")))
+            {
+                return 0;
+            }
+            var supplementStudents = schedule.Rounds.Where(r => r.Status == true).SelectMany(r => r.HealthCheckResults).Where(hr => hr.ParentConfirmed == true && hr.Status!.ToLower().Contains("failed")).ToList();
+            return supplementStudents.Count;
         }
     }
 }

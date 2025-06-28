@@ -197,7 +197,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         }
 
-        public async Task<bool> CreateVaccinationRoundByScheduleIdAsync(VaccinationRoundRequest request)
+        public async Task<bool> CreateVaccinationRegularRoundByScheduleIdAsync(VaccinationRoundRequest request)
         {
             var schedule = await scheduleRepository.GetVaccinationScheduleByIdAsync(request.ScheduleId!.Value);
             if (schedule == null)
@@ -206,6 +206,15 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             if (schedule.Rounds.Any(r => r.TargetGrade!.Equals(request.TargetGrade!)))
                 return false;
+
+            if (request.TargetGrade!.Contains("supplement"))
+            {
+                var supplementaryTotalStudents = await GetTotalSupplementaryTotalStudentsAsync(request.ScheduleId.Value);
+                if (supplementaryTotalStudents == 0)
+                {
+                    return false;
+                }
+            }
 
             var round = new VaccinationRound
             {
@@ -330,6 +339,21 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             ;
             return responses;
+        }
+
+        public async Task<int> GetTotalSupplementaryTotalStudentsAsync(Guid scheduleId)
+        {
+            var schedule = await scheduleRepository.GetVaccinationScheduleByIdAsync(scheduleId);
+            if (schedule == null)
+            {
+                return 0;
+            }
+            if (schedule.Rounds.Any(r => r.TargetGrade != null && r.TargetGrade.Contains("supplement")))
+            {
+                return 0;
+            }
+            var supplementStudents = schedule.Rounds.Where(r => r.Status == true).SelectMany(r => r.VaccinationResults).Where(vr => vr.ParentConfirmed == true && vr.HealthQualified == true && vr.Vaccinated == false).ToList();
+            return supplementStudents.Count;
         }
     }
 }
