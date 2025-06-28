@@ -22,7 +22,7 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
             string? sortOrder,
             int skip,
             int take);
-        Task<bool> StaffHasAppointmentAsync(DateOnly? date);
+        Task<bool> StaffHasAppointmentAsync(DateOnly? date, TimeOnly? startTime, TimeOnly? endTime);
         Task AddAsync(Appointment appointment);
         Task<Appointment?> GetByIdAsync(Guid appointmentId);
         void Update(Appointment appointment);
