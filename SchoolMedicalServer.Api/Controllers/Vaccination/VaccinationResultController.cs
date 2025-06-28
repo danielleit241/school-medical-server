@@ -29,7 +29,7 @@
             {
                 return BadRequest(new { Message = "Failed to create vaccination result." });
             }
-            return Ok();
+            return Ok(result);
         }
 
         [HttpPost("vaccination-results/observations")]

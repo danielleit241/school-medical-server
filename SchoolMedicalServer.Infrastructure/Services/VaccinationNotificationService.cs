@@ -152,7 +152,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var contentFailed = $"Your child {studentName} has not received the vaccination: {vaccineName} on {startTime}.";
             var contentSuccess = $"Your child {studentName} has received the vaccination: {vaccineName} on {startTime}.";
             var contentNotHealthQualified = $"Your child {studentName} is not qualified for the vaccination: {vaccineName} on {startTime}.";
-            var defaultContent = $"Your child {studentName} has received the vaccination: {vaccineName} on {startTime}.";
 
             var notification = new Notification
             {
@@ -165,21 +164,17 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Type = NotificationTypes.VaccinationResult,
                 SourceId = result.VaccinationResultId
             };
-            if (result.Status!.Contains("completed"))
+            if (result.Status!.ToLower().Contains("completed"))
             {
                 notification.Content = contentSuccess;
             }
-            else if (result.Status.Contains("failed"))
+            else if (result.Status.ToLower().Contains("failed"))
             {
                 notification.Content = contentFailed;
             }
-            else if (result.Status.Contains("not qualified"))
+            else if (result.Status.ToLower().Contains("not qualified"))
             {
                 notification.Content = contentNotHealthQualified;
-            }
-            else
-            {
-                notification.Content = defaultContent;
             }
             await notificationRepository.AddAsync(notification);
             var notiInfo = helperService.GetNotificationInformation(notification);
