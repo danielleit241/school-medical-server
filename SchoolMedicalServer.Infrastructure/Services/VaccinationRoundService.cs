@@ -207,15 +207,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             if (schedule.Rounds.Any(r => r.TargetGrade!.Equals(request.TargetGrade!)))
                 return false;
 
-            if (request.TargetGrade!.Contains("supplement"))
-            {
-                var supplementaryTotalStudents = await GetTotalSupplementaryTotalStudentsAsync(request.ScheduleId.Value);
-                if (supplementaryTotalStudents == 0)
-                {
-                    return false;
-                }
-            }
-
             var round = new VaccinationRound
             {
                 RoundId = Guid.NewGuid(),
