@@ -17,10 +17,6 @@
         public async Task<IActionResult> UpdateHealthQualifiedVaccinationResult(Guid resultId, [FromBody] bool status)
         {
             var result = await service.UpdateHealthQualifiedVaccinationResult(resultId, status);
-            if (!result)
-            {
-                return NotFound(new { Message = "Vaccination result not found or update failed." });
-            }
             return Ok(result);
         }
 
@@ -29,7 +25,7 @@
         public async Task<IActionResult> CreateVaccinationResult([FromBody] VaccinationResultRequest request)
         {
             var result = await service.CreateVaccinationResult(request);
-            if (!result)
+            if (result == null)
             {
                 return BadRequest(new { Message = "Failed to create vaccination result." });
             }

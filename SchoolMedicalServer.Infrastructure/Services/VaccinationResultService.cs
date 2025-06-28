@@ -89,6 +89,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var parentId = await studentRepository.GetParentUserIdAsync(healthProfile!.StudentId);
             await observationRepository.CreateVaccinationObservation(observation);
 
+            if (observation.SeverityLevel!.ToLower().Contains("Normal"))
+            {
+                return null!;
+            }
+
             return new NotificationRequest
             {
                 NotificationTypeId = observation.VaccinationObservationId,
@@ -97,12 +102,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
             };
         }
 
-        public async Task<bool> CreateVaccinationResult(VaccinationResultRequest request)
+        public async Task<NotificationRequest> CreateVaccinationResult(VaccinationResultRequest request)
         {
             var result = await resultRepository.GetByIdAsync(request.VaccinationResultId);
             if (result == null || result!.HealthQualified == false)
             {
-                return false;
+                return null!;
             }
             result.Vaccinated = request.Vaccinated;
             result.VaccinatedDate = request.VaccinatedDate ?? DateOnly.FromDateTime(DateTime.UtcNow);
@@ -113,7 +118,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
             result.UpdatedAt = DateTime.UtcNow;
 
             await resultRepository.UpdateAsync(result);
-            return true;
+
+            return new NotificationRequest
+            {
+                NotificationTypeId = result.VaccinationResultId,
+                SenderId = result.RecorderId,
+                ReceiverId = result.HealthProfile!.Student!.User!.UserId
+            };
         }
 
         public async Task<VaccinationResultResponse> GetVaccinationResult(Guid resultId)
@@ -175,12 +186,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return result.HealthQualified;
         }
 
-        public async Task<bool> UpdateHealthQualifiedVaccinationResult(Guid resultId, bool status)
+        public async Task<NotificationRequest> UpdateHealthQualifiedVaccinationResult(Guid resultId, bool status)
         {
             var result = await resultRepository.GetByIdAsync(resultId);
             if (result == null)
             {
-                return false;
+                return null!;
             }
             result.HealthQualified = status;
             if (result.HealthQualified == false)
@@ -194,7 +205,16 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             result.UpdatedAt = DateTime.UtcNow;
             await resultRepository.UpdateAsync(result);
-            return true;
+            if (result.HealthQualified == false)
+            {
+                return new NotificationRequest
+                {
+                    NotificationTypeId = result.VaccinationResultId,
+                    SenderId = result.RecorderId,
+                    ReceiverId = result.HealthProfile!.Student!.User!.UserId
+                };
+            }
+            return null!;
         }
 
         public async Task<PaginationResponse<VaccinationResultParentResponse>> GetVaccinationResultStudentAsync(PaginationRequest? pagination, Guid studentId)
