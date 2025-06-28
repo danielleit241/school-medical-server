@@ -20,6 +20,19 @@
             return Ok(new { Message = "Health check round updated successfully." });
         }
 
+        [HttpGet("schedules/{scheduleId}/health-check-rounds/supplementary/total-students")]
+        [Authorize(Roles = "admin, manager")]
+        public async Task<IActionResult> GetTotalSupplementaryTotalStudents(Guid scheduleId)
+        {
+            if (scheduleId == Guid.Empty)
+            {
+                return BadRequest(new { Message = "Invalid request data." });
+            }
+            var result = await service.GetTotalSupplementaryTotalStudentsAsync(scheduleId);
+            return Ok(new { SupplementStudents = result });
+        }
+
+
         [HttpGet("managers/health-check-rounds/{roundId}/students")]
         [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> GetStudentsByHealthCheckRoundId([FromQuery] PaginationRequest? pagination, Guid roundId)
