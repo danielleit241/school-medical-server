@@ -210,11 +210,22 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 worksheet.Cell(1, 10).Value = "VaccinatedDate";
                 worksheet.Cell(1, 11).Value = "VaccinatedTime";
                 worksheet.Cell(1, 12).Value = "InjectionSite";
-                worksheet.Cell(1, 13).Value = "ObservationNotes";
-                worksheet.Cell(1, 14).Value = "Notes";
+                worksheet.Cell(1, 13).Value = "Notes";
+                worksheet.Cell(1, 14).Value = "ObservationNotes";
 
-          
-                var titleRange = worksheet.Range(1, 1, 1, 14);
+
+                worksheet.Cell(1, 15).Value = "ReactionStartTime";
+                worksheet.Cell(1, 16).Value = "ReactionType";
+                worksheet.Cell(1, 17).Value = "SeverityLevel";
+                worksheet.Cell(1, 18).Value = "ImmediateReaction";
+              
+                worksheet.Cell(1, 19).Value = "Intervention";
+                worksheet.Cell(1, 20).Value = "ObservationEndTime";
+                worksheet.Cell(1, 21).Value = "ObservationStartTime";
+                worksheet.Cell(1, 22).Value = "ObservedBy";
+
+
+                var titleRange = worksheet.Range(1, 1, 1, 25);
                 titleRange.Style.Font.Bold = true;
                 titleRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 titleRange.Style.Font.FontSize = 12;
@@ -239,7 +250,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     worksheet.Cell(row, 4).Value = student?.Gender ?? "";
                     worksheet.Cell(row, 5).Value = student?.Grade ?? "";
                     worksheet.Cell(row, 6).Value = student?.ParentPhoneNumber ?? "";
-
                     worksheet.Cell(row, 7).Value = result.ParentConfirmed.HasValue
                         ? (result.ParentConfirmed.Value ? "Confirmed" : "Declined")
                         : "Pending";
@@ -254,13 +264,23 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     worksheet.Cell(row, 12).Value = !string.IsNullOrEmpty(result.InjectionSite)
                         ? result.InjectionSite
                         : "Not specified";
-
-                    worksheet.Cell(row, 13).Value = observation != null && !string.IsNullOrEmpty(observation.Notes)
-                        ? observation.Notes
-                        : "No observations recorded";
-                    worksheet.Cell(row, 14).Value = !string.IsNullOrEmpty(result.Notes)
+                    worksheet.Cell(row, 13).Value = !string.IsNullOrEmpty(result.Notes)
                         ? result.Notes
                         : "No notes";
+                    worksheet.Cell(row, 14).Value = observation?.Notes ?? "No observation notes";
+
+        
+
+                    worksheet.Cell(row, 15).Value = observation?.ReactionStartTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "N/A";
+                    worksheet.Cell(row, 16).Value = observation?.ReactionType ?? "normal";
+                    worksheet.Cell(row, 17).Value = observation?.SeverityLevel ?? "normal";
+                    worksheet.Cell(row, 18).Value = observation?.ImmediateReaction ?? "no";
+        
+                    worksheet.Cell(row, 19).Value = observation?.Intervention ?? "no";
+                    worksheet.Cell(row, 20).Value = observation?.ObservationEndTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "N/A";
+                    worksheet.Cell(row, 21).Value = observation?.ObservationStartTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "N/A";
+                    worksheet.Cell(row, 22).Value = observation?.ObservedBy ?? "N/A";
+
 
                     row++;
                 }
