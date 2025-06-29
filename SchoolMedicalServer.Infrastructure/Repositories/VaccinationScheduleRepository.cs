@@ -28,7 +28,9 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
 
         public async Task<VaccinationSchedule?> GetVaccinationScheduleByIdAsync(Guid id)
         {
-            return await _context.VaccinationSchedules.Include(s => s.Rounds).Include(s => s.Vaccine)
+            return await _context.VaccinationSchedules
+                .Include(s => s.Rounds).ThenInclude(r => r.VaccinationResults)
+                .Include(s => s.Vaccine)
                 .Where(s => s.ScheduleId == id).FirstOrDefaultAsync();
         }
 

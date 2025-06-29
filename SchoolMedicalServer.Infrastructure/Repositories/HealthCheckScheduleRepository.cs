@@ -20,7 +20,11 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
 
         public async Task<HealthCheckSchedule?> GetHealthCheckScheduleByIdAsync(Guid? id)
         {
-            return await _context.HealthCheckSchedules.Include(s => s.Rounds).Where(s => s.ScheduleId == id).FirstOrDefaultAsync();
+            return await _context.HealthCheckSchedules
+                .Where(s => s.ScheduleId == id)
+                .Include(s => s.Rounds)
+                .ThenInclude(r => r.HealthCheckResults)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<HealthCheckSchedule>> GetHealthCheckSchedulesAsync()
