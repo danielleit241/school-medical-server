@@ -33,7 +33,7 @@
         }
 
         [HttpGet("vaccination-details/{id}")]
-        [Authorize(Roles = "admin, manager, parent")]
+        [Authorize]
         public async Task<IActionResult> GetVaccineDetail(Guid id)
         {
             var vaccineDetail = await service.GetVaccineDetailAsync(id);

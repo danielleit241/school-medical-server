@@ -135,7 +135,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<PaginationResponse<MedicalRegistrationResponse?>> GetMedicalRegistrationsAsync(PaginationRequest? paginationRequest, Guid nurseId)
         {
-            var totalCount = await medicalRegistrationRepository.CountByUserAsync(nurseId);
+            var medicalRegistrations = await medicalRegistrationRepository.GetAllMedicalRegistration();
+            var totalCount = medicalRegistrations.Where(mr => mr.StaffNurseId == nurseId).Count();
             if (totalCount == 0)
             {
                 return null!;

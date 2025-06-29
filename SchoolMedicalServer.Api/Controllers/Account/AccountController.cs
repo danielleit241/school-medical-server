@@ -59,9 +59,9 @@
             string templatePath = Path.Combine(_env.WebRootPath, "templates", "register_email_template.html");
             if (!System.IO.File.Exists(templatePath))
                 return NotFound("Email template not found");
-
+            var uniqueAccounts = accounts.DistinctBy(acc => acc.EmailAddress);
             var semaphore = new SemaphoreSlim(5);
-            var tasks = accounts.Select(async account =>
+            var tasks = uniqueAccounts.Select(async account =>
             {
                 await semaphore.WaitAsync();
                 try

@@ -2,6 +2,7 @@
 {
     public class VaccinationRoundStudentResponse
     {
+        public Guid? VaccineId { get; set; }
         public StudentsOfRoundResponse StudentsOfRoundResponse { get; set; } = new StudentsOfRoundResponse();
         public ParentOfStudentResponse ParentsOfStudent { get; set; } = new ParentOfStudentResponse();
     }

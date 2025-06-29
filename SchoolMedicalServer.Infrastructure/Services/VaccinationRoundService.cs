@@ -184,6 +184,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 var parentResponse = await ParentOfStudentResponse(result!);
                 responses.Add(new VaccinationRoundStudentResponse
                 {
+                    VaccineId = round.Schedule!.VaccineId,
                     StudentsOfRoundResponse = studentResponse,
                     ParentsOfStudent = parentResponse
                 });
