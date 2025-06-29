@@ -339,7 +339,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return 0;
             }
-            if (schedule.Rounds.Any(r => r.TargetGrade != null && r.TargetGrade.Contains("supplement")))
+            if (schedule.Rounds.Any(r => r.TargetGrade != null && r.TargetGrade.ToLower().Contains("supplement")))
             {
                 return 0;
             }
