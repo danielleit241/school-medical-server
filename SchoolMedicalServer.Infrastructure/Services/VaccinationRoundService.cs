@@ -343,7 +343,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return 0;
             }
-            var supplementStudents = schedule.Rounds.Where(r => r.Status == true).SelectMany(r => r.VaccinationResults).Where(vr => vr.ParentConfirmed == true && vr.HealthQualified == true && vr.Vaccinated == false).ToList();
+            var supplementStudents = schedule.Rounds
+                .Where(r => r.Status == true)
+                .SelectMany(r => r.VaccinationResults)
+                .Where(vr => vr.ParentConfirmed == true && vr.HealthQualified == true && vr.Vaccinated == false)
+                .ToList();
             return supplementStudents.Count;
         }
     }
