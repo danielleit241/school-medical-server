@@ -43,7 +43,6 @@ namespace SchoolMedicalServer.Abstractions.Dtos.HealthDeclaration
         [Required(ErrorMessage = "Vaccinated date is required.")]
         public DateOnly? VaccinatedDate { get; set; }
 
-        [Required(ErrorMessage = "Notes are required.")]
         public string? Notes { get; set; }
     }
 }

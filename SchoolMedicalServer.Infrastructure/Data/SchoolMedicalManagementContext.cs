@@ -478,7 +478,7 @@ public partial class SchoolMedicalManagementContext : DbContext
                 .HasColumnName("DayOfBirth")
                 .HasColumnType("date");
             entity.Property(e => e.Gender)
-                .HasMaxLength(3);
+                .HasMaxLength(6);
             entity.Property(e => e.Grade)
                 .HasMaxLength(12)
                 .IsUnicode(false)
