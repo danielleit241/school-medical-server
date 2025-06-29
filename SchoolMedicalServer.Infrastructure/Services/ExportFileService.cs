@@ -330,21 +330,29 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
                 using var workbook = new XLWorkbook();
                 var worksheet = workbook.Worksheets.Add("HealthCheckResults");
-                worksheet.Cell(1, 1).Value = "StudentName";
-                worksheet.Cell(1, 2).Value = "ParentConfirmed";
-                worksheet.Cell(1, 3).Value = "DatePerformed";
-                worksheet.Cell(1, 4).Value = "Height";
-                worksheet.Cell(1, 5).Value = "Weight";
-                worksheet.Cell(1, 6).Value = "VisionLeft";
-                worksheet.Cell(1, 7).Value = "VisionRight";
-                worksheet.Cell(1, 8).Value = "Hearing";
-                worksheet.Cell(1, 9).Value = "Nose";
-                worksheet.Cell(1, 10).Value = "BloodPressure";
-                worksheet.Cell(1, 11).Value = "Status";
-                worksheet.Cell(1, 12).Value = "Notes";
-                worksheet.Cell(1, 13).Value = "RecordedAt";
+           
+                worksheet.Cell(1, 1).Value = "Student Code";
+                worksheet.Cell(1, 2).Value = "Full Name";
+                worksheet.Cell(1, 3).Value = "Date of Birth";
+                worksheet.Cell(1, 4).Value = "Gender";
+                worksheet.Cell(1, 5).Value = "Grade";
+                worksheet.Cell(1, 6).Value = "Parent Phone";
+                worksheet.Cell(1, 7).Value = "Parent Confirm";
+                // Các trường cũ
+                worksheet.Cell(1, 8).Value = "DatePerformed";
+                worksheet.Cell(1, 9).Value = "Height";
+                worksheet.Cell(1, 10).Value = "Weight";
+                worksheet.Cell(1, 11).Value = "VisionLeft";
+                worksheet.Cell(1, 12).Value = "VisionRight";
+                worksheet.Cell(1, 13).Value = "Hearing";
+                worksheet.Cell(1, 14).Value = "Nose";
+                worksheet.Cell(1, 15).Value = "BloodPressure";
+                worksheet.Cell(1, 16).Value = "Status";
+                worksheet.Cell(1, 17).Value = "Notes";
+         
 
-                var titleRange = worksheet.Range(1, 1, 1, 13);
+
+                var titleRange = worksheet.Range(1, 1, 1, 17);
                 titleRange.Style.Font.Bold = true;
                 titleRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 titleRange.Style.Font.FontSize = 12;
@@ -354,25 +362,32 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
                 foreach (var result in filteredResults)
                 {
-                    worksheet.Cell(row, 1).Value = result.HealthProfile?.Student?.FullName ?? "";
-                    worksheet.Cell(row, 2).Value = result.ParentConfirmed.HasValue
+                    var student = result.HealthProfile?.Student;
+                 
+                    worksheet.Cell(row, 1).Value = student?.StudentCode ?? "";
+                    worksheet.Cell(row, 2).Value = student?.FullName ?? "";
+                    worksheet.Cell(row, 3).Value = student?.DayOfBirth.HasValue == true
+                        ? student.DayOfBirth.Value.ToString("dd/MM/yyyy")
+                        : "";
+                    worksheet.Cell(row, 4).Value = student?.Gender ?? "";
+                    worksheet.Cell(row, 5).Value = student?.Grade ?? "";
+                    worksheet.Cell(row, 6).Value = student?.ParentPhoneNumber ?? "";
+                    worksheet.Cell(row, 7).Value = result.ParentConfirmed.HasValue
                         ? (result.ParentConfirmed.Value ? "Confirmed" : "Declined")
                         : "Pending";
-                    worksheet.Cell(row, 3).Value = result.DatePerformed.HasValue
+                    worksheet.Cell(row, 8).Value = result.DatePerformed.HasValue
                         ? result.DatePerformed.Value.ToString("yyyy-MM-dd")
-                        : "";
-                    worksheet.Cell(row, 4).Value = result.Height?.ToString() ?? "";
-                    worksheet.Cell(row, 5).Value = result.Weight?.ToString() ?? "";
-                    worksheet.Cell(row, 6).Value = result.VisionLeft?.ToString() ?? "";
-                    worksheet.Cell(row, 7).Value = result.VisionRight?.ToString() ?? "";
-                    worksheet.Cell(row, 8).Value = result.Hearing ?? "";
-                    worksheet.Cell(row, 9).Value = result.Nose ?? "";
-                    worksheet.Cell(row, 10).Value = result.BloodPressure ?? "";
-                    worksheet.Cell(row, 11).Value = result.Status ?? "";
-                    worksheet.Cell(row, 12).Value = result.Notes ?? "";
-                    worksheet.Cell(row, 13).Value = result.RecordedAt.HasValue
-                        ? result.RecordedAt.Value.ToString("yyyy-MM-dd HH:mm:ss")
-                        : "";
+                        : "not recorded yet ";
+                    worksheet.Cell(row, 9).Value = result.Height?.ToString() ?? "not recorded yet";
+                    worksheet.Cell(row, 10).Value = result.Weight?.ToString() ?? "not recorded yet";
+                    worksheet.Cell(row, 11).Value = result.VisionLeft?.ToString() ?? "not recorded yet";
+                    worksheet.Cell(row, 12).Value = result.VisionRight?.ToString() ?? "not recorded yet";
+                    worksheet.Cell(row, 13).Value = result.Hearing ?? "not recorded yet";
+                    worksheet.Cell(row, 14).Value = result.Nose ?? "not recorded yet";
+                    worksheet.Cell(row, 15).Value = result.BloodPressure ?? "not recorded yet";
+                    worksheet.Cell(row, 16).Value = result.Status ?? "";
+                    worksheet.Cell(row, 17).Value = result.Notes ?? "not recorded yet";
+                  
                     row++;
                 }
                 worksheet.Columns().AdjustToContents(); // Tự động căn lề cột
