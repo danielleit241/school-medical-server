@@ -72,7 +72,7 @@ School Medical Server is a backend system for managing school healthcare operati
     ```bash
     dotnet run --project SchoolMedicalServer.Api
     ```
-    - The API will usually be available at `https://localhost:5001` (see `launchSettings.json` for details).
+    - The API will usually be available at `https://localhost:700` or `http://localhost:5078` (see `launchSettings.json` for details).
 
 6. **Test the API**
     - Use Swagger UI (usually at `/swagger`) or Postman to interact with endpoints.
