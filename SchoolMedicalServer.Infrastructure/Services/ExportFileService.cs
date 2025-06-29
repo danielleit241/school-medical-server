@@ -189,7 +189,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
         {
             try
             {
-                var vaccinationResults = await vaccinationResultRepository.GetAllAsync();
+                var vaccinationResults = await vaccinationResultRepository.GetByRoundIdAsync(roundId);
 
                 var filteredResults = vaccinationResults
                     .Where(r => r.RoundId == roundId)
@@ -214,16 +214,16 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 worksheet.Cell(1, 14).Value = "ObservationNotes";
 
 
-                worksheet.Cell(1, 15).Value = "ReactionStartTime";
-                worksheet.Cell(1, 16).Value = "ReactionType";
-                worksheet.Cell(1, 17).Value = "SeverityLevel";
-                worksheet.Cell(1, 18).Value = "ImmediateReaction";
-              
-                worksheet.Cell(1, 19).Value = "Intervention";
-                worksheet.Cell(1, 20).Value = "ObservationEndTime";
-                worksheet.Cell(1, 21).Value = "ObservationStartTime";
+                worksheet.Cell(1, 15).Value = "ObservationStartTime";
+                worksheet.Cell(1, 16).Value = "ObservationEndTime";
+                worksheet.Cell(1, 17).Value = "ReactionStartTime";
+                worksheet.Cell(1, 18).Value = "ReactionType";
+                worksheet.Cell(1, 19).Value = "SeverityLevel";
+                worksheet.Cell(1, 20).Value = "ImmediateReaction";
+                worksheet.Cell(1, 21).Value = "Intervention";
                 worksheet.Cell(1, 22).Value = "ObservedBy";
-
+                
+           
 
                 var titleRange = worksheet.Range(1, 1, 1, 25);
                 titleRange.Style.Font.Bold = true;
@@ -241,6 +241,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     string healthQualifiedText = (result.HealthQualified.HasValue && result.HealthQualified.Value)
                         ? "Qualified"
                         : "Not Qualified";
+
 
                     worksheet.Cell(row, 1).Value = student?.StudentCode ?? "";
                     worksheet.Cell(row, 2).Value = student?.FullName ?? "";
@@ -267,25 +268,25 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     worksheet.Cell(row, 13).Value = !string.IsNullOrEmpty(result.Notes)
                         ? result.Notes
                         : "No notes";
+
                     worksheet.Cell(row, 14).Value = observation?.Notes ?? "No observation notes";
 
-        
-
-                    worksheet.Cell(row, 15).Value = observation?.ReactionStartTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "N/A";
-                    worksheet.Cell(row, 16).Value = observation?.ReactionType ?? "normal";
-                    worksheet.Cell(row, 17).Value = observation?.SeverityLevel ?? "normal";
-                    worksheet.Cell(row, 18).Value = observation?.ImmediateReaction ?? "no";
-        
-                    worksheet.Cell(row, 19).Value = observation?.Intervention ?? "no";
-                    worksheet.Cell(row, 20).Value = observation?.ObservationEndTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "N/A";
-                    worksheet.Cell(row, 21).Value = observation?.ObservationStartTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "N/A";
-                    worksheet.Cell(row, 22).Value = observation?.ObservedBy ?? "N/A";
+              
+                    worksheet.Cell(row, 15).Value = observation?.ObservationStartTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "";
+                    worksheet.Cell(row, 16).Value = observation?.ObservationEndTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "";
+                    worksheet.Cell(row, 17).Value = observation?.ReactionStartTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "";
+                    worksheet.Cell(row, 18).Value = observation?.ReactionType ?? "  ";
+                    worksheet.Cell(row, 19).Value = observation?.SeverityLevel ?? " ";
+                    worksheet.Cell(row, 20).Value = observation?.ImmediateReaction ?? " ";
+                    worksheet.Cell(row, 21).Value = observation?.Intervention ?? "  ";
+                    worksheet.Cell(row, 22).Value = observation?.ObservedBy ?? "";
+                   
 
 
                     row++;
                 }
 
-                worksheet.Columns().AdjustToContents(); // Tự động căn lề cột
+                worksheet.Columns().AdjustToContents();
                 using var stream = new MemoryStream();
                 workbook.SaveAs(stream);
                 return stream.ToArray();
