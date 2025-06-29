@@ -185,8 +185,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
         }
 
-        public async Task<byte[]> ExportVaccinationResultsExcelFileAsync(Guid roundId)
-        {
+            public async Task<byte[]> ExportVaccinationResultsExcelFileAsync(Guid roundId)
+            {
             try
             {
                 var vaccinationResults = await vaccinationResultRepository.GetByRoundIdAsync(roundId);
@@ -212,8 +212,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 worksheet.Cell(1, 12).Value = "InjectionSite";
                 worksheet.Cell(1, 13).Value = "Notes";
                 worksheet.Cell(1, 14).Value = "ObservationNotes";
-
-
                 worksheet.Cell(1, 15).Value = "ObservationStartTime";
                 worksheet.Cell(1, 16).Value = "ObservationEndTime";
                 worksheet.Cell(1, 17).Value = "ReactionStartTime";
@@ -222,10 +220,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 worksheet.Cell(1, 20).Value = "ImmediateReaction";
                 worksheet.Cell(1, 21).Value = "Intervention";
                 worksheet.Cell(1, 22).Value = "ObservedBy";
-                
-           
 
-                var titleRange = worksheet.Range(1, 1, 1, 25);
+                var titleRange = worksheet.Range(1, 1, 1, 22);
                 titleRange.Style.Font.Bold = true;
                 titleRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 titleRange.Style.Font.FontSize = 12;
@@ -241,7 +237,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     string healthQualifiedText = (result.HealthQualified.HasValue && result.HealthQualified.Value)
                         ? "Qualified"
                         : "Not Qualified";
-
 
                     worksheet.Cell(row, 1).Value = student?.StudentCode ?? "";
                     worksheet.Cell(row, 2).Value = student?.FullName ?? "";
@@ -269,19 +264,46 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         ? result.Notes
                         : "No notes";
 
-                    worksheet.Cell(row, 14).Value = observation?.Notes ?? "No observation notes";
-
-              
-                    worksheet.Cell(row, 15).Value = observation?.ObservationStartTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "";
-                    worksheet.Cell(row, 16).Value = observation?.ObservationEndTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "";
-                    worksheet.Cell(row, 17).Value = observation?.ReactionStartTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "";
-                    worksheet.Cell(row, 18).Value = observation?.ReactionType ?? "  ";
-                    worksheet.Cell(row, 19).Value = observation?.SeverityLevel ?? " ";
-                    worksheet.Cell(row, 20).Value = observation?.ImmediateReaction ?? " ";
-                    worksheet.Cell(row, 21).Value = observation?.Intervention ?? "  ";
-                    worksheet.Cell(row, 22).Value = observation?.ObservedBy ?? "";
-                   
-
+     
+                    if (result.HealthQualified.HasValue && !result.HealthQualified.Value)
+                    {
+               
+                        worksheet.Cell(row, 14).Value = "Not qualified";
+                        worksheet.Cell(row, 15).Value = "Not qualified";
+                        worksheet.Cell(row, 16).Value = "Not qualified";
+                        worksheet.Cell(row, 17).Value = "Not qualified";
+                        worksheet.Cell(row, 18).Value = "Not qualified";
+                        worksheet.Cell(row, 19).Value = "Not qualified";
+                        worksheet.Cell(row, 20).Value = "Not qualified";
+                        worksheet.Cell(row, 21).Value = "Not qualified";
+                        worksheet.Cell(row, 22).Value = "Not qualified";
+                    }
+                    else if (!result.Vaccinated)
+                    {
+                      
+                        worksheet.Cell(row, 14).Value = "Failed";
+                        worksheet.Cell(row, 15).Value = "Failed";
+                        worksheet.Cell(row, 16).Value = "Failed";
+                        worksheet.Cell(row, 17).Value = "Failed";
+                        worksheet.Cell(row, 18).Value = "Failed";
+                        worksheet.Cell(row, 19).Value = "Failed";
+                        worksheet.Cell(row, 20).Value = "Failed";
+                        worksheet.Cell(row, 21).Value = "Failed";
+                        worksheet.Cell(row, 22).Value = "Failed";
+                    }
+                    else
+                    {
+                        
+                        worksheet.Cell(row, 14).Value = observation?.Notes ?? "No observation notes";
+                        worksheet.Cell(row, 15).Value = observation?.ObservationStartTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "";
+                        worksheet.Cell(row, 16).Value = observation?.ObservationEndTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "";
+                        worksheet.Cell(row, 17).Value = observation?.ReactionStartTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "";
+                        worksheet.Cell(row, 18).Value = observation?.ReactionType ?? "";
+                        worksheet.Cell(row, 19).Value = observation?.SeverityLevel ?? "";
+                        worksheet.Cell(row, 20).Value = observation?.ImmediateReaction ?? "";
+                        worksheet.Cell(row, 21).Value = observation?.Intervention ?? "";
+                        worksheet.Cell(row, 22).Value = observation?.ObservedBy ?? "";
+                    }
 
                     row++;
                 }
