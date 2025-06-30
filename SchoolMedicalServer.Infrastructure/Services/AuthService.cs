@@ -158,7 +158,6 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.NewPassword);
             user.Otp = null;
-            user.OtpExpiryTime = null;
             userRepository.Update(user);
             await baseRepository.SaveChangesAsync();
             return true;

@@ -122,7 +122,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<IEnumerable<UserInformation>> GetFreeNursesAsync()
         {
-            var today = DateTime.UtcNow.Date;
+            DateTime todayStart = DateTime.Today;
+            DateTime todayEnd = todayStart.AddDays(1).AddTicks(-1);
             var vaccinationRounds = await vaccinationRoundRepository.GetVaccinationRoundsAsync();
             var healthCheckRounds = await healthCheckRoundRepository.GetHealthCheckRoundsAsync();
             var nurses = await userRepository.GetUsersByRoleName("nurse");
@@ -130,8 +131,17 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var freeNurses = new List<UserInformation>();
             foreach (var nurse in nurses)
             {
-                var hasVaccinationToday = vaccinationRounds.Any(vr => vr.NurseId == nurse.UserId && vr.StartTime <= today && vr.EndTime >= today);
-                var hasHealthCheckToday = healthCheckRounds.Any(hcr => hcr.NurseId == nurse.UserId && hcr.StartTime <= today && hcr.EndTime >= today);
+                var hasVaccinationToday = vaccinationRounds.Any(vr =>
+                            vr.NurseId == nurse.UserId &&
+                            vr.StartTime <= todayEnd &&
+                            vr.EndTime >= todayStart
+                        );
+
+                var hasHealthCheckToday = healthCheckRounds.Any(hcr =>
+                            hcr.NurseId == nurse.UserId &&
+                            hcr.StartTime <= todayEnd &&
+                            hcr.EndTime >= todayStart
+                        );
                 if (!hasVaccinationToday && !hasHealthCheckToday)
                 {
                     freeNurses.Add(new UserInformation
