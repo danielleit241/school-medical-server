@@ -28,9 +28,10 @@ jobs:
     - name: ✅ Run unit tests
       run: dotnet test SchoolMedicalServer.Test/SchoolMedicalServer.Test.csproj --verbosity normal --collect:"XPlat Code Coverage"
 
-    - name: 📊 Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
       with:
+        token: ${{ secrets.CODECOV_TOKEN }}
         files: ./SchoolMedicalServer.Test/TestResults/**/*.cobertura.xml
         fail_ci_if_error: true
 
