@@ -221,7 +221,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     ParentNotificationStartDate = schedule.ParentNotificationStartDate,
                     ParentNotificationEndDate = schedule.ParentNotificationEndDate,
                     CreatedAt = schedule.CreatedAt,
-                    UpdatedAt = schedule.UpdatedAt
+                    UpdatedAt = schedule.UpdatedAt,
+                    Status = schedule.Status
                 }
             };
         }
