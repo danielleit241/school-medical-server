@@ -17,9 +17,9 @@
         }
 
         [HttpGet("admins/dashboards/recent-actions")]
-        public async Task<IActionResult> GetUsersRecentActions()
+        public async Task<IActionResult> GetUsersRecentActions([FromQuery] DashboardRequest request)
         {
-            var res = await service.GetRecentActionsAsync();
+            var res = await service.GetRecentActionsAsync(request);
             if (res == null || !res.Any())
             {
                 return NotFound("No recent actions found.");

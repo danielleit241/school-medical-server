@@ -8,7 +8,6 @@
     public class UserRecentAction
     {
         public string? Name { get; set; }
-        public DateTime? DateTime { get; set; }
         public int Count { get; set; }
     }
 }
