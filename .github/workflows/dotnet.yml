@@ -26,7 +26,7 @@ jobs:
       run: dotnet build --no-restore --configuration Release
 
     - name: ✅ Run unit tests
-      run: dotnet test SchoolMedicalServer.Test/SchoolMedicalServer.Test.csproj --verbosity normal --collect:"XPlat Code Coverage"
+      run: dotnet test SchoolMedicalServer.Test/SchoolMedicalServer.Test.csproj --verbosity normal --collect:"XPlat Code Coverage" /p:ExcludeByFile="**/Migrations/*"
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
