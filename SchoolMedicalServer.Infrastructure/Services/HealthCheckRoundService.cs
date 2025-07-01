@@ -1,4 +1,5 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlows.HealthCheck.Rounds;
+﻿using System.Globalization;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlows.HealthCheck.Rounds;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
@@ -27,11 +28,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             if (schedule.Rounds.Any(r => r.TargetGrade!.Equals(request.TargetGrade!)))
                 return false;
-
+            TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
             var round = new HealthCheckRound
             {
                 RoundId = Guid.NewGuid(),
-                RoundName = request.RoundName,
+                RoundName = textInfo.ToTitleCase(request.RoundName!.ToLower().Trim()),
                 TargetGrade = request.TargetGrade,
                 Description = request.Description,
                 StartTime = request.StartTime!.Value,
@@ -269,7 +270,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return false;
             }
-            round.RoundName = request.RoundName;
+            TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+            round.RoundName = textInfo.ToTitleCase(request.RoundName!.ToLower().Trim());
             round.TargetGrade = request.TargetGrade;
             round.Description = request.Description;
             round.StartTime = request.StartTime;

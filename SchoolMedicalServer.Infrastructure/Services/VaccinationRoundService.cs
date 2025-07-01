@@ -1,3 +1,4 @@
+using System.Globalization;
 using SchoolMedicalServer.Abstractions.Dtos.MainFlows.Vaccination.Rounds;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
@@ -207,11 +208,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             if (schedule.Rounds.Any(r => r.TargetGrade!.Equals(request.TargetGrade!)))
                 return false;
-
+            TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
             var round = new VaccinationRound
             {
                 RoundId = Guid.NewGuid(),
-                RoundName = request.RoundName,
+                RoundName = textInfo.ToTitleCase(request.RoundName!.ToLower().Trim()),
                 TargetGrade = request.TargetGrade,
                 Description = request.Description,
                 StartTime = request.StartTime!.Value,
@@ -292,7 +293,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return false;
             }
-            updateRound.RoundName = request.RoundName;
+            TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+            updateRound.RoundName = textInfo.ToTitleCase(request.RoundName!.ToLower().Trim());
             updateRound.TargetGrade = request.TargetGrade;
             updateRound.Description = request.Description;
             updateRound.StartTime = request.StartTime;
