@@ -1,0 +1,88 @@
+# Git
+.git
+.gitignore
+.gitattributes
+README.md
+
+# Build output
+**/bin/
+**/obj/
+**/out/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.cache
+.vscode/
+
+# Dependencies
+**/node_modules/
+**/packages/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+**/logs/
+*.log
+
+# Test results
+TestResults/
+test-results/
+coverage/
+*.coverage
+*.coveragexml
+
+# Temporary files
+**/tmp/
+**/temp/
+**/*.tmp
+
+# Environment files (will be handled by docker-compose)
+.env
+.env.local
+.env.development
+.env.production
+
+# IDE files
+*.swp
+*.swo
+*~
+
+# Docker files (avoid recursion)
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# NuGet
+*.nupkg
+*.snupkg
+
+# Build artifacts
+*.binlog
+
+# Database files
+*.mdf
+*.ldf
+*.db
+*.db-shm
+*.db-wal
+
+# Certificates and secrets
+*.pfx
+*.p12
+*.key
+*.pem
+*.crt

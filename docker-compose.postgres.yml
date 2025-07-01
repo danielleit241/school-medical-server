@@ -1,0 +1,22 @@
+version: '3.8'
+
+# PostgreSQL-specific configuration
+services:
+  school-medical-api:
+    environment:
+      - ConnectionStrings__DBDefault=Host=postgres;Database=${POSTGRES_DB:-SchoolMedicalManagement};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-YourStrong!Passw0rd};
+    depends_on:
+      postgres:
+        condition: service_healthy
+      # Remove sqlserver dependency
+    profiles:
+      - postgres
+
+  # Disable SQL Server when using PostgreSQL
+  sqlserver:
+    profiles:
+      - sqlserver
+
+  postgres:
+    profiles:
+      - postgres

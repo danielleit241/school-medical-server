@@ -24,6 +24,10 @@
 
             app.MapControllers();
             app.MapHub<NotificationHub>("/notificationHub");
+            
+            // Add health check endpoint
+            app.MapHealthChecks("/health");
+            
             return app;
         }
 

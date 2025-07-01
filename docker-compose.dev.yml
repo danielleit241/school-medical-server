@@ -1,0 +1,26 @@
+version: '3.8'
+
+# Development-specific overrides
+services:
+  school-medical-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: build
+    volumes:
+      # Mount source code for development (if using volume mounts for development)
+      - ./SchoolMedicalServer.Api:/src/SchoolMedicalServer.Api
+      - ./SchoolMedicalServer.Infrastructure:/src/SchoolMedicalServer.Infrastructure
+      - ./SchoolMedicalServer.Abstractions:/src/SchoolMedicalServer.Abstractions
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    command: ["dotnet", "watch", "run", "--project", "SchoolMedicalServer.Api", "--urls", "http://0.0.0.0:8080"]
+
+  sqlserver:
+    ports:
+      - "1433:1433"
+    # In development, we might want to expose the database port

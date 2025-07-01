@@ -1,0 +1,100 @@
+version: '3.8'
+
+services:
+  # School Medical Server API
+  school-medical-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: school-medical-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ENVIRONMENT:-Development}
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DBDefault=Server=sqlserver;Database=SchoolMedicalManagement;User Id=sa;Password=${DB_PASSWORD:-YourStrong!Passw0rd};Trusted_Connection=False;TrustServerCertificate=True;
+      - Jwt__Key=${JWT_KEY:-3OtmdcjooTLneJsdUbNRSFLw92UiMSRoFoKnedu8vRSlqHkLcJ7okRBTQkh3SBLF}
+      - Jwt__Issuer=${JWT_ISSUER:-http://localhost:8080}
+      - Jwt__Audience=${JWT_AUDIENCE:-http://localhost:8080}
+      - DefaultAdmin__PhoneNumber=${ADMIN_PHONE:-adminsystem}
+      - DefaultAdmin__Password=${ADMIN_PASSWORD:-adminsystem}
+      - DefaultAccountCreate__Password=${DEFAULT_PASSWORD:-123@123@123}
+      - DefaultAccountCreate__RoleName=${DEFAULT_ROLE:-parent}
+      - EmailHost=${EMAIL_HOST:-smtp.gmail.com}
+      - EmailPort=${EMAIL_PORT:-587}
+      - EmailUsername=${EMAIL_USERNAME:-noreply.medicaredh2tt@gmail.com}
+      - EmailPassword=${EMAIL_PASSWORD}
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - school-medical-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: school-medical-sqlserver
+    restart: unless-stopped
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${DB_PASSWORD:-YourStrong!Passw0rd}
+      - MSSQL_PID=${MSSQL_PID:-Express}
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    networks:
+      - school-medical-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${DB_PASSWORD:-YourStrong!Passw0rd} -Q 'SELECT 1' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # PostgreSQL Database (Alternative option)
+  postgres:
+    image: postgres:15-alpine
+    container_name: school-medical-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-SchoolMedicalManagement}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-YourStrong!Passw0rd}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql:ro
+    networks:
+      - school-medical-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    profiles:
+      - postgres
+
+networks:
+  school-medical-network:
+    driver: bridge
+    name: school-medical-network
+
+volumes:
+  sqlserver_data:
+    driver: local
+    name: school-medical-sqlserver-data
+  postgres_data:
+    driver: local
+    name: school-medical-postgres-data

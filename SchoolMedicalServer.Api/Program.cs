@@ -6,6 +6,10 @@ builder.Services.AddRepositories();
 builder.Services.AddServices();
 builder.Services.AddSignalR();
 
+// Add health checks
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<SchoolMedicalManagementContext>();
+
 var app = builder.Build();
 
 await app.AddWebApplicationServicesAsync();
