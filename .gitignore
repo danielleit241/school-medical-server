@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Docker and deployment specific ignores
+.env.local
+.env
+backups/
+**/logs/
