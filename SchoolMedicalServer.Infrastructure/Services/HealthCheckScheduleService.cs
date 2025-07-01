@@ -1,4 +1,5 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlows;
+﻿using System.Globalization;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlows;
 using SchoolMedicalServer.Abstractions.Dtos.MainFlows.HealthCheck.Schedules;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
@@ -22,10 +23,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return false!;
             }
+            TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
             var healthCheckSchedule = new HealthCheckSchedule
             {
                 ScheduleId = Guid.NewGuid(),
-                Title = request.Title,
+                Title = textInfo.ToTitleCase(request.Title!.ToLower().Trim()),
                 Description = request.Description,
                 StartDate = request.StartDate,
                 EndDate = request.EndDate,
@@ -38,7 +40,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Rounds = [.. request.HealthCheckRounds.Select(round => new HealthCheckRound
                 {
                     RoundId = Guid.NewGuid(),
-                    RoundName = round.RoundName,
+                    RoundName = textInfo.ToTitleCase(round.RoundName!.ToLower().Trim()),
                     TargetGrade = round.TargetGrade,
                     Description = round.Description,
                     StartTime = round.StartTime,
@@ -217,7 +219,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return false;
             }
-            schedule.Title = request.Title;
+            TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+            schedule.Title = textInfo.ToTitleCase(request.Title!.ToLower().Trim());
             schedule.HealthCheckType = request.HealthCheckType;
             schedule.Description = request.Description;
             schedule.StartDate = request.StartDate;
