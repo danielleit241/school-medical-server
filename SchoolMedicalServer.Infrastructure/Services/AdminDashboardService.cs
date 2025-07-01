@@ -68,26 +68,23 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return responses;
         }
 
-        public async Task<IEnumerable<DashboardUserRecentActionResponse>> GetRecentActionsAsync()
+        public async Task<IEnumerable<DashboardUserRecentActionResponse>> GetRecentActionsAsync(DashboardRequest request)
         {
-            var now = DateTime.UtcNow;
-            var next30Mins = now.AddMinutes(30);
-            var nextDays = now.AddDays(1);
+            DateTime? fromDate = request.From?.ToDateTime(new TimeOnly(0, 0));
+            DateTime? toDate = request.To?.ToDateTime(new TimeOnly(23, 59));
+
             var responses = new List<DashboardUserRecentActionResponse>();
-
-
             var user = await userRepository.GetAllUser();
-            var userJustCreated = user.Where(u => u.CreatedAt >= now && u.CreatedAt <= next30Mins).ToList();
-            var userJustUpdated = user.Where(u => u.UpdatedAt >= now && u.UpdatedAt <= next30Mins).ToList();
-            var userJustResetPassword = user.Where(u => u.OtpExpiryTime >= now.Date && u.OtpExpiryTime <= nextDays).ToList();
+            var userJustCreated = user.Where(u => u.CreatedAt >= fromDate && u.CreatedAt <= toDate).ToList();
+            var userJustUpdated = user.Where(u => u.UpdatedAt >= fromDate && u.UpdatedAt <= toDate).ToList();
+            var userJustResetPassword = user.Where(u => u.OtpExpiryTime >= fromDate && u.OtpExpiryTime <= toDate).ToList();
 
             responses.Add(new DashboardUserRecentActionResponse
             {
                 UserRecentAction = new UserRecentAction
                 {
-                    Name = $"Create in {now} to {next30Mins}",
-                    Count = userJustCreated.Count,
-                    DateTime = now
+                    Name = $"Create in {fromDate} to {toDate}",
+                    Count = userJustCreated.Count
                 }
             });
 
@@ -95,9 +92,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 UserRecentAction = new UserRecentAction
                 {
-                    Name = $"Update in {now} to {next30Mins}",
-                    Count = userJustUpdated.Count,
-                    DateTime = now
+                    Name = $"Update in {fromDate} to {toDate}",
+                    Count = userJustUpdated.Count
                 }
             });
 
@@ -105,7 +101,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 UserRecentAction = new UserRecentAction
                 {
-                    Name = $"Reset password in {now.Date} to {nextDays}",
+                    Name = $"Reset password in {fromDate} to {toDate}",
                     Count = userJustResetPassword.Count
                 }
             });
