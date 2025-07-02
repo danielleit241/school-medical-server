@@ -99,7 +99,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     ResultId = Guid.NewGuid(),
                     HealthProfileId = hp!.HealthProfileId!,
                     RoundId = round.RoundId,
-                    ParentConfirmed = true,
+                    ParentConfirmed = null,
                     Status = "Pending",
                     RecordedId = round.NurseId,
                     CreatedAt = DateTime.UtcNow
