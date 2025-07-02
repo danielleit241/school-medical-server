@@ -415,13 +415,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     worksheet.Cell(row, 8).Value = result.DatePerformed.HasValue
                         ? result.DatePerformed.Value.ToString("yyyy-MM-dd")
                         : "not recorded yet ";
-                    worksheet.Cell(row, 9).Value = result.Height?.ToString() ?? "not recorded yet";
-                    worksheet.Cell(row, 10).Value = result.Weight?.ToString() ?? "not recorded yet";
-                    worksheet.Cell(row, 11).Value = result.VisionLeft?.ToString() ?? "not recorded yet";
-                    worksheet.Cell(row, 12).Value = result.VisionRight?.ToString() ?? "not recorded yet";
-                    worksheet.Cell(row, 13).Value = result.Hearing ?? "not recorded yet";
-                    worksheet.Cell(row, 14).Value = result.Nose ?? "not recorded yet";
-                    worksheet.Cell(row, 15).Value = result.BloodPressure ?? "not recorded yet";
+                    worksheet.Cell(row, 9).Value = result.Height?.ToString() ?? "Not recorded yet";
+                    worksheet.Cell(row, 10).Value = result.Weight?.ToString() ?? "Not recorded yet";
+                    worksheet.Cell(row, 11).Value = result.VisionLeft?.ToString() ?? "Not recorded yet";
+                    worksheet.Cell(row, 12).Value = result.VisionRight?.ToString() ?? "Not recorded yet";
+                    worksheet.Cell(row, 13).Value = result.Hearing ?? "Not recorded yet";
+                    worksheet.Cell(row, 14).Value = result.Nose ?? "Not recorded yet";
+                    worksheet.Cell(row, 15).Value = result.BloodPressure ?? "Not recorded yet";
                     worksheet.Cell(row, 16).Value = result.Status ?? "";
                     string status = (result.Status ?? "").Trim().ToLower();
                     if (status == "completed")
@@ -434,7 +434,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                         worksheet.Cell(row, 16).Style.Font.FontColor = XLColor.Red;
                         worksheet.Cell(row, 16).Style.Font.Bold = true;
                     }
-                    worksheet.Cell(row, 17).Value = result.Notes ?? "not recorded yet";
+                    worksheet.Cell(row, 17).Value = result.Notes ?? "Not recorded yet";
                   
                     row++;
                 }
