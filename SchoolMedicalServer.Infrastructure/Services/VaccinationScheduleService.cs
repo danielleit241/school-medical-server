@@ -1,4 +1,5 @@
-﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlows;
+﻿using System.Globalization;
+using SchoolMedicalServer.Abstractions.Dtos.MainFlows;
 using SchoolMedicalServer.Abstractions.Dtos.MainFlows.Vaccination.Schedules;
 using SchoolMedicalServer.Abstractions.Dtos.MainFlows.Vaccination.Vaccines;
 using SchoolMedicalServer.Abstractions.Dtos.Notification;
@@ -23,12 +24,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return false;
             }
-
+            TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
             var vaccinationSchedule = new VaccinationSchedule
             {
                 ScheduleId = Guid.NewGuid(),
                 VaccineId = request.VaccineId,
-                Title = request.Title,
+                Title = textInfo.ToTitleCase(request.Title!.ToLower().Trim()),
                 Description = request.Description,
                 StartDate = request.StartDate,
                 EndDate = request.EndDate,
@@ -40,7 +41,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Rounds = [.. request.VaccinationRounds.Select(round => new VaccinationRound
                 {
                     RoundId = Guid.NewGuid(),
-                    RoundName = round.RoundName,
+                    RoundName = textInfo.ToTitleCase(round.RoundName!.ToLower().Trim()),
                     TargetGrade = round.TargetGrade,
                     Description = round.Description,
                     StartTime = round.StartTime,
@@ -99,7 +100,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     VaccinationResultId = Guid.NewGuid(),
                     HealthProfileId = healthProfile.HealthProfileId,
                     RoundId = round.RoundId,
-                    ParentConfirmed = true,
+                    ParentConfirmed = null,
                     HealthQualified = true,
                     Vaccinated = false,
                     RecorderId = round.NurseId,
@@ -269,9 +270,9 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 if (await resultRepository.IsExistStudentByRoundId(round.RoundId))
                     return false;
             }
-
+            TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
             schedule.VaccineId = request.VaccineId;
-            schedule.Title = request.Title;
+            schedule.Title = textInfo.ToTitleCase(request.Title!.ToLower().Trim());
             schedule.Description = request.Description;
             schedule.StartDate = request.StartDate;
             schedule.EndDate = request.EndDate;

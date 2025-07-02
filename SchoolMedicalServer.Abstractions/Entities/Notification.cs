@@ -24,5 +24,6 @@ public enum NotificationTypes
     Vaccination = 5,
     GeneralNotification = 6,
     VaccinationObservation = 7,
-    VaccinationResult = 8
+    VaccinationResult = 8,
+    HealthCheckResult = 9
 }
