@@ -96,7 +96,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Content = $"The health check result for your child {result.HealthProfile!.Student!.FullName} is now available.",
                 SendDate = DateTime.UtcNow,
                 IsRead = false,
-                Type = NotificationTypes.HealthCheckUp,
+                Type = NotificationTypes.HealthCheckResult,
                 SourceId = result.ResultId
             };
             await notificationRepository.AddAsync(notification);
