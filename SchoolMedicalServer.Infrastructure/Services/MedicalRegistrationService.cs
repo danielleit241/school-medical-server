@@ -30,9 +30,26 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return null!;
             }
-            medicalRegistration.DateApproved = request.DateApproved ?? DateOnly.FromDateTime(DateTime.UtcNow);
-            medicalRegistration.Status = true;
 
+            if (request.Status == true)
+            {
+                medicalRegistration.DateApproved = request.DateApproved ?? DateOnly.FromDateTime(DateTime.UtcNow);
+                medicalRegistration.Status = true;
+            }
+            else
+            {
+                medicalRegistration.DateApproved = null;
+                medicalRegistration.Status = false;
+                var medicalRegistrationDetails = await medicalRegistrationDetailsRepository.GetDetailsByRegistrationIdAsync(medicalRegistrationId);
+                foreach (var detail in medicalRegistrationDetails)
+                {
+                    detail.IsCompleted = false;
+                    detail.StaffNurseId = nurse.UserId;
+                    detail.DateCompleted = null;
+                    medicalRegistrationDetailsRepository.UpdateDetails(detail);
+                }
+            }
+            medicalRegistration.NurseNotes = request.NurseNotes;
             medicalRegistrationRepository.Update(medicalRegistration);
             await baseRepository.SaveChangesAsync();
 
@@ -93,8 +110,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     RegistrationId = medicalRegistration.RegistrationId,
                     DoseNumber = detail.DoseNumber,
                     DoseTime = detail.DoseTime,
-                    Notes = detail.Notes,
-                    IsCompleted = false
+                    Notes = detail.Notes
                 };
                 medicalRegistration.Details.Add(registrationDetail);
             }

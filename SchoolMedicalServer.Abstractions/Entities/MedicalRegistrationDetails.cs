@@ -10,7 +10,7 @@ namespace SchoolMedicalServer.Abstractions.Entities
         public string? DoseNumber { get; set; }
         public string? DoseTime { get; set; }
         public string? Notes { get; set; }
-        public bool IsCompleted { get; set; }
+        public bool? IsCompleted { get; set; }
         public DateTime? DateCompleted { get; set; }
 
         [JsonIgnore]

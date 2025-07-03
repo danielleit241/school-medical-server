@@ -20,7 +20,7 @@ namespace SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration
         public bool ParentConsent { get; set; }
         public DateOnly? DateSubmitted { get; set; }
         public string? PictureUrl { get; set; }
-        public bool Status { get; set; }
+        public bool? Status { get; set; }
     }
 
     public class MedicalRegistrationDetailsResponse
@@ -33,7 +33,7 @@ namespace SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration
 
         public string? Notes { get; set; }
 
-        public bool IsCompleted { get; set; } = false;
+        public bool? IsCompleted { get; set; } = false;
 
         public DateTime? DateCompleted { get; set; }
     }

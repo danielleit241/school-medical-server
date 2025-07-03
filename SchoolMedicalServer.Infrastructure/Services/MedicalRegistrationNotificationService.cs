@@ -51,13 +51,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var receiver = await helperService.GetReceiverInformationAsync(request);
             var sender = await helperService.GetSenderInformationAsync(request);
 
+
             var notification = new Notification
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = receiver!.UserId,
                 SenderId = sender!.UserId,
-                Title = "Medical Registration Approved",
-                Content = $"Your child's medication registration ({medicalRegistration.MedicationName}) has been approved by the nurse.",
+                Title = $"Medical Registration {(medicalRegistration.Status == true ? "Approved" : "Declined")}",
+                Content = $"Your child's medication registration ({medicalRegistration.MedicationName}) has been {(medicalRegistration.Status == true ? "approved" : "declined")} by the nurse. {(medicalRegistration.Status == false ? medicalRegistration.NurseNotes : "")}",
                 SendDate = DateTime.UtcNow,
                 IsRead = false,
                 Type = NotificationTypes.MedicalRegistration,
