@@ -47,16 +47,27 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             var receiver = await notificationHelper.GetReceiverInformationAsync(request);
             var sender = await notificationHelper.GetSenderInformationAsync(request);
+            var body = "";
+            if (appointment.ConfirmationStatus == true && appointment.CompletionStatus == null)
+            {
+                body = $"Your appointment with {sender!.UserName} is confirmed for {appointment.AppointmentDate?.ToString("d")} from {appointment.AppointmentStartTime?.ToString()} to {appointment.AppointmentEndTime?.ToString()}.";
+            }
+            else if (appointment.CompletionStatus == true)
+            {
+                body = $"Your appointment with {sender!.UserName} is completed for {appointment.AppointmentDate?.ToString("d")} from {appointment.AppointmentStartTime?.ToString()} to {appointment.AppointmentEndTime?.ToString()}.";
+            }
+            else
+            {
+                body = $"Your appointment with {sender!.UserName} is not completed for {appointment.AppointmentDate?.ToString("d")} from {appointment.AppointmentStartTime?.ToString()} to {appointment.AppointmentEndTime?.ToString()}.";
+            }
 
             var notification = new Notification
             {
                 NotificationId = Guid.NewGuid(),
                 SenderId = sender!.UserId,
                 UserId = receiver!.UserId,
-                Title = appointment.CompletionStatus == false ? "Appointment Confirmation" : "Appointment Completion",
-                Content = appointment.CompletionStatus == true
-                            ? $"Your appointment with {sender!.UserName} is completed for {appointment.AppointmentDate?.ToString("d")} from {appointment.AppointmentStartTime?.ToString()} to {appointment.AppointmentEndTime?.ToString()}."
-                            : $"Your appointment with {sender!.UserName} is confirmed for {appointment.AppointmentDate?.ToString("d")} from {appointment.AppointmentStartTime?.ToString()} to {appointment.AppointmentEndTime?.ToString()}.",
+                Title = appointment.CompletionStatus == null ? "Appointment Confirmation" : "Appointment Completion",
+                Content = body,
                 SendDate = DateTime.UtcNow,
                 IsRead = false,
                 Type = NotificationTypes.Appointment,
