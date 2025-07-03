@@ -91,7 +91,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 AppointmentEndTime = request.AppointmentEndTime,
                 AppointmentReason = request.AppointmentReason,
                 ConfirmationStatus = false,
-                CompletionStatus = false
+                CompletionStatus = null
             };
             await appointmentRepository.AddAsync(appointment);
             await baseRepository.SaveChangesAsync();
