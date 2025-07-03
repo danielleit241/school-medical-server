@@ -10,5 +10,10 @@ namespace SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration
 
         [Required(ErrorMessage = "Date approved is required.")]
         public DateOnly? DateApproved { get; set; }
+
+        [Required(ErrorMessage = "Status is required.")]
+        public bool Status { get; set; }
+
+        public string? NurseNotes { get; set; }
     }
 }

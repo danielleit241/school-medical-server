@@ -217,10 +217,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 )
                 .ToList();
 
-            var pendingRegistration = filteredRegistrations.Where(r => r.Status == false).ToList();
+            var pendingRegistration = filteredRegistrations.Where(r => r.Status == null).ToList();
+            var declinedRegistration = filteredRegistrations.Where(r => r.Status == false).ToList();
             var approvedRegistration = filteredRegistrations.Where(r => r.Status == true).ToList();
-            var notCompletedRegistration = filteredRegistrations.Where(r => r.Status == true && r.Details.Any() && r.Details.Any(d => !d.IsCompleted)).ToList();
-            var completedRegistration = filteredRegistrations.Where(r => r.Status == true && r.Details.Any() && r.Details.All(d => d.IsCompleted)).ToList();
+            var notCompletedRegistration = filteredRegistrations.Where(r => r.Status == true && r.Details.Any() && r.Details.Any(d => !d.IsCompleted == false)).ToList();
+            var completedRegistration = filteredRegistrations.Where(r => r.Status == true && r.Details.Any() && r.Details.All(d => d.IsCompleted == true)).ToList();
 
             responses.Add(new DashboardResponse
             {
@@ -232,6 +233,19 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     {
                         Id = pending.RegistrationId,
                         Name = pending.MedicationName
+                    }).ToList()
+                }
+            });
+            responses.Add(new DashboardResponse
+            {
+                Item = new Item
+                {
+                    Name = $"Declined in {fromDate} to {toDate}",
+                    Count = declinedRegistration.Count,
+                    Details = declinedRegistration.Select(declined => new ItemDetails
+                    {
+                        Id = declined.RegistrationId,
+                        Name = declined.MedicationName
                     }).ToList()
                 }
             });

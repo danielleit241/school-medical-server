@@ -26,7 +26,9 @@ public partial class MedicalRegistration
 
     public DateOnly? DateApproved { get; set; }
 
-    public bool Status { get; set; }
+    public bool? Status { get; set; }
+
+    public string? NurseNotes { get; set; }
 
     [JsonIgnore]
     public virtual Student? Student { get; set; }
