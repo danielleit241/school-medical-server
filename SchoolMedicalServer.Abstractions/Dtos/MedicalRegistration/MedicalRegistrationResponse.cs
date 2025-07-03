@@ -21,6 +21,7 @@ namespace SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration
         public DateOnly? DateSubmitted { get; set; }
         public string? PictureUrl { get; set; }
         public bool? Status { get; set; }
+        public string? NurseNotes { get; set; }
     }
 
     public class MedicalRegistrationDetailsResponse

@@ -305,7 +305,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                     Notes = medicalRegistration.Notes,
                     ParentConsent = medicalRegistration.ParentalConsent ?? false,
                     DateSubmitted = medicalRegistration.DateSubmitted,
-                    Status = medicalRegistration.Status
+                    Status = medicalRegistration.Status,
+                    NurseNotes = medicalRegistration.NurseNotes
                 },
                 MedicalRegistrationDetails = details,
                 NurseApproved = nurseApprovedResponse,
