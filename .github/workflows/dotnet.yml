@@ -26,4 +26,22 @@ jobs:
       run: dotnet build --no-restore --configuration Release
 
     - name: ✅ Run unit tests
-      run: dotnet test SchoolMedicalServer.Test/SchoolMedicalServer.Test.csproj --verbosity normal
+      run: dotnet test SchoolMedicalServer.Test/SchoolMedicalServer.Test.csproj --verbosity normal --collect:"XPlat Code Coverage" /p:ExcludeByFile="SchoolMedicalServer.Infrastructure/Migrations/*.cs"
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./SchoolMedicalServer.Test/TestResults/**/*.cobertura.xml
+        fail_ci_if_error: true
+
+    - name: 📈 Generate HTML coverage report
+      run: |
+        dotnet tool install -g dotnet-reportgenerator-globaltool
+        reportgenerator -reports:SchoolMedicalServer.Test/TestResults/**/*.cobertura.xml -targetdir:coverage-report -reporttypes:Html
+
+    - name: 📤 Upload HTML coverage report as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-html-report
+        path: coverage-report

@@ -42,7 +42,7 @@ namespace SchoolMedicalServer.Test
 
         public static IEnumerable<object[]> ValidLoginData() => Users.ToList().Select(u => new object[] { u.Phone, u.Password });
         public static IEnumerable<object[]> InvalidLoginData() => [
-            ["1234567890", "WrongPassword!"],
+            ["1234567899", "WrongPassword!"],
             ["9817232134", "YourStr0ngPassw0rd!"],
             ["0000000000", "WrongPassword!"]
         ];
