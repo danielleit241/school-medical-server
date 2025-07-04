@@ -47,5 +47,18 @@
             }
             return StatusCode(200, registrations);
         }
+
+        [HttpGet("parents/{userId}/medical-registrations/total-cancel")]
+        [Authorize(Roles = "parent")]
+        public async Task<IActionResult> GetTotalCancelledMedicalRegistrations(Guid userId)
+        {
+            if (userId == Guid.Empty)
+            {
+                return BadRequest("Invalid user ID.");
+            }
+            var totalCancelledInMonth = await service.GetUserCancelMedicalRegistrationsInMonthAsync(userId);
+
+            return Ok(new { TotalCancelled = totalCancelledInMonth });
+        }
     }
 }

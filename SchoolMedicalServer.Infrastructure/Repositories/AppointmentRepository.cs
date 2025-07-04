@@ -128,5 +128,15 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .AsNoTracking()
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Appointment>> GetByUserIdAsync(Guid userId)
+        {
+            return await _context.Appointments
+                .Where(a => a.UserId == userId)
+                .Include(a => a.Student)
+                .Include(a => a.User)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }

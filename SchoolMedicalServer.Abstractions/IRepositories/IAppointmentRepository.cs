@@ -28,7 +28,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         void Update(Appointment appointment);
         Task<Appointment?> GetByIdWithStudentAsync(Guid appointmentId);
         Task<IEnumerable<Appointment>> GetAllAppointment();
-
-
+        Task<IEnumerable<Appointment>> GetByUserIdAsync(Guid userId);
     }
 }

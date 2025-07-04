@@ -13,6 +13,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
 
         Task<MedicalRegistrationResponse?> GetMedicalRegistrationAsync(Guid medicalRegistrationId);
         Task<PaginationResponse<MedicalRegistrationResponse?>> GetMedicalRegistrationsAsync(PaginationRequest? paginationRequest, Guid nurseId); //paginantion
+        Task<int> GetUserCancelMedicalRegistrationsInMonthAsync(Guid userId);
         Task<PaginationResponse<MedicalRegistrationResponse?>> GetUserMedicalRegistrationsAsync(PaginationRequest? paginationRequest, Guid userId); //paginantion
     }
 }

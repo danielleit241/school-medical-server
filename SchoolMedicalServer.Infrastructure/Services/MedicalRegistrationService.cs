@@ -316,5 +316,20 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             return response;
         }
+
+        public async Task<int> GetUserCancelMedicalRegistrationsInMonthAsync(Guid userId)
+        {
+            var registrations = await medicalRegistrationRepository.GetByUserIdAsync(userId);
+            if (registrations == null || !registrations.Any())
+            {
+                return 0;
+            }
+            var firstDateOfMonth = new DateOnly(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
+            var lastDateOfMonth = firstDateOfMonth.AddMonths(1).AddDays(-1);
+            var cancelledRegistrations = registrations
+                .Where(r => r.Status == false && r.DateSubmitted >= firstDateOfMonth && r.DateSubmitted <= lastDateOfMonth)
+                .Count();
+            return cancelledRegistrations;
+        }
     }
 }

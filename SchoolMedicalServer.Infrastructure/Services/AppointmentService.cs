@@ -283,5 +283,20 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             return hasAppointment;
         }
+
+        public async Task<int> GetUserCancelAppointmentsInMonth(Guid userId)
+        {
+            var appointments = await appointmentRepository.GetByUserIdAsync(userId);
+            var firstDateOfMonth = new DateOnly(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
+            var lastDateOfMonth = firstDateOfMonth.AddMonths(1).AddDays(-1);
+            if (appointments == null || !appointments.Any())
+            {
+                return 0;
+            }
+            var cancelledAppointments = appointments
+                .Where(a => a.UserId == userId && a.CompletionStatus == false && a.AppointmentDate >= firstDateOfMonth && a.AppointmentDate <= lastDateOfMonth)
+                .Count();
+            return cancelledAppointments;
+        }
     }
 }
