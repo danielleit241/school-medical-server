@@ -13,6 +13,6 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
         void Update(MedicalRegistration registration);
         Task<MedicalRegistration?> GetApprovedByIdWithStudentAsync(Guid registrationId);
         Task<IEnumerable<MedicalRegistration>> GetAllMedicalRegistration();
-
+        Task<IEnumerable<MedicalRegistration>> GetByUserIdAsync(Guid userId);
     }
 }

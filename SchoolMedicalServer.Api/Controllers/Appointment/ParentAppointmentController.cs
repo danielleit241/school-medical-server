@@ -64,5 +64,17 @@
 
             return Ok(appointment);
         }
+
+        [HttpGet("parents/{userId}/appointments/total-cancel")]
+        [Authorize(Roles = "parent")]
+        public async Task<IActionResult> GetTotalCancelledAppointments(Guid userId)
+        {
+            if (userId == Guid.Empty)
+            {
+                return BadRequest("User ID cannot be empty.");
+            }
+            var totalCancelledInMonth = await service.GetUserCancelAppointmentsInMonth(userId);
+            return Ok(new { TotalCancelled = totalCancelledInMonth });
+        }
     }
 }
