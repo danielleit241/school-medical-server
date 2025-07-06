@@ -5,6 +5,19 @@ namespace SchoolMedicalServer.Api.Controllers.HealthDeclaration
     public class HealthDeclarationController(IHealthProfileDeclarationService service) : ControllerBase
     {
 
+        [HttpGet("parents/{parentId}/students/total-health-declarations")]
+        [Authorize(Roles = "parent")]
+        public async Task<IActionResult> IsHealthDeclarationExist(Guid parentId)
+        {
+            if (parentId == Guid.Empty)
+            {
+                return BadRequest("Parent ID cannot be empty.");
+            }
+            var response = await service.IsHealthDeclarationExistAsync(parentId);
+
+            return Ok(response);
+        }
+
         [HttpGet("students/{studentId}/health-declarations")]
         [Authorize(Roles = "parent, nurse")]
         public async Task<IActionResult> GetHealthProfileDeclaration(Guid studentId)

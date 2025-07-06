@@ -96,6 +96,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return response;
         }
 
+        public async Task<int> IsHealthDeclarationExistAsync(Guid parentId)
+        {
+            var healthProfiles = await healthProfileRepository.GetAllAsync();
+            var studentIsNotDeclared = healthProfiles.Where(h => h.Student?.UserId == parentId && h.DeclarationDate == null)
+                .Select(h => h.StudentId).ToList();
+            return studentIsNotDeclared.Count;
+        }
+
         public async Task<bool> UpdateHealthDeclarationAsync(HealthProfileDeclarationRequest request)
         {
             var studentId = request.HealthDeclaration.StudentId;

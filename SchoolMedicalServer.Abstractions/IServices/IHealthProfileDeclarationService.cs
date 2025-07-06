@@ -6,6 +6,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
     {
         Task<bool> CreateHealthDeclarationAsync(HealthProfileDeclarationRequest request);
         Task<HealthProfileDeclarationResponse?> GetHealthDeclarationAsync(Guid studentId);
+        Task<int> IsHealthDeclarationExistAsync(Guid parentId);
         Task<bool> UpdateHealthDeclarationAsync(HealthProfileDeclarationRequest request);
     }
 }
