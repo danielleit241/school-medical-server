@@ -7,9 +7,9 @@
 
         [HttpGet("nurses/students/medical-events/all")]
         [Authorize(Roles = "nurse")]
-        public async Task<IActionResult> GetAllStudentMedicalEvents([FromQuery] PaginationRequest? paginationRequest)
+        public async Task<IActionResult> GetAllStudentMedicalEvents()
         {
-            var medicalEvents = await service.GetAllMedicalEvent(paginationRequest);
+            var medicalEvents = await service.GetAllMedicalEvent();
             if (medicalEvents == null || !medicalEvents.Any())
             {
                 return NotFound(new { Message = "No medical events found." });

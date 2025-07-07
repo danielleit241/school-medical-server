@@ -209,7 +209,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             };
         }
 
-        public async Task<IEnumerable<MedicalEventResponse>> GetAllMedicalEvent(PaginationRequest? paginationRequest)
+        public async Task<IEnumerable<MedicalEventResponse>> GetAllMedicalEvent()
         {
             var medicalEvents = await eventRepo.GetAllMedicalEvent();
 
