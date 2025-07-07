@@ -1,9 +1,9 @@
-﻿using System.Linq.Dynamic.Core;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Infrastructure.Data;
+using System.Linq.Dynamic.Core;
 
 
 namespace SchoolMedicalServer.Infrastructure.Repositories
@@ -76,6 +76,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .Select(s => new MedicalRegistrationStudentResponse
                 {
                     StudentId = s.StudentId,
+                    StudentCode = s.StudentCode,
                     StudentFullName = s.FullName
                 })
                 .AsNoTracking()
