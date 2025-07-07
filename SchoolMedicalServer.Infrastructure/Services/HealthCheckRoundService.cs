@@ -1,9 +1,9 @@
-﻿using System.Globalization;
-using SchoolMedicalServer.Abstractions.Dtos.MainFlows.HealthCheck.Rounds;
+﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlows.HealthCheck.Rounds;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Abstractions.IServices;
+using System.Globalization;
 
 namespace SchoolMedicalServer.Infrastructure.Services
 {
@@ -246,7 +246,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 StudentCode = student?.StudentCode,
                 DayOfBirth = student?.DayOfBirth,
                 Gender = student?.Gender,
-                Grade = student?.Grade
+                Grade = student?.Grade,
+                ResultStatus = result.Status
             };
         }
 
