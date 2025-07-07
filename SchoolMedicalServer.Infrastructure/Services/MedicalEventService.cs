@@ -101,12 +101,12 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<PaginationResponse<MedicalEventResponse>?> GetAllStudentMedicalEventsAsync(PaginationRequest? paginationRequest)
         {
-            var totalCount = await eventRepo.CountAsync();
+            var totalCount = await eventRepo.CountAsync(paginationRequest?.Search);
             if (totalCount == 0)
                 return null!;
 
             int skip = (paginationRequest!.PageIndex - 1) * paginationRequest.PageSize;
-            var events = await eventRepo.GetPagedAsync(skip, paginationRequest.PageSize);
+            var events = await eventRepo.GetPagedSearchBySeveriryLevelAsync(skip, paginationRequest.PageSize, paginationRequest.Search);
 
             var result = new List<MedicalEventResponse>();
 
@@ -207,6 +207,31 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 SeverityLevel = medicalEvent.SeverityLevel,
                 Notes = medicalEvent.Notes
             };
+        }
+
+        public async Task<IEnumerable<MedicalEventResponse>> GetAllMedicalEvent(PaginationRequest? paginationRequest)
+        {
+            var medicalEvents = await eventRepo.GetAllMedicalEvent();
+
+            if (medicalEvents == null || !medicalEvents.Any())
+            {
+                return Enumerable.Empty<MedicalEventResponse>();
+            }
+            var result = new List<MedicalEventResponse>();
+            foreach (var medicalEvent in medicalEvents)
+            {
+                var medicalRequests = await requestRepo.GetByEventIdAsync(medicalEvent.EventId);
+                var student = await studentRepo.GetStudentByIdAsync(medicalEvent.StudentId);
+                var studentInfo = new StudentInforResponse
+                {
+                    StudentId = student?.StudentId,
+                    FullName = student?.FullName,
+                    StudentCode = student?.StudentCode,
+                };
+                var response = GetResponse(medicalEvent, medicalRequests, studentInfo);
+                result.Add(response);
+            }
+            return result;
         }
     }
 }
