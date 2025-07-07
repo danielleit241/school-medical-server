@@ -205,7 +205,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 return null!;
             }
-            var nurseFullName = user.FullName;
+            var nurse = await userRepository.GetByIdAsync(appointment.StaffNurseId);
             var response = new AppointmentResponse
             {
                 Student = new StudentInfo
@@ -222,7 +222,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 StaffNurse = new StaffNurseInfo
                 {
                     StaffNurseId = appointment.StaffNurseId,
-                    FullName = nurseFullName
+                    FullName = nurse!.FullName,
+                    PhoneNumber = nurse.PhoneNumber
                 },
                 AppointmentId = appointment.AppointmentId,
                 Topic = appointment.Topic,

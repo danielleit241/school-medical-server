@@ -50,6 +50,7 @@ namespace SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration
     public class MedicalRegistrationStudentResponse
     {
         public Guid StudentId { get; set; }
+        public string? StudentCode { get; set; }
         public string? StudentFullName { get; set; }
     }
 
