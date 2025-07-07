@@ -7,18 +7,29 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
 {
     public class MedicalEventRepository(SchoolMedicalManagementContext _context) : IMedicalEventRepository
     {
-        public async Task<int> CountAsync()
-            => await _context.MedicalEvents.CountAsync();
+        public async Task<int> CountAsync(string? searchBySeverityLevel)
+        {
+            return await _context.MedicalEvents
+                .Where(e =>
+                    searchBySeverityLevel!.ToLower() == "all" || string.IsNullOrEmpty(searchBySeverityLevel)
+                    || e.SeverityLevel!.ToLower() == searchBySeverityLevel.ToLower())
+                .CountAsync();
+        }
 
         public async Task<int> CountByStudentIdAsync(Guid studentId)
             => await _context.MedicalEvents.Where(e => e.StudentId == studentId).CountAsync();
 
-        public async Task<List<MedicalEvent>> GetPagedAsync(int skip, int take)
-            => await _context.MedicalEvents
+        public async Task<List<MedicalEvent>> GetPagedSearchBySeveriryLevelAsync(int skip, int take, string? searchBySeverityLevel)
+        {
+            return await _context.MedicalEvents
+                .Where(e =>
+                    searchBySeverityLevel!.ToLower() == "all" || string.IsNullOrEmpty(searchBySeverityLevel)
+                    || e.SeverityLevel!.ToLower() == searchBySeverityLevel.ToLower())
                 .OrderByDescending(e => e.EventDate)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();
+        }
 
         public async Task<List<MedicalEvent>> GetByStudentIdPagedAsync(Guid studentId, int skip, int take)
             => await _context.MedicalEvents

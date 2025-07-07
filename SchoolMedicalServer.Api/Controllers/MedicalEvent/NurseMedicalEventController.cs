@@ -4,9 +4,22 @@
     [ApiController]
     public class NurseMedicalEventController(IMedicalEventService service) : ControllerBase
     {
-        [HttpGet("nurses/students/medical-events")]
+
+        [HttpGet("nurses/students/medical-events/all")]
         [Authorize(Roles = "nurse")]
         public async Task<IActionResult> GetAllStudentMedicalEvents([FromQuery] PaginationRequest? paginationRequest)
+        {
+            var medicalEvents = await service.GetAllMedicalEvent(paginationRequest);
+            if (medicalEvents == null || !medicalEvents.Any())
+            {
+                return NotFound(new { Message = "No medical events found." });
+            }
+            return Ok(medicalEvents);
+        }
+
+        [HttpGet("nurses/students/medical-events")]
+        [Authorize(Roles = "nurse")]
+        public async Task<IActionResult> GetPagedStudentMedicalEvents([FromQuery] PaginationRequest? paginationRequest)
         {
             var medicalEvents = await service.GetAllStudentMedicalEventsAsync(paginationRequest);
             if (medicalEvents == null)
