@@ -114,12 +114,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 var medicalRequests = await requestRepo.GetByEventIdAsync(medicalEvent.EventId);
                 var student = await studentRepo.GetStudentByIdAsync(medicalEvent.StudentId);
-                var studentInfo = new StudentInforResponse
-                {
-                    StudentId = student?.StudentId,
-                    FullName = student?.FullName,
-                    StudentCode = student?.StudentCode,
-                };
+                var studentInfo = MapToStudentInfo(student);
                 var response = GetResponse(medicalEvent, medicalRequests, studentInfo);
                 result.Add(response);
             }
@@ -140,12 +135,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
             var medicalRequests = await requestRepo.GetByEventIdAsync(medicalEvent.EventId);
             var student = await studentRepo.GetStudentByIdAsync(medicalEvent.StudentId);
-            var studentInfo = new StudentInforResponse
-            {
-                StudentId = student?.StudentId,
-                FullName = student?.FullName,
-                StudentCode = student?.StudentCode,
-            };
+            var studentInfo = MapToStudentInfo(student);
             var response = GetResponse(medicalEvent, medicalRequests, studentInfo);
 
             return response;
@@ -166,12 +156,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 var medicalRequests = await requestRepo.GetByEventIdAsync(medicalEvent.EventId);
                 var student = await studentRepo.GetStudentByIdAsync(medicalEvent.StudentId);
-                var studentInfo = new StudentInforResponse
-                {
-                    StudentId = student?.StudentId,
-                    FullName = student?.FullName,
-                    StudentCode = student?.StudentCode,
-                };
+                var studentInfo = MapToStudentInfo(student);
                 var response = GetResponse(medicalEvent, medicalRequests, studentInfo);
                 result.Add(response);
             }
@@ -232,6 +217,19 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 result.Add(response);
             }
             return result;
+        }
+
+        private StudentInforResponse MapToStudentInfo(Student? student)
+        {
+            return new StudentInforResponse
+            {
+                StudentId = student.StudentId,
+                FullName = student.FullName,
+                StudentCode = student.StudentCode,
+                ParentId = student.UserId,
+                ParentFullName = student.User?.FullName,
+                ParentPhoneNumber = student.User?.PhoneNumber
+            };
         }
     }
 }

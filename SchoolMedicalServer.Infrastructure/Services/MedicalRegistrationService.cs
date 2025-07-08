@@ -243,7 +243,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var parentInfo = new MedicalRegistrationParentResponse
             {
                 UserId = user.UserId,
-                UserFullName = user.FullName
+                UserFullName = user.FullName,
+                UserPhoneNumber = user.PhoneNumber,
             };
             if (parentInfo == null)
                 return null!;

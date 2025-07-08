@@ -30,7 +30,8 @@ namespace SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration
 
         public string? PictureUrl { get; set; }
 
-        public string Notes { get; set; } = default!;
+        public string? Notes { get; set; } = default!;
+
 
         [Required(ErrorMessage = "Parent consent is required.")]
         public bool ParentConsent { get; set; }

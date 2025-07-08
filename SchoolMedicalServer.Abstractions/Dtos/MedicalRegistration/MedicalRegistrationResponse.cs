@@ -58,5 +58,6 @@ namespace SchoolMedicalServer.Abstractions.Dtos.MedicalRegistration
     {
         public Guid? UserId { get; set; }
         public string? UserFullName { get; set; }
+        public string? UserPhoneNumber { get; set; }
     }
 }
