@@ -42,6 +42,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                                 (string.IsNullOrEmpty(search) ||
                                  round.RoundName!.Contains(search) ||
                                  round.TargetGrade!.Contains(search)))
+                .OrderByDescending(round => round.StartTime)
                 .Skip(skip)
                 .Take(pageSize)
                 .Include(round => round.Schedule)
@@ -52,6 +53,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task<IEnumerable<HealthCheckRound>> GetHealthCheckRoundsByScheduleIdAsync(Guid scheduleId)
         {
             return await _context.HealthCheckRounds
+                .OrderBy(round => round.CreatedAt)
                 .Where(round => round.ScheduleId == scheduleId)
                 .Include(round => round.Schedule)
                 .Include(round => round.HealthCheckResults)

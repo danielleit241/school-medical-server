@@ -24,6 +24,9 @@
         public Guid? StudentId { get; set; }
         public string? StudentCode { get; set; }
         public string? FullName { get; set; }
+        public Guid? ParentId { get; set; }
+        public string? ParentFullName { get; set; }
+        public string? ParentPhoneNumber { get; set; }
     }
 
     public class MedicalRequestDtoResponse

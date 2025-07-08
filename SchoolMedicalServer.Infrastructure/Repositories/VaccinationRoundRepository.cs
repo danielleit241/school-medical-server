@@ -36,6 +36,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                                (string.IsNullOrEmpty(search) ||
                                round.RoundName!.Contains(search) ||
                                round.TargetGrade!.Contains(search)))
+                .OrderByDescending(round => round.StartTime)
                 .Skip(skip)
                 .Take(pageSize)
                 .ToListAsync();
@@ -45,6 +46,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         {
             return await _context.VaccinationRounds
                 .Where(round => round.ScheduleId == scheduleId)
+                .OrderBy(round => round.CreatedAt)
                 .ToListAsync();
         }
 

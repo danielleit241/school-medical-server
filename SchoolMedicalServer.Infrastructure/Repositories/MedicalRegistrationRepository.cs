@@ -11,11 +11,17 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
             => await _context.MedicalRegistrations.FirstOrDefaultAsync(m => m.RegistrationId == registrationId);
 
         public async Task<List<MedicalRegistration>> GetNursePagedAsync(Guid staffId, int skip, int take)
-            => await _context.MedicalRegistrations
+        {
+            return await _context.MedicalRegistrations
                 .Where(m => m.StaffNurseId == staffId)
-                .OrderByDescending(m => m.DateSubmitted)
-                .Skip(skip).Take(take)
+                .OrderBy(m => m.Status == null ? 1 : (m.Status == true ? 2 : 3))
+                .ThenByDescending(m => m.DateSubmitted)
+                .ThenBy(m => m.DateApproved == null ? 1 : 2)
+                .Skip(skip)
+                .Take(take)
                 .ToListAsync();
+        }
+
 
         public async Task<int> CountAsync()
             => await _context.MedicalRegistrations.CountAsync();
@@ -23,7 +29,9 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task<List<MedicalRegistration>> GetByUserPagedAsync(Guid userId, int skip, int take)
             => await _context.MedicalRegistrations
                 .Where(m => m.UserId == userId)
-                .OrderByDescending(m => m.DateSubmitted)
+                .OrderBy(m => m.Status == null ? 1 : (m.Status == true ? 2 : 3))
+                .ThenByDescending(m => m.DateSubmitted)
+                .ThenBy(m => m.DateApproved == null ? 1 : 2)
                 .Skip(skip).Take(take)
                 .ToListAsync();
 

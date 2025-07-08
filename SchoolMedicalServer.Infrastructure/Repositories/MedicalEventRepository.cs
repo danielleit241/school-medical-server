@@ -9,9 +9,13 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
     {
         public async Task<int> CountAsync(string? searchBySeverityLevel)
         {
+            if (searchBySeverityLevel == null)
+            {
+                searchBySeverityLevel = "all";
+            }
             return await _context.MedicalEvents
                 .Where(e =>
-                    searchBySeverityLevel!.ToLower() == "all" || string.IsNullOrEmpty(searchBySeverityLevel)
+                    searchBySeverityLevel.ToLower() == "all" || string.IsNullOrEmpty(searchBySeverityLevel)
                     || e.SeverityLevel!.ToLower() == searchBySeverityLevel.ToLower())
                 .CountAsync();
         }
@@ -21,9 +25,13 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
 
         public async Task<List<MedicalEvent>> GetPagedSearchBySeveriryLevelAsync(int skip, int take, string? searchBySeverityLevel)
         {
+            if (searchBySeverityLevel == null)
+            {
+                searchBySeverityLevel = "all";
+            }
             return await _context.MedicalEvents
                 .Where(e =>
-                    searchBySeverityLevel!.ToLower() == "all" || string.IsNullOrEmpty(searchBySeverityLevel)
+                    searchBySeverityLevel.ToLower() == "all" || string.IsNullOrEmpty(searchBySeverityLevel)
                     || e.SeverityLevel!.ToLower() == searchBySeverityLevel.ToLower())
                 .OrderByDescending(e => e.EventDate)
                 .Skip(skip)
