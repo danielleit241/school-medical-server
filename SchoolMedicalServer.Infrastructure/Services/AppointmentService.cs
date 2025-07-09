@@ -35,18 +35,30 @@ namespace SchoolMedicalServer.Infrastructure.Services
             return response;
         }
 
-        public async Task<IEnumerable<AppointmentResponse>?> GetAppointmentsByStaffNurseAndDate(Guid staffNurseId, DateOnly? dateRequest)
+        public async Task<PaginationResponse<AppointmentResponse>?> GetAppointmentsByStaffNurseAndDate(PaginationRequest? paginationRequest, Guid staffNurseId, DateOnly? dateRequestStart, DateOnly? dateRequestEnd)
         {
             if (staffNurseId == Guid.Empty)
             {
-                return [];
+                return null;
             }
 
-            var date = dateRequest.HasValue ? dateRequest : DateOnly.FromDateTime(DateTime.UtcNow.Date);
+            var dateStart = dateRequestStart.HasValue ? dateRequestStart : DateOnly.FromDateTime(DateTime.UtcNow.Date);
+            var dateEnd = dateRequestEnd.HasValue ? dateRequestEnd : DateOnly.FromDateTime(DateTime.UtcNow.Date).AddDays(1);
 
-            var appointments = await appointmentRepository.GetByStaffNurseAndDateAsync(staffNurseId, date);
+            var appointments = await appointmentRepository.GetByStaffNurseAndDateAsync(staffNurseId, dateStart, dateEnd);
             if (appointments == null || appointments.Count == 0)
-                return [];
+            {
+                return null;
+            }
+            int totalCount = appointments?.Count ?? 0;
+            var skip = (paginationRequest!.PageIndex - 1) * paginationRequest.PageSize;
+            appointments = appointments?
+                .Skip(skip)
+                .Take(paginationRequest.PageSize)
+                .ToList();
+
+            if (appointments == null || appointments.Count == 0)
+                return null;
 
             var user = await userRepository.GetByIdAsync(staffNurseId);
 
@@ -57,8 +69,13 @@ namespace SchoolMedicalServer.Infrastructure.Services
             {
                 response.Add(await GetResponseAsync(appointment));
             }
-
-            return response;
+            var result = new PaginationResponse<AppointmentResponse>(
+                paginationRequest.PageIndex,
+                paginationRequest.PageSize,
+                totalCount,
+                response
+            );
+            return result;
         }
 
         public async Task<NotificationRequest> RegisterAppointment(AppointmentRequest request)
@@ -74,7 +91,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             var userId = user.UserId;
 
-            var hasAppointment = await appointmentRepository.StaffHasAppointmentAsync(request.AppointmentDate, request.AppointmentStartTime, request.AppointmentEndTime);
+            var hasAppointment = await appointmentRepository.StaffHasAppointmentAsync(request.StaffNurseId, request.AppointmentDate, request.AppointmentStartTime, request.AppointmentEndTime);
 
             if (hasAppointment)
                 return null!;

@@ -1,18 +1,20 @@
-﻿using System.Linq.Dynamic.Core;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Infrastructure.Data;
+using System.Linq.Dynamic.Core;
 
 namespace SchoolMedicalServer.Infrastructure.Repositories
 {
     public class AppointmentRepository(SchoolMedicalManagementContext _context) : IAppointmentRepository
     {
-        public async Task<List<Appointment>> GetByStaffNurseAndDateAsync(Guid staffNurseId, DateOnly? date)
+        public async Task<List<Appointment>> GetByStaffNurseAndDateAsync(Guid staffNurseId, DateOnly? dateStart, DateOnly? dateEnd)
             => await _context.Appointments
                 .Include(a => a.User)
                 .Include(a => a.Student)
-                .Where(a => a.AppointmentDate == date && a.StaffNurseId == staffNurseId)
+                .Where(a => a.StaffNurseId == staffNurseId &&
+                           a.AppointmentDate >= dateStart &&
+                           a.AppointmentDate <= dateEnd)
                 .ToListAsync();
 
         public async Task<Appointment?> GetByStaffNurseAndAppointmentIdAsync(Guid staffNurseId, Guid appointmentId)
@@ -101,11 +103,12 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
             return await query.Skip(skip).Take(take).ToListAsync();
         }
 
-        public async Task<bool> StaffHasAppointmentAsync(DateOnly? date, TimeOnly? startTime, TimeOnly? endTime)
+        public async Task<bool> StaffHasAppointmentAsync(Guid? nurseId, DateOnly? date, TimeOnly? startTime, TimeOnly? endTime)
             => await _context.Appointments
-                .AnyAsync(a => a.AppointmentDate == date &&
-                               a.AppointmentStartTime <= endTime &&
-                               a.AppointmentEndTime >= startTime);
+                    .AnyAsync(a => a.StaffNurseId == nurseId &&
+                               a.AppointmentDate == date &&
+                               a.AppointmentStartTime < endTime &&
+                               a.AppointmentEndTime > startTime);
 
         public async Task AddAsync(Appointment appointment)
             => await _context.Appointments.AddAsync(appointment);
