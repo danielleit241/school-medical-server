@@ -242,7 +242,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                             InjectionSite = vr.InjectionSite,
                             Manufacturer = vr.Round!.Schedule!.Vaccine!.Manufacturer,
                             BatchNumber = vr.Round!.Schedule!.Vaccine!.BatchNumber,
-                            DoseNumber = idx + 1
+                            DoseNumber = idx + 1,
+                            NurseId = vr.Round!.NurseId,
                         })
                         .ToList();
 
