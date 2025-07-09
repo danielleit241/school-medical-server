@@ -1,8 +1,8 @@
-﻿using System.Linq.Dynamic.Core;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Infrastructure.Data;
+using System.Linq.Dynamic.Core;
 
 namespace SchoolMedicalServer.Infrastructure.Repositories
 {
@@ -15,7 +15,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
 
         public async Task<int> CountAsync()
         {
-            return await _context.VaccinationDetails.CountAsync();
+            return await _context.VaccinationDetails.Where(vd => vd.Status == true).CountAsync();
         }
 
         public void Delete(Guid id)
@@ -41,7 +41,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 int skip,
                 int take)
         {
-            IQueryable<VaccinationDetail> query = _context.VaccinationDetails.AsNoTracking();
+            IQueryable<VaccinationDetail> query = _context.VaccinationDetails.Where(vd => vd.Status == true).AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(search))
             {

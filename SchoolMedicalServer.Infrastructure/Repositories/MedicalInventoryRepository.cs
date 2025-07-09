@@ -1,8 +1,8 @@
-﻿using System.Linq.Dynamic.Core;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
 using SchoolMedicalServer.Infrastructure.Data;
+using System.Linq.Dynamic.Core;
 
 namespace SchoolMedicalServer.Infrastructure.Repositories
 {
@@ -10,7 +10,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
     {
         public async Task<List<MedicalInventory>> GetAllAsync() => await _context.MedicalInventories.ToListAsync();
         public async Task AddAsync(MedicalInventory inventory) => await _context.MedicalInventories.AddAsync(inventory);
-        public async Task<int> CountAsync() => await _context.MedicalInventories.CountAsync();
+        public async Task<int> CountAsync() => await _context.MedicalInventories.Where(mi => mi.Status == true).CountAsync();
 
         public async Task<List<MedicalInventory>> GetPagedAsync(
                 string? search,
@@ -19,7 +19,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 int skip,
                 int take)
         {
-            IQueryable<MedicalInventory> query = _context.MedicalInventories.AsNoTracking();
+            IQueryable<MedicalInventory> query = _context.MedicalInventories.Where(mi => mi.Status == true).AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
