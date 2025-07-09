@@ -18,15 +18,15 @@
 
         [HttpGet("nurses/{staffNurseId}/appointments")]
         [Authorize(Roles = "nurse, parent")]
-        public async Task<IActionResult> GetStaffNurseAppointments(Guid staffNurseId, [FromQuery] DateOnly? dateRequest, [FromQuery] PaginationRequest? paginationRequest)
+        public async Task<IActionResult> GetStaffNurseAppointments(Guid staffNurseId, [FromQuery] DateOnly? dateRequestStart, [FromQuery] DateOnly dateRequestEnd, [FromQuery] PaginationRequest? paginationRequest)
         {
             if (staffNurseId == Guid.Empty)
             {
                 return BadRequest("Staff nurse ID cannot be empty.");
             }
-            if (dateRequest.HasValue)
+            if (dateRequestStart.HasValue)
             {
-                var appointments = await service.GetAppointmentsByStaffNurseAndDate(staffNurseId, dateRequest);
+                var appointments = await service.GetAppointmentsByStaffNurseAndDate(paginationRequest, staffNurseId, dateRequestStart, dateRequestEnd);
                 if (appointments is null)
                 {
                     return NotFound("No appointments found for the specified staff nurse on the given date.");

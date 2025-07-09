@@ -7,7 +7,7 @@ namespace SchoolMedicalServer.Abstractions.IServices
     public interface IAppointmentService
     {
         Task<IEnumerable<StaffNurseInfo>> GetStaffNurses();
-        Task<IEnumerable<AppointmentResponse>?> GetAppointmentsByStaffNurseAndDate(Guid staffNurseId, DateOnly? dateRequest);
+        Task<PaginationResponse<AppointmentResponse>?> GetAppointmentsByStaffNurseAndDate(PaginationRequest? paginationRequest, Guid staffNurseId, DateOnly? dateRequestStart, DateOnly? dateRequestEnd);
         Task<NotificationRequest> RegisterAppointment(AppointmentRequest request);
 
         Task<AppointmentResponse> GetStaffNurseAppointment(Guid staffNurseId, Guid appointmentId);

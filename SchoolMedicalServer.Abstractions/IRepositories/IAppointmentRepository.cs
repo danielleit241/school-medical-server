@@ -4,7 +4,7 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
 {
     public interface IAppointmentRepository
     {
-        Task<List<Appointment>> GetByStaffNurseAndDateAsync(Guid staffNurseId, DateOnly? date);
+        Task<List<Appointment>> GetByStaffNurseAndDateAsync(Guid staffNurseId, DateOnly? dateRequestStart, DateOnly? dateRequestEnd);
         Task<Appointment?> GetByStaffNurseAndAppointmentIdAsync(Guid staffNurseId, Guid appointmentId);
         Task<int> CountByStaffNurseIdAsync(Guid staffNurseId);
         Task<List<Appointment>> GetByStaffNursePagedAsync(
@@ -22,7 +22,7 @@ namespace SchoolMedicalServer.Abstractions.IRepositories
             string? sortOrder,
             int skip,
             int take);
-        Task<bool> StaffHasAppointmentAsync(DateOnly? date, TimeOnly? startTime, TimeOnly? endTime);
+        Task<bool> StaffHasAppointmentAsync(Guid? nurseId, DateOnly? date, TimeOnly? startTime, TimeOnly? endTime);
         Task AddAsync(Appointment appointment);
         Task<Appointment?> GetByIdAsync(Guid appointmentId);
         void Update(Appointment appointment);
