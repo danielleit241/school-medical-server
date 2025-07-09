@@ -19,5 +19,6 @@
         public string? Manufacturer { get; set; }
         public string? BatchNumber { get; set; }
         public int DoseNumber { get; set; }
+        public Guid? NurseId { get; set; }
     }
 }

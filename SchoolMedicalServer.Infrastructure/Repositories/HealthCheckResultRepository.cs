@@ -16,6 +16,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
         public async Task<int> CountByStudentIdAsync(Guid studentId)
         {
             return await _context.HealthCheckResults
+                .Where(hcr => hcr.Status!.ToLower().Contains("completed"))
                 .Include(hcr => hcr.HealthProfile)
                 .CountAsync(hcr => hcr.HealthProfile!.StudentId == studentId);
         }
@@ -87,6 +88,7 @@ namespace SchoolMedicalServer.Infrastructure.Repositories
                 .Include(hcr => hcr.Round)
                 .Include(hcr => hcr.HealthProfile)
                 .ThenInclude(hp => hp!.Student)
+                .Where(hcr => hcr.Status!.ToLower().Contains("completed"))
                 .Where(hcr => hcr.HealthProfile!.StudentId == studentId &&
                               (string.IsNullOrEmpty(search) ||
                                hcr.HealthProfile.Student.FullName.Contains(search)))
