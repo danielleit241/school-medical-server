@@ -52,6 +52,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
             }
             int totalCount = appointments?.Count ?? 0;
             var skip = (paginationRequest!.PageIndex - 1) * paginationRequest.PageSize;
+
             appointments = appointments?
                 .Skip(skip)
                 .Take(paginationRequest.PageSize)
@@ -289,7 +290,7 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<bool> HasBookedAppointment(Guid parentId)
         {
-            var today = DateOnly.FromDateTime(DateTime.UtcNow.Date);
+            var today = DateOnly.FromDateTime(DateTime.UtcNow.Date).AddDays(1);
             var userAppoinments = await appointmentRepository.GetAllAppointment();
             if (userAppoinments == null || !userAppoinments.Any())
             {
