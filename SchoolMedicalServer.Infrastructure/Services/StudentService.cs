@@ -30,7 +30,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 Grade = s.Grade,
                 Address = s.Address,
                 ParentPhoneNumber = s.ParentPhoneNumber,
-                ParentEmailAddress = s.ParentEmailAddress
+                ParentEmailAddress = s.ParentEmailAddress,
+                ParentAccountCreated = s.UserId.HasValue
             }).ToList();
 
             return new PaginationResponse<StudentInformationResponse>(

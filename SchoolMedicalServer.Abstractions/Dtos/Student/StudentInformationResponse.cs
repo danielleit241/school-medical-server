@@ -19,5 +19,7 @@
         public string? ParentPhoneNumber { get; set; }
 
         public string? ParentEmailAddress { get; set; }
+
+        public bool ParentAccountCreated { get; set; } = false;
     }
 }
