@@ -117,10 +117,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<IEnumerable<DashboardRoundResponse>> GetNurseHealthChecksDashboardAsync(Guid nurseId, DashboardRequest request)
         {
-            var (today, endOfWeek) = GetWeekRange();
+            var (today, endDate) = Get2WeekRange();
             var schedules = await healthCheckScheduleRepository.GetHealthCheckSchedulesAsync();
             var rounds = schedules.SelectMany(s => s.Rounds).ToList();
-            rounds = [.. rounds.Where(r => r.NurseId == nurseId && r.StartTime >= today && r.StartTime <= endOfWeek)];
+            rounds = [.. rounds.Where(r => r.NurseId == nurseId && r.StartTime >= today && r.StartTime <= endDate)];
 
             var responses = new List<DashboardRoundResponse>();
             foreach (var round in rounds)
@@ -293,10 +293,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
 
         public async Task<IEnumerable<DashboardRoundResponse>> GetNurseVaccinationsDashboardAsync(Guid nurseId, DashboardRequest request)
         {
-            var (today, endOfWeek) = GetWeekRange();
+            var (today, endDate) = Get2WeekRange();
             var schedules = await vaccinationScheduleRepository.GetVaccinationSchedulesAsync();
             var rounds = schedules.SelectMany(s => s.Rounds).ToList();
-            rounds = [.. rounds.Where(r => r.NurseId == nurseId && r.StartTime >= today && r.StartTime <= endOfWeek)];
+            rounds = [.. rounds.Where(r => r.NurseId == nurseId && r.StartTime >= today && r.StartTime <= endDate)];
 
             var responses = new List<DashboardRoundResponse>();
             foreach (var round in rounds)
@@ -337,13 +337,11 @@ namespace SchoolMedicalServer.Infrastructure.Services
             };
         }
 
-        private (DateTime today, DateTime endOfWeek) GetWeekRange()
+        private (DateTime today, DateTime endDate) Get2WeekRange()
         {
             var today = DateTime.UtcNow.Date;
-            var daysUntilSunday = DayOfWeek.Sunday - today.DayOfWeek;
-            if (daysUntilSunday <= 0) daysUntilSunday += 7;
-            var endOfWeek = today.AddDays(daysUntilSunday);
-            return (today, endOfWeek);
+            var endDate = today.AddDays(13);
+            return (today, endDate);
         }
     }
 }
