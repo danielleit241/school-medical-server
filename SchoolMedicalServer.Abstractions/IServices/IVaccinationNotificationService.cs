@@ -8,5 +8,6 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task<IEnumerable<NotificationResponse>> SendVaccinationNotificationToNurses(IEnumerable<NotificationRequest> requests);
         Task<NotificationResponse> SendVaccinationObservationNotificationToParent(NotificationRequest requests);
         Task<NotificationResponse> SendVaccinationResultNotificationToParent(NotificationRequest request);
+        Task<NotificationResponse> SendVaccinationNotificationToAdmin(NotificationRequest request);
     }
 }

@@ -4,6 +4,20 @@
     [ApiController]
     public class NotificationVaccinationController(IVaccinationNotificationService service, INotificationSender notificationSender) : ControllerBase
     {
+        [HttpPost("notifications/vaccinations/rounds/to-admin")]
+        [Authorize(Roles = "nurse")]
+        public async Task<IActionResult> SendVaccinationNotificationToAdmin([FromBody] NotificationRequest request)
+        {
+            var notification = await service.SendVaccinationNotificationToAdmin(request);
+            if (notification == null)
+            {
+                return BadRequest("Failed to send vaccination notification to admin.");
+            }
+
+            await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
+            return Ok(notification);
+        }
+
         [HttpPost("notifications/vaccinations/to-parent")]
         [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> SendVaccinationNotificationToParent([FromBody] IEnumerable<NotificationRequest> requests)

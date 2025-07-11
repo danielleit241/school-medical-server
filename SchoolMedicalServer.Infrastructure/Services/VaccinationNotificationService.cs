@@ -180,5 +180,35 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var notiInfo = helperService.GetNotificationInformation(notification);
             return helperService.GetNotificationResponse(notiInfo, sender, receiver);
         }
+
+        public async Task<NotificationResponse> SendVaccinationNotificationToAdmin(NotificationRequest request)
+        {
+            var round = await roundRepository.GetVaccinationRoundByIdAsync(request.NotificationTypeId);
+            if (round == null)
+            {
+                return null!;
+            }
+            var sender = await helperService.GetSenderInformationAsync(request);
+            var receiver = await helperService.GetReceiverInformationAsync(request);
+            if (sender == null || receiver == null)
+            {
+                return null!;
+            }
+            var notification = new Notification
+            {
+                NotificationId = Guid.NewGuid(),
+                UserId = sender.UserId,
+                SenderId = receiver.UserId,
+                Title = "Vaccination Round Notification",
+                Content = $"A vaccination round has been completed: {round.RoundName} on {round.StartTime?.ToString("d")}.",
+                SendDate = DateTime.UtcNow,
+                IsRead = false,
+                Type = NotificationTypes.Vaccination,
+                SourceId = round.RoundId
+            };
+            await notificationRepository.AddAsync(notification);
+            var notiInfo = helperService.GetNotificationInformation(notification);
+            return helperService.GetNotificationResponse(notiInfo, sender, receiver);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlows.HealthCheck.Rounds;
+using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 
 namespace SchoolMedicalServer.Abstractions.IServices
@@ -14,6 +15,6 @@ namespace SchoolMedicalServer.Abstractions.IServices
         Task<IEnumerable<HealthCheckRoundStudentResponse>> GetStudentsByHealthCheckRoundIdForNurseAsync(Guid roundId, Guid nurseId);
         Task<int> GetTotalSupplementaryTotalStudentsAsync(Guid scheduleId);
         Task<bool> UpdateHealthCheckRoundAsync(Guid roundId, HealthCheckRoundUpdateRequest request);
-        Task<bool> UpdateHealthCheckRoundStatusAsync(Guid roundId, bool request);
+        Task<NotificationRequest> UpdateHealthCheckRoundStatusAsync(Guid roundId, bool request);
     }
 }
