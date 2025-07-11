@@ -130,8 +130,14 @@ namespace SchoolMedicalServer.Infrastructure.Services
         public async Task<IEnumerable<VaccinationDetailsResponse>> GetAllVaccineDetailsAsync()
         {
             var details = await vacctionDetailsRepository.GetAllAsync();
-            details = details.ToList().Where(detail => detail.Status == true && detail.ExpirationDate != DateOnly.FromDateTime(DateTime.Now)).ToList();
-            return details.Select(detail => MapToResponse(detail)).ToList();
+            var today = DateOnly.FromDateTime(DateTime.Now);
+
+            var filteredDetails = details
+                .Where(detail => detail.Status == true && detail.ExpirationDate >= today)
+                .ToList();
+
+            return filteredDetails.Select(detail => MapToResponse(detail)).ToList();
         }
+
     }
 }
