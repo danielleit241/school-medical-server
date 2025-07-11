@@ -1,4 +1,5 @@
 using SchoolMedicalServer.Abstractions.Dtos.MainFlows.Vaccination.Rounds;
+using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
@@ -134,22 +135,30 @@ namespace SchoolMedicalServer.Infrastructure.Services
             );
         }
 
-        public async Task<bool> UpdateVaccinationRoundStatusAsync(Guid roundId, bool request)
+        public async Task<NotificationRequest> UpdateVaccinationRoundStatusAsync(Guid roundId, bool request)
         {
             var round = await vaccinationRound.GetVaccinationRoundByIdAsync(roundId);
             if (round == null)
             {
-                return false;
+                return null!;
             }
             var today = DateTime.UtcNow;
             if (round.EndTime < today)
             {
-                return false;
+                return null!;
             }
             round.Status = request;
             round.UpdatedAt = today;
             await vaccinationRound.UpdateVaccinationRound(round);
-            return true;
+
+            var notifcation = new NotificationRequest
+            {
+                NotificationTypeId = round.RoundId,
+                SenderId = round.NurseId,
+                ReceiverId = round.Schedule!.CreatedBy,
+            };
+
+            return notifcation;
         }
 
         public async Task<IEnumerable<VaccinationRoundResponse>> GetVaccinationRoundsByScheduleIdAsync(Guid scheduleId)

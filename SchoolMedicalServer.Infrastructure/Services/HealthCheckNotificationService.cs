@@ -29,13 +29,25 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     continue;
                 }
+
+                var body = "";
+
+                if (result.Status!.ToLower().Contains("failed"))
+                {
+                    body = $"Your child {student!.FullName} has failed the health check: {schedule!.HealthCheckType} on {round.StartTime?.ToString("d")}. Please contact the school for further assistance.";
+                }
+                else if (result.Status.ToLower().Contains("completed"))
+                {
+                    body = $"Your child {student!.FullName} has successfully completed the health check: {schedule!.HealthCheckType} on {round.StartTime?.ToString("d")}.";
+                }
+
                 var notification = new Notification
                 {
                     NotificationId = Guid.NewGuid(),
                     UserId = receiver.UserId,
                     SenderId = sender.UserId,
                     Title = schedule.Title,
-                    Content = $"Your child {student!.FullName} has received the health check: {schedule!.HealthCheckType} on {round.StartTime?.ToString("d")}.",
+                    Content = body,
                     SendDate = DateTime.UtcNow,
                     IsRead = false,
                     Type = NotificationTypes.HealthCheckUp,
@@ -103,6 +115,37 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var notiInfo = helperService.GetNotificationInformation(notification);
             var sender = await helperService.GetSenderInformationAsync(request);
             var receiver = await helperService.GetReceiverInformationAsync(request);
+            return helperService.GetNotificationResponse(notiInfo, sender, receiver);
+        }
+
+        public async Task<NotificationResponse> SendHealthCheckNotificationToAdmin(NotificationRequest request)
+        {
+            var round = await healthCheckRoundRepository.GetHealthCheckRoundByIdAsync(request.NotificationTypeId);
+            if (round == null)
+            {
+                return null!;
+            }
+            var sender = await helperService.GetSenderInformationAsync(request);
+            var receiver = await helperService.GetReceiverInformationAsync(request);
+            if (sender == null || receiver == null)
+            {
+                return null!;
+            }
+            var notification = new Notification
+            {
+                NotificationId = Guid.NewGuid(),
+                UserId = receiver.UserId,
+                SenderId = sender.UserId,
+                Title = "Health Check Round Notification",
+                Content = $"A health check round has been completed: {round.RoundName} on {round.StartTime?.ToString("d")}.",
+                SendDate = DateTime.UtcNow,
+                IsRead = false,
+                Type = NotificationTypes.HealthCheckUp,
+                SourceId = round.RoundId
+            };
+
+            await notificationRepository.AddAsync(notification);
+            var notiInfo = helperService.GetNotificationInformation(notification);
             return helperService.GetNotificationResponse(notiInfo, sender, receiver);
         }
     }

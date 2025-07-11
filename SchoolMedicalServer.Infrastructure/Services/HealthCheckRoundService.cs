@@ -1,4 +1,5 @@
 ﻿using SchoolMedicalServer.Abstractions.Dtos.MainFlows.HealthCheck.Rounds;
+using SchoolMedicalServer.Abstractions.Dtos.Notification;
 using SchoolMedicalServer.Abstractions.Dtos.Pagination;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Abstractions.IRepositories;
@@ -217,22 +218,28 @@ namespace SchoolMedicalServer.Infrastructure.Services
             );
         }
 
-        public async Task<bool> UpdateHealthCheckRoundStatusAsync(Guid roundId, bool request)
+        public async Task<NotificationRequest> UpdateHealthCheckRoundStatusAsync(Guid roundId, bool request)
         {
             var round = await healthCheckRoundRepository.GetHealthCheckRoundByIdAsync(roundId);
             if (round == null)
             {
-                return false;
+                return null!;
             }
             var today = DateTime.UtcNow;
             if (round.EndTime < today)
             {
-                return false;
+                return null!;
             }
             round.Status = request;
             round.UpdatedAt = DateTime.UtcNow;
             await healthCheckRoundRepository.UpdateHealthCheckRound(round);
-            return true;
+            var notification = new NotificationRequest
+            {
+                NotificationTypeId = round.RoundId,
+                ReceiverId = round.Schedule?.CreatedBy,
+                SenderId = round.NurseId,
+            };
+            return notification;
         }
 
         private async Task<StudentsOfRoundResponse> StudentsOfRoundResponse(HealthCheckResult result)

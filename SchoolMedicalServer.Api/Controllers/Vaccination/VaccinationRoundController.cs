@@ -114,11 +114,11 @@
                 return BadRequest(new { Message = "Invalid round ID." });
             }
             var result = await service.UpdateVaccinationRoundStatusAsync(roundId, request);
-            if (!result)
+            if (result == null)
             {
                 return NotFound(new { Message = "Vaccination round not found or update failed." });
             }
-            return Ok(new { Message = "Vaccination round status updated successfully." });
+            return Ok(result);
         }
 
         [HttpPut("vaccination-rounds/{roundId}")]

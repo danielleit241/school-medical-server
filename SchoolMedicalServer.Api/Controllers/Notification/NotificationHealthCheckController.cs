@@ -4,6 +4,19 @@
     [ApiController]
     public class NotificationHealthCheckController(IHealthCheckNotificationService service, INotificationSender notificationSender) : ControllerBase
     {
+        [HttpPost("notifications/health-checks/rounds/to-admin")]
+        [Authorize(Roles = "nurse")]
+        public async Task<IActionResult> SendHealthCheckNotificationToAdmin([FromBody] NotificationRequest request)
+        {
+            var notification = await service.SendHealthCheckNotificationToAdmin(request);
+            if (notification == null)
+            {
+                return BadRequest("Failed to send health-check notification to admin.");
+            }
+            await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
+            return Ok(notification);
+        }
+
         [HttpPost("notifications/health-checks/to-parent")]
         [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> SendHealthCheckNotificationToParent([FromBody] IEnumerable<NotificationRequest> requests)

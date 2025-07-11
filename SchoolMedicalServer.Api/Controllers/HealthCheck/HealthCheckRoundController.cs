@@ -91,11 +91,11 @@
                 return BadRequest(new { Message = "Invalid round ID." });
             }
             var result = await service.UpdateHealthCheckRoundStatusAsync(roundId, request);
-            if (!result)
+            if (result == null)
             {
                 return NotFound(new { Message = "Health check round not found or update failed." });
             }
-            return Ok(new { Message = "Health check round status updated successfully." });
+            return Ok(result);
         }
 
         [HttpPut("health-check-rounds/{roundId}")]
