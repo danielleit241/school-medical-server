@@ -197,8 +197,8 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var notification = new Notification
             {
                 NotificationId = Guid.NewGuid(),
-                UserId = sender.UserId,
-                SenderId = receiver.UserId,
+                UserId = receiver.UserId,
+                SenderId = sender.UserId,
                 Title = "Vaccination Round Notification",
                 Content = $"A vaccination round has been completed: {round.RoundName} on {round.StartTime?.ToString("d")}.",
                 SendDate = DateTime.UtcNow,
