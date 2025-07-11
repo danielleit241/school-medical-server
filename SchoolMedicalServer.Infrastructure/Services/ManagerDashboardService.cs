@@ -19,12 +19,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
             var medicalItems = await medicalInventoryRepository.GetAllAsync();
 
             var today = DateTime.UtcNow.Date;
-            var daysUntilSunday = DayOfWeek.Sunday - today.DayOfWeek;
-            if (daysUntilSunday <= 0) daysUntilSunday += 7;
-            var endOfWeek = today.AddDays(daysUntilSunday);
+            var endOf2Week = today.AddDays(13);
 
             var expiringThisWeek = medicalItems
-                .Where(item => item.ExpiryDate.HasValue && item.ExpiryDate.Value >= today && item.ExpiryDate.Value <= endOfWeek)
+                .Where(item => item.ExpiryDate.HasValue && item.ExpiryDate.Value >= today && item.ExpiryDate.Value <= endOf2Week)
                 .Select(item => new Dictionary<string, MedicalInventoryDashboardResponse>
                 {
                     {
