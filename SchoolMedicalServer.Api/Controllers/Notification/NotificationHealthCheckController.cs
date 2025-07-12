@@ -2,7 +2,7 @@
 {
     [Route("api")]
     [ApiController]
-    public class NotificationHealthCheckController(IHealthCheckNotificationService service, INotificationSender notificationSender) : ControllerBase
+    public class NotificationHealthCheckController(IHealthCheckNotificationService service, INotificationSender notificationSender, IEmailHelper emailHelper, IWebHostEnvironment env, IUserService userService) : ControllerBase
     {
         [HttpPost("notifications/health-checks/rounds/to-admin")]
         [Authorize(Roles = "nurse")]
@@ -29,8 +29,26 @@
             foreach (var notification in notifications)
             {
                 await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
+                var parent = await userService.GetUserAsync(notification.ReceiverInformationDto.UserId!.Value);
+                await SendEmailToParent(parent?.EmailAddress ?? string.Empty, parent?.FullName ?? "Parent");
             }
             return Ok(notifications);
+        }
+
+        private async Task SendEmailToParent(string parentEmail, string parentName)
+        {
+            string templateName = "email_schedule_reminders.html";
+            string templatePath = Path.Combine(env.WebRootPath, "templates", templateName);
+            string emailTemplate = System.IO.File.ReadAllText(templatePath);
+            string html = emailTemplate
+                .Replace("{ParentName}", parentName ?? "Parent")
+                .Replace("{Type}", "Vaccination");
+            await emailHelper.SendEmailAsync(new EmailFrom
+            {
+                To = parentEmail,
+                Subject = "[MEDICARE] Please confirm Vaccination result",
+                Body = html
+            });
         }
 
         [HttpPost("notifications/health-checks/results/to-parent")]
@@ -43,6 +61,7 @@
                 return BadRequest("Failed to send health-check result notification to parent.");
             }
             await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
+
             return Ok(notification);
         }
 

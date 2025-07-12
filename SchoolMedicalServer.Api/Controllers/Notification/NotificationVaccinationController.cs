@@ -2,7 +2,7 @@
 {
     [Route("api")]
     [ApiController]
-    public class NotificationVaccinationController(IVaccinationNotificationService service, INotificationSender notificationSender) : ControllerBase
+    public class NotificationVaccinationController(IVaccinationNotificationService service, INotificationSender notificationSender, IEmailHelper emailHelper, IWebHostEnvironment env, IUserService userService) : ControllerBase
     {
         [HttpPost("notifications/vaccinations/rounds/to-admin")]
         [Authorize(Roles = "nurse")]
@@ -30,8 +30,26 @@
             foreach (var notification in notifications)
             {
                 await notificationSender.NotifyUserUnreadCountAsync(notification.ReceiverInformationDto.UserId);
+                var parent = await userService.GetUserAsync(notification.ReceiverInformationDto.UserId!.Value);
+                await SendEmailToParent(parent?.EmailAddress ?? string.Empty, parent?.FullName ?? "Parent");
             }
             return Ok(notifications);
+        }
+
+        private async Task SendEmailToParent(string parentEmail, string parentName)
+        {
+            string templateName = "email_schedule_reminders.html";
+            string templatePath = Path.Combine(env.WebRootPath, "templates", templateName);
+            string emailTemplate = System.IO.File.ReadAllText(templatePath);
+            string html = emailTemplate
+                .Replace("{ParentName}", parentName)
+                .Replace("{Type}", "Health Check");
+            await emailHelper.SendEmailAsync(new EmailFrom
+            {
+                To = parentEmail,
+                Subject = "[MEDICARE] Please confirm Health Check result",
+                Body = html
+            });
         }
 
         [HttpPost("notifications/vaccinations/results/to-parent")]
