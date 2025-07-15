@@ -1,10 +1,11 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using SchoolMedicalServer.Abstractions.Dtos.Authentication;
 using SchoolMedicalServer.Abstractions.Entities;
 using SchoolMedicalServer.Infrastructure.Data;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 namespace SchoolMedicalServer.Test
 {
     public class AuthServiceDDTTest : TestExtensions
@@ -34,6 +35,7 @@ namespace SchoolMedicalServer.Test
                 FullName = $"User {u.Phone}",
                 PasswordHash = new PasswordHasher<User>().HashPassword(null!, u.Password),
                 RoleId = adminRole.RoleId,
+                EmailAddress = "test@gmail.com",
                 Status = true
             });
             context.Users.AddRange(userEntities);
@@ -106,6 +108,169 @@ namespace SchoolMedicalServer.Test
             };
             var result = await authService.LoginAsync(loginRequest);
             Assert.Null(result);
+        }
+
+        [Theory]
+        [MemberData(nameof(ValidLoginData))]
+        public async Task RefreshToken_ShouldReturnToken_WhenCredentialsAreValid(string phoneNumber, string password)
+        {
+            var context = CreateContext();
+            SeedRolesAndUsers(context, Users);
+            var authService = CreateAuthService(context);
+            var loginRequest = new UserLoginRequest
+            {
+                PhoneNumber = phoneNumber,
+                Password = password
+            };
+            var checkLogin = await authService.CheckLoginAsync(loginRequest);
+            Assert.True(checkLogin);
+            var result = await authService.LoginAsync(loginRequest);
+            Assert.NotNull(result);
+            Assert.NotEmpty(result.AccessToken);
+            Assert.NotEmpty(result.RefreshToken);
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.ReadJwtToken(result.AccessToken);
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            userIdClaim.Should().NotBeNull();
+            var requestRefresh = new RefreshTokenRequest
+            {
+                RefreshToken = result.RefreshToken,
+                UserId = Guid.Parse(userIdClaim.Value),
+            };
+            var refreshToken = await authService.RefreshTokenAsync(requestRefresh);
+
+            requestRefresh.Should().NotBeNull();
+        }
+
+        [Theory]
+        [MemberData(nameof(ValidLoginData))]
+        public async Task RefreshToken_ShouldReturnNull_WhenRefreshTokensAreInvalid(string phoneNumber, string password)
+        {
+            var context = CreateContext();
+            SeedRolesAndUsers(context, Users);
+            var authService = CreateAuthService(context);
+            var loginRequest = new UserLoginRequest
+            {
+                PhoneNumber = phoneNumber,
+                Password = password
+            };
+            var checkLogin = await authService.CheckLoginAsync(loginRequest);
+            Assert.True(checkLogin);
+            var result = await authService.LoginAsync(loginRequest);
+            Assert.NotNull(result);
+            Assert.NotEmpty(result.AccessToken);
+            Assert.NotEmpty(result.RefreshToken);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.ReadJwtToken(result.AccessToken);
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            userIdClaim.Should().NotBeNull();
+            var requestRefresh = new RefreshTokenRequest
+            {
+                RefreshToken = "InvalidRefreshToken",
+                UserId = Guid.Parse(userIdClaim.Value),
+            };
+            var refreshToken = await authService.RefreshTokenAsync(requestRefresh);
+            refreshToken.Should().BeNull();
+        }
+
+        [Theory]
+        [MemberData(nameof(ValidLoginData))]
+        public async Task ChangePassword_ShouldReturnUser_WhenPasswordIsChanged(string phoneNumber, string password)
+        {
+            var context = CreateContext();
+            SeedRolesAndUsers(context, Users);
+            var authService = CreateAuthService(context);
+            var user = await context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+            Assert.NotNull(user);
+            var oldHash = user.PasswordHash;
+            var changePasswordRequest = new ChangePasswordRequest
+            {
+                PhoneNumber = phoneNumber,
+                OldPassword = password,
+                NewPassword = "NewStr0ngPassw0rd!"
+            };
+            var updatedUser = await authService.ChangePasswordAsync(changePasswordRequest);
+            Assert.NotNull(updatedUser);
+            updatedUser.PasswordHash.Should().NotBe(oldHash);
+        }
+
+        [Theory]
+        [MemberData(nameof(ValidLoginData))]
+        public async Task ChangePassword_ShouldReturnNull_WhenOldPasswordIsIncorrect(string phoneNumber, string password)
+        {
+            var context = CreateContext();
+            SeedRolesAndUsers(context, Users);
+            var authService = CreateAuthService(context);
+            var user = await context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+            Assert.NotNull(user);
+            var oldHash = user.PasswordHash;
+            var changePasswordRequest = new ChangePasswordRequest
+            {
+                PhoneNumber = phoneNumber,
+                OldPassword = "WrongOldPassword!",
+                NewPassword = "NewStr0ngPassw0rd!"
+            };
+            var updatedUser = await authService.ChangePasswordAsync(changePasswordRequest);
+            Assert.Null(updatedUser);
+            user.PasswordHash.Should().Be(oldHash);
+        }
+
+        [Theory]
+        [MemberData(nameof(ValidLoginData))]
+        public async Task ResetPassword_ShouldReturnTrue_WhenOptIsValid(string phoneNumber, string password)
+        {
+            var context = CreateContext();
+            SeedRolesAndUsers(context, Users);
+            var authService = CreateAuthService(context);
+
+
+            var otp = await authService.GetOtpAsync(new SendOtpRequest
+            {
+                PhoneNumber = phoneNumber,
+                EmailAddress = "test@gmail.com"
+            });
+
+            Assert.NotNull(otp);
+            Assert.NotEmpty(otp);
+
+            var verifyOtp = await authService.VerifyOtpAsync(otp);
+            Assert.True(verifyOtp);
+
+            var resetPasswordRequest = new ResetPasswordRequest
+            {
+                PhoneNumber = phoneNumber,
+                Otp = otp,
+                NewPassword = "NewStr0ngPassw0rd!"
+            };
+
+            var result = await authService.ResetPasswordAsync(resetPasswordRequest);
+            Assert.True(result);
+        }
+
+        [Theory]
+        [MemberData(nameof(ValidLoginData))]
+        public async Task ResetPassword_ShouldReturnFalse_WhenOptIsInvalid(string phoneNumber, string password)
+        {
+            var context = CreateContext();
+            SeedRolesAndUsers(context, Users);
+            var authService = CreateAuthService(context);
+            var otp = await authService.GetOtpAsync(new SendOtpRequest
+            {
+                PhoneNumber = phoneNumber,
+                EmailAddress = "wrong@email.com"
+            });
+            Assert.Null(otp);
+            var verifyOtp = await authService.VerifyOtpAsync("InvalidOtp");
+            Assert.False(verifyOtp);
+            var resetPasswordRequest = new ResetPasswordRequest
+            {
+                PhoneNumber = phoneNumber,
+                Otp = "InvalidOtp",
+                NewPassword = "NewStr0ngPassw0rd!"
+            };
+            var result = await authService.ResetPasswordAsync(resetPasswordRequest);
+            Assert.False(result);
         }
     }
 }
