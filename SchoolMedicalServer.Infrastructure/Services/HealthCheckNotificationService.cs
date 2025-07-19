@@ -40,6 +40,10 @@ namespace SchoolMedicalServer.Infrastructure.Services
                 {
                     body = $"Your child {student!.FullName} has successfully completed the health check: {schedule!.HealthCheckType} on {round.StartTime?.ToString("d")}.";
                 }
+                else
+                {
+                    body = $"Your child {student!.FullName} has received the health check: {schedule!.HealthCheckType} on {round.StartTime?.ToString("d")}.";
+                }
 
                 var notification = new Notification
                 {
