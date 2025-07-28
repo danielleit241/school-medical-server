@@ -47,7 +47,7 @@ jobs:
         path: coverage-report
 
     - name: 🐳 Build Docker image
-      run: docker build -t medicare-api -f SchoolMedicalServer.Api/Dockerfile SchoolMedicalServer.Api
+      run: docker build -t medicare-api -f SchoolMedicalServer.Api/Dockerfile .
 
     - name: 🐳 Run Docker Compose
       run: docker-compose -f docker-compose/docker-compose.yml up --build -d
