@@ -19,6 +19,15 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
+    # ✅ Cache NuGet packages
+    - name: 💾 Cache NuGet packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.nuget/packages
+        key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          nuget-${{ runner.os }}-
+
     - name: 📦 Restore dependencies
       run: dotnet restore SchoolMedicalServer.Api/SchoolMedicalServer.Api.csproj
 
@@ -50,4 +59,4 @@ jobs:
       run: docker build -t medicare-api -f SchoolMedicalServer.Api/Dockerfile .
 
     - name: 🐳 Run Docker Compose
-      run: docker compose -f docker-compose/docker-compose.yml up --build -d
+      run: docker compose -f ./docker-compose/docker-compose.yml up --build -d
