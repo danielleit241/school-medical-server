@@ -20,10 +20,10 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: 📦 Restore dependencies
-      run: dotnet restore
+      run: dotnet restore SchoolMedicalServer.sln
 
     - name: 🛠 Build solution
-      run: dotnet build --no-restore --configuration Release
+      run: dotnet build SchoolMedicalServer.sln --no-restore --configuration Release
 
     - name: ✅ Run unit tests
       run: dotnet test SchoolMedicalServer.Test/SchoolMedicalServer.Test.csproj --verbosity normal --collect:"XPlat Code Coverage" /p:ExcludeByFile="SchoolMedicalServer.Infrastructure/Migrations/*.cs"
