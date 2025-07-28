@@ -1,0 +1,51 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: school-medical-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${DB_PASSWORD}
+      - MSSQL_PID=Express
+    ports:
+      - "${DB_PORT}:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - school-medical-network
+    restart: unless-stopped
+
+  school-medical-api:
+    build:
+      context: .
+      dockerfile: SchoolMedicalServer.Api/Dockerfile
+    container_name: school-medical-api
+    ports:
+      - "${API_PORT}:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ASPNETCORE_URLS=${ASPNETCORE_URLS}
+      - ConnectionStrings__DBDefault=${CONNECTION_STRING}
+      - Jwt__Key=${JWT_KEY}
+      - Jwt__Issuer=${JWT_ISSUER}
+      - Jwt__Audience=${JWT_AUDIENCE}
+      - DefaultAdmin__PhoneNumber=${DEFAULT_ADMIN_PHONE}
+      - DefaultAdmin__Password=${DEFAULT_ADMIN_PASSWORD}
+      - DefaultAccountCreate__Password=${DEFAULT_ACCOUNT_PASSWORD}
+      - DefaultAccountCreate__RoleName=${DEFAULT_ACCOUNT_ROLE}
+      - EmailHost=${EMAIL_HOST}
+      - EmailPort=${EMAIL_PORT}
+      - EmailUsername=${EMAIL_USERNAME}
+      - EmailPassword=${EMAIL_PASSWORD}
+    depends_on:
+      - sqlserver
+    networks:
+      - school-medical-network
+    restart: unless-stopped
+
+volumes:
+  sqlserver_data:
+    driver: local
+
+networks:
+  school-medical-network:
+    driver: bridge
