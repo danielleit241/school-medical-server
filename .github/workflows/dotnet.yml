@@ -59,4 +59,4 @@ jobs:
       run: docker build -t medicare-api -f SchoolMedicalServer.Api/Dockerfile .
 
     - name: 🐳 Run Docker Compose
-      run: docker compose -f ./docker-compose/docker-compose.yml up --build -d
+      run: docker compose -f ./docker-compose.yml up --build -d
