@@ -17,7 +17,7 @@ jobs:
     - name: ⚙️ Setup .NET SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '8.0.x' # hoặc 7.0.x nếu bạn dùng bản thấp hơn
+        dotnet-version: '8.0.x'
 
     - name: 📦 Restore dependencies
       run: dotnet restore
@@ -28,7 +28,7 @@ jobs:
     - name: ✅ Run unit tests
       run: dotnet test SchoolMedicalServer.Test/SchoolMedicalServer.Test.csproj --verbosity normal --collect:"XPlat Code Coverage" /p:ExcludeByFile="SchoolMedicalServer.Infrastructure/Migrations/*.cs"
 
-    - name: Upload coverage reports to Codecov
+    - name: 🧾 Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
@@ -45,3 +45,9 @@ jobs:
       with:
         name: coverage-html-report
         path: coverage-report
+
+    - name: 🐳 Build Docker image
+      run: docker build -t medicare-api -f SchoolMedicalServer.Api/Dockerfile SchoolMedicalServer.Api
+
+    - name: 🐳 Run Docker Compose
+      run: docker-compose -f docker-compose/docker-compose.yml up --build -d
